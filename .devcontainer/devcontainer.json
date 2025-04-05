@@ -1,0 +1,14 @@
+{
+  "name": "RunSuggestionEngine",
+  "image": "mcr.microsoft.com/dotnet/sdk:8.0",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-azuretools.vscode-azurefunctions",
+        "formulahendry.dotnet-test-explorer"
+      ]
+    }
+  },
+  "forwardPorts": [7071]
+}
