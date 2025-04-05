@@ -1,0 +1,3 @@
+[submodule "tools/terraform"]
+	path = tools/terraform
+	url = git@github.com:markstanden/terraform-tools.git
