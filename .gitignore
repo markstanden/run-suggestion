@@ -1,0 +1,84 @@
+# .NET/C# build outputs
+bin/
+obj/
+out/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.sln.docstates
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+*.opensdf
+ipch/
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+orleans.codegen.cs
+nCrunchTemp_*
+
+# Visual Studio Code files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+.ionide/
+
+# Terraform files
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+*.tfplan
+.terragrunt-cache/
+
+# Secrets and environment files
+.env
+appsettings.*.json
+local.settings.json
+*.Development.json
+secrets.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js Tools for .NET
+node_modules/
+package-lock.json
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+coverage/
+*.coverage
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Azure Functions local settings
+local.settings.json
