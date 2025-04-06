@@ -1,6 +1,7 @@
 #!/bin/bash
-echo "Restoring NuGet packages..."
-dotnet restore /workspaces/run-suggestion/RunSuggestion.sln --verbosity minimal
+
+echo "Updating .NET workloads..."
+sudo dotnet workload update
 
 echo ""
 echo "Install Linux CLI tools"
@@ -36,3 +37,10 @@ if [ -f /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh ]; then
     chmod +x /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
     /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
 fi
+
+echo ""
+echo "Updating .NET workloads..."
+sudo dotnet workload update
+
+echo "Restoring NuGet packages..."
+dotnet restore /workspaces/run-suggestion/RunSuggestion.sln --verbosity minimal
