@@ -1,3 +1,6 @@
 [submodule "tools/terraform"]
 	path = tools/terraform
 	url = git@github.com:markstanden/terraform-tools.git
+[submodule ".coding-standards"]
+	path = .coding-standards
+	url = git@github.com:markstanden/coding-standards
