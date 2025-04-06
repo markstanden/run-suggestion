@@ -3,4 +3,4 @@
 	url = git@github.com:markstanden/terraform-tools.git
 [submodule ".coding-standards"]
 	path = .coding-standards
-	url = https://github.com/markstanden/coding-standards
+	url = git@github.com:markstanden/coding-standards
