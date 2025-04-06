@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Updating .NET workloads..."
-sudo dotnet workload update
-
 echo ""
 echo "Install Linux CLI tools"
 sudo apt-get update && sudo apt-get install -y \
