@@ -1,14 +1,24 @@
 #!/bin/bash
 
-# Install Azure Functions Core Tools
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/debian/$(lsb_release -rs | cut -d"." -f 1)/prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
-sudo apt-get update
-sudo apt-get install -y azure-functions-core-tools-4
+# Restore NuGet packages for the solution
+echo "post-create-command: Restoring NuGet packages..."
+dotnet restore /workspaces/run-suggestion/RunSuggestion.sln --verbosity minimal
 
-# Install tree utility (for cleantree function)
-sudo apt-get install -y tree
+# Install Linux CLI tools
+sudo apt-get update && sudo apt-get install -y \
+    fzf \
+    silversearcher-ag \
+    tree
 
-# Add cleantree function to shell profile, used for readme trees
-echo 'function cleantree() { pwd && tree -a -d -I "obj|bin|devportal|images|nodejs|build|standard-logic-apps"; }' >> ~/.zshrc
+# Define cleantree function for shell profiles
+CLEANTREE_FUNC='function cleantree() { pwd && tree -d -I "obj|bin|images|nodejs|build"; }'
+
+# Add to bash profile if it exists
+if [ -f ~/.bashrc ]; then
+    echo "$CLEANTREE_FUNC" >> ~/.bashrc
+fi
+
+# Add to zsh profile if it exists
+if [ -f ~/.zshrc ]; then
+    echo "$CLEANTREE_FUNC" >> ~/.zshrc
+fi
