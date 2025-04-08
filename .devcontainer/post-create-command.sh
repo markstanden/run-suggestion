@@ -42,11 +42,8 @@ fi
 echo "Setting/Fixing devcontainer git hooks directory..."
 git config --local core.hooksPath .git/hooks
 
-echo ""
 echo "Adding custom git aliases..."
 echo "'git amend' to add current stage to previous commit"
 git config --global alias.amend "commit --amend"
 echo "'git uncommit' to soft undo previous commit (return to staging)"
 git config --global alias.uncommit 'reset --soft HEAD~1'
-
-echo ""
