@@ -26,27 +26,17 @@ if [ -f ~/.zshrc ]; then
 fi
 
 echo ""
-echo "Setting up Terraform tools..."
-if [ -f /workspaces/run-suggestion/tools/terraform/install.sh ]; then
-    chmod +x /workspaces/run-suggestion/tools/terraform/install.sh
-    /workspaces/run-suggestion/tools/terraform/install.sh
-fi
-
-echo ""
-echo "Setting up coding standards and Git hooks..."
-if [ -f /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh ]; then
-    chmod +x /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
-    /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
-fi
-
-echo "Setting/Fixing devcontainer git hooks directory..."
-git config --local core.hooksPath .git/hooks
-
-echo ""
 echo "Adding custom git aliases..."
 echo "'git amend' to add current stage to previous commit"
 git config --global alias.amend "commit --amend"
 echo "'git uncommit' to soft undo previous commit (return to staging)"
 git config --global alias.uncommit 'reset --soft HEAD~1'
+
+echo ""
+echo "Running common init script"
+if [ -f /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh ]; then
+    chmod +x /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
+    /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
+fi
 
 echo ""
