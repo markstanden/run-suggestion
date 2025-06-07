@@ -86,3 +86,6 @@ local.settings.json
 # Submodule symlinks
 .editorconfig
 Directory.Build.props
+
+# Rider
+.idea
