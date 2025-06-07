@@ -2,9 +2,8 @@ namespace RunSuggestion.Core.Models;
 
 public class RunActivity
 {
-    public int Id { get; init; }
-    public DateTime Date { get; init; }
-    public int Distance { get; init; }
-    public byte Effort { get; init; }
-    public TimeSpan Duration { get; init; }
+    public int Id { get; set; }
+    public float Distance { get; set; }
+    public byte Effort { get; set; }
+    public TimeSpan Duration { get; set; }
 }
