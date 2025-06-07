@@ -1,6 +1,10 @@
 #!/bin/bash
 
 echo ""
+echo "Updating .NET workloads..."
+sudo sudo dotnet workload update
+
+echo ""
 echo "Install Linux CLI tools"
 sudo apt-get update && sudo apt-get install -y \
     fzf \
@@ -22,22 +26,17 @@ if [ -f ~/.zshrc ]; then
 fi
 
 echo ""
-echo "Setting up Terraform tools..."
-if [ -f /workspaces/run-suggestion/tools/terraform/install.sh ]; then
-    chmod +x /workspaces/run-suggestion/tools/terraform/install.sh
-    /workspaces/run-suggestion/tools/terraform/install.sh
-fi
+echo "Adding custom git aliases..."
+echo "'git amend' to add current stage to previous commit"
+git config --global alias.amend "commit --amend"
+echo "'git uncommit' to soft undo previous commit (return to staging)"
+git config --global alias.uncommit 'reset --soft HEAD~1'
 
 echo ""
-echo "Setting up coding standards and Git hooks..."
+echo "Running common init script"
 if [ -f /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh ]; then
     chmod +x /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
     /workspaces/run-suggestion/.coding-standards/dotnet/setup.sh
 fi
 
 echo ""
-echo "Updating .NET workloads..."
-sudo dotnet workload update
-
-echo "Restoring NuGet packages..."
-dotnet restore /workspaces/run-suggestion/RunSuggestion.sln --verbosity minimal
