@@ -20,9 +20,7 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
         using CsvReader csvReader = new (reader, CultureInfo.InvariantCulture);
         IEnumerable<TrainingPeaksActivity> csvData = csvReader.GetRecords<TrainingPeaksActivity>().ToList();
 
-        return csvData
-            .Where(row => row.Title == "Running")
-            .Select(row => new RunEvent()
+        return csvData.Select(row => new RunEvent()
         {
             Id= 0,
             Date = row.WorkoutDay,

@@ -11,8 +11,8 @@ public class CsvToRunHistoryTransformerTests
     public void ConvertToRunHistory_SingleValidRow_ReturnsOneRunEvent()
     {
         // Arrange
-        const string CsvHeader = "\"WorkoutDay\",\"DistanceInMeters\",\"TimeTotalInHours\",\"Rpe\"";
-        const string CsvRow = "\"2025-01-01\",\"6073.669921875\",\"0.551279187202454\",\"\"";
+        const string CsvHeader = "\"Title\",\"WorkoutType\",\"WorkoutDay\",\"DistanceInMeters\",\"TimeTotalInHours\",\"HeartRateAverage\",\"HeartRateMax\",\"Rpe\",\"Feeling\"";
+        const string CsvRow = "\"Running\",\"Run\",\"2024-12-31\",\"12345.6789\",\"0.5\",\"150\",\"200\",\"3\",\"5\"";
         const string Csv = $"{CsvHeader}\n{CsvRow}";
 
         // Act
@@ -20,8 +20,9 @@ public class CsvToRunHistoryTransformerTests
 
         // Assert
         RunEvent runEvent = result.ShouldHaveSingleItem();
-        runEvent.Distance.ShouldBe(6.07f, 0.01f);
-        runEvent.Duration.ShouldBe(TimeSpan.FromMinutes(33));
-        runEvent.Effort.ShouldBe((byte)0);
+        runEvent.Date.ShouldBe(new DateTime(2024, 12, 31));
+        runEvent.Distance.ShouldBe(12346);
+        runEvent.Duration.ShouldBe(TimeSpan.FromMinutes(30));
+        runEvent.Effort.ShouldBe((byte)3);
     }
 }
