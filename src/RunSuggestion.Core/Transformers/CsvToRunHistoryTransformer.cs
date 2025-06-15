@@ -1,5 +1,3 @@
-using System.Globalization;
-using CsvHelper;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
@@ -37,7 +35,7 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
         IEnumerable<TrainingPeaksActivity> csvData = _csvParser.Parse<TrainingPeaksActivity>(csv);
 
         return csvData
-            .Where(OnlyRunEvents)
+            .Where(TrainingPeaksActivity.IsRunActivity)
             .Select(MapToRunEvent);
     }
 
@@ -55,14 +53,6 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
             Effort = (byte)(activity.Rpe ?? 0),
             Duration = TimeSpan.FromHours(activity.TimeTotalInHours),
         };
-
-    /// <summary>
-    /// Predicate that returns true only if the TrainingPeaks activity is a Run
-    /// </summary>
-    /// <param name="activity">Parsed line from Trainingpeaks CSV</param>
-    /// <returns>True if the activity is a Run</returns>
-    private bool OnlyRunEvents(TrainingPeaksActivity activity) =>
-        activity.Title == TrainingPeaksActivity.RUNNING_ACTIVITY_TITLE;
 }
 
 
