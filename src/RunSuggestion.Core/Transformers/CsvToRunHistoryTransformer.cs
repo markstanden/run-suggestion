@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 
 namespace RunSuggestion.Core.Transformers;
 

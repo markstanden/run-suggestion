@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Tests.TestHelpers;
 using RunSuggestion.Core.Transformers;

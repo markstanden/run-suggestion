@@ -1,4 +1,4 @@
-namespace RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+namespace RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 
 public class TrainingPeaksActivity
 {

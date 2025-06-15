@@ -1,5 +1,5 @@
 using System.Globalization;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 
 namespace RunSuggestion.Core.Tests.TestHelpers;
 
