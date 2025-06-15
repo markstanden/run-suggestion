@@ -89,3 +89,7 @@ Directory.Build.props
 
 # Rider
 .idea
+
+# Project
+.coding-standards
+tools/terraform
