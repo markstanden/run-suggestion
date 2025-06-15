@@ -3,6 +3,7 @@ namespace RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 public class TrainingPeaksActivity
 {
     public const string WORKOUT_DAY_DATETIME_FORMAT = "yyyy-MM-dd";
+    public const string RUNNING_ACTIVITY_TITLE = "Running";
 
     /// <summary>
     /// In my sample data this is the activity type as reported by Garmin
