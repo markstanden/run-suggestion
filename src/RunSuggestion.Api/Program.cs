@@ -8,7 +8,7 @@ IHost host = new HostBuilder()
     .ConfigureServices(services =>
     {
         services.AddScoped<IAuthenticator, AuthenticationService>();
-        services.AddScoped<IRunHistoryAdder, RunHistoryService>(service => new RunHistoryService());
+        services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>(service => new TrainingPeaksHistoryService());
     })
     .Build();
 
