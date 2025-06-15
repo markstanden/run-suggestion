@@ -16,20 +16,25 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
 {
     public IEnumerable<RunEvent> Transform(string csv)
     {
-        using StringReader reader = new (csv);
-        using CsvReader csvReader = new (reader, CultureInfo.InvariantCulture);
-        IEnumerable<TrainingPeaksActivity> csvData = csvReader.GetRecords<TrainingPeaksActivity>().ToList();
+        IEnumerable<TrainingPeaksActivity> csvData = ParseCsvData<TrainingPeaksActivity>(csv);
 
         return csvData
             .Where(row => row.Title == "Running")
             .Select(row => new RunEvent()
-        {
-            Id= 0,
-            Date = row.WorkoutDay,
-            Distance = (int)Math.Round(row.DistanceInMeters),
-            Effort = (byte)(row.Rpe ?? 0),
-            Duration = TimeSpan.FromHours(row.TimeTotalInHours),
-        });
+            {
+                Id = 0,
+                Date = row.WorkoutDay,
+                Distance = (int)Math.Round(row.DistanceInMeters),
+                Effort = (byte)(row.Rpe ?? 0),
+                Duration = TimeSpan.FromHours(row.TimeTotalInHours),
+            });
+    }
+
+    private IEnumerable<T> ParseCsvData<T>(string csv)
+    {
+        using StringReader reader = new(csv);
+        using CsvReader csvReader = new(reader, CultureInfo.InvariantCulture);
+        return csvReader.GetRecords<T>().ToList();
     }
 }
 
