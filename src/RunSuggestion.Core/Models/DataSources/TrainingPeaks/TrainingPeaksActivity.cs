@@ -72,4 +72,12 @@ public class TrainingPeaksActivity
     /// set to null if not provided by the user (requires event review in the Garmin Connect app).
     /// </summary>
     public int? Feeling { get; init; }
+
+    /// <summary>
+    /// Predicate that returns true only if the TrainingPeaks activity is a Run
+    /// </summary>
+    /// <param name="activity">Parsed line from Trainingpeaks CSV</param>
+    /// <returns>True if the activity is a Run</returns>
+    public static bool IsRunActivity(TrainingPeaksActivity activity) =>
+        activity.Title == TrainingPeaksActivity.RUNNING_ACTIVITY_TITLE;
 }
