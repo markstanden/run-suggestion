@@ -14,8 +14,6 @@ namespace RunSuggestion.Core.Transformers;
 /// </summary>
 public class CsvToRunHistoryTransformer : IRunHistoryTransformer
 {
-    public const string TRAININGPEAKS_RUNNING_TITLE = "Running";
-
     /// <summary>
     /// Transforms a csv string into an IEnumerable of RunEvents.
     /// Only Runs will be included in the returned IEnumerable, other
@@ -66,7 +64,7 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
     /// <param name="activity">Parsed line from Trainingpeaks CSV</param>
     /// <returns>True if the activity is a Run</returns>
     private bool OnlyRunEvents(TrainingPeaksActivity activity) =>
-        activity.Title == TRAININGPEAKS_RUNNING_TITLE;
+        activity.Title == TrainingPeaksActivity.RUNNING_ACTIVITY_TITLE;
 }
 
 
