@@ -19,15 +19,8 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
         IEnumerable<TrainingPeaksActivity> csvData = ParseCsvData<TrainingPeaksActivity>(csv);
 
         return csvData
-            .Where(row => row.Title == "Running")
-            .Select(row => new RunEvent()
-            {
-                Id = 0,
-                Date = row.WorkoutDay,
-                Distance = (int)Math.Round(row.DistanceInMeters),
-                Effort = (byte)(row.Rpe ?? 0),
-                Duration = TimeSpan.FromHours(row.TimeTotalInHours),
-            });
+            .Where(OnlyRunEvents)
+            .Select(MapToRunEvent);
     }
 
     private IEnumerable<T> ParseCsvData<T>(string csv)
@@ -36,6 +29,19 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
         using CsvReader csvReader = new(reader, CultureInfo.InvariantCulture);
         return csvReader.GetRecords<T>().ToList();
     }
+
+    private RunEvent MapToRunEvent(TrainingPeaksActivity activity) =>
+        new RunEvent()
+        {
+            Id = 0,
+            Date = activity.WorkoutDay,
+            Distance = (int)Math.Round(activity.DistanceInMeters),
+            Effort = (byte)(activity.Rpe ?? 0),
+            Duration = TimeSpan.FromHours(activity.TimeTotalInHours),
+        };
+
+    private bool OnlyRunEvents(TrainingPeaksActivity activity) =>
+        activity.Title == "Running";
 }
 
 
