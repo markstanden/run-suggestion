@@ -14,6 +14,17 @@ namespace RunSuggestion.Core.Transformers;
 /// </summary>
 public class CsvToRunHistoryTransformer : IRunHistoryTransformer
 {
+    private readonly ICsvParser _csvParser;
+
+    /// <summary>
+    /// Transformer class constructor.  Arguments are passed in via dependency injection within the Program.cs
+    /// </summary>
+    /// <param name="csvParser">Instance of ICsvParser dependency injected into the constructor on initialisation.</param>
+    public CsvToRunHistoryTransformer(ICsvParser csvParser)
+    {
+        _csvParser = csvParser;
+    }
+
     /// <summary>
     /// Transforms a csv string into an IEnumerable of RunEvents.
     /// Only Runs will be included in the returned IEnumerable, other
@@ -23,24 +34,11 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
     /// <returns>an IEnumerable of RunEvents</returns>
     public IEnumerable<RunEvent> Transform(string csv)
     {
-        IEnumerable<TrainingPeaksActivity> csvData = ParseCsvData<TrainingPeaksActivity>(csv);
+        IEnumerable<TrainingPeaksActivity> csvData = _csvParser.Parse<TrainingPeaksActivity>(csv);
 
         return csvData
             .Where(OnlyRunEvents)
             .Select(MapToRunEvent);
-    }
-
-    /// <summary>
-    /// Generic method to parse the provided CSV into an IEnumerable of T.
-    /// </summary>
-    /// <param name="csv">The csv string to parse</param>
-    /// <typeparam name="T">The model to deserialise into</typeparam>
-    /// <returns>An IEnumerable of type T</returns>
-    private IEnumerable<T> ParseCsvData<T>(string csv)
-    {
-        using StringReader reader = new(csv);
-        using CsvReader csvReader = new(reader, CultureInfo.InvariantCulture);
-        return csvReader.GetRecords<T>().ToList();
     }
 
     /// <summary>
