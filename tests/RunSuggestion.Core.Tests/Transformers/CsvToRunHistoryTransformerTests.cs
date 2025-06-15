@@ -1,5 +1,7 @@
+using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Tests.TestHelpers;
 using RunSuggestion.Core.Transformers;
 
@@ -7,7 +9,13 @@ namespace RunSuggestion.Core.Tests.Transformers;
 
 public class CsvToRunHistoryTransformerTests
 {
-    private readonly CsvToRunHistoryTransformer _sut = new();
+    private readonly ICsvParser _csvParser = new CsvParser();
+    private readonly CsvToRunHistoryTransformer _sut;
+
+    public CsvToRunHistoryTransformerTests()
+    {
+        _sut = new CsvToRunHistoryTransformer(_csvParser);
+    }
 
     [Fact]
     public void ConvertToRunHistory_SingleValidRunRow_ReturnsOneRunEvent()
