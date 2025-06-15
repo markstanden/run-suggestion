@@ -1,5 +1,3 @@
-using System.Globalization;
-using CsvHelper;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
@@ -14,23 +12,47 @@ namespace RunSuggestion.Core.Transformers;
 /// </summary>
 public class CsvToRunHistoryTransformer : IRunHistoryTransformer
 {
+    private readonly ICsvParser _csvParser;
+
+    /// <summary>
+    /// Transformer class constructor.  Arguments are passed in via dependency injection within the Program.cs
+    /// </summary>
+    /// <param name="csvParser">Instance of ICsvParser dependency injected into the constructor on initialisation.</param>
+    public CsvToRunHistoryTransformer(ICsvParser csvParser)
+    {
+        _csvParser = csvParser;
+    }
+
+    /// <summary>
+    /// Transforms a csv string into an IEnumerable of RunEvents.
+    /// Only Runs will be included in the returned IEnumerable, other
+    /// activity types will be discarded.
+    /// </summary>
+    /// <param name="csv">The CSV string to be parsed</param>
+    /// <returns>an IEnumerable of RunEvents</returns>
     public IEnumerable<RunEvent> Transform(string csv)
     {
-        using StringReader reader = new (csv);
-        using CsvReader csvReader = new (reader, CultureInfo.InvariantCulture);
-        IEnumerable<TrainingPeaksActivity> csvData = csvReader.GetRecords<TrainingPeaksActivity>().ToList();
+        IEnumerable<TrainingPeaksActivity> csvData = _csvParser.Parse<TrainingPeaksActivity>(csv);
 
         return csvData
-            .Where(row => row.Title == "Running")
-            .Select(row => new RunEvent()
-        {
-            Id= 0,
-            Date = row.WorkoutDay,
-            Distance = (int)Math.Round(row.DistanceInMeters),
-            Effort = (byte)(row.Rpe ?? 0),
-            Duration = TimeSpan.FromHours(row.TimeTotalInHours),
-        });
+            .Where(TrainingPeaksActivity.IsRunActivity)
+            .Select(MapToRunEvent);
     }
+
+    /// <summary>
+    /// Maps a parsed TrainingPeaksActivity to a new RunEvent instance
+    /// </summary>
+    /// <param name="activity"></param>
+    /// <returns>A mapped RunEvent</returns>
+    private RunEvent MapToRunEvent(TrainingPeaksActivity activity) =>
+        new RunEvent()
+        {
+            Id = 0,
+            Date = activity.WorkoutDay,
+            Distance = (int)Math.Round(activity.DistanceInMeters),
+            Effort = (byte)(activity.Rpe ?? 0),
+            Duration = TimeSpan.FromHours(activity.TimeTotalInHours),
+        };
 }
 
 

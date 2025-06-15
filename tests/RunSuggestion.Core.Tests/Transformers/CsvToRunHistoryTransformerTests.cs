@@ -1,5 +1,7 @@
+using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Tests.TestHelpers;
 using RunSuggestion.Core.Transformers;
 
@@ -7,7 +9,13 @@ namespace RunSuggestion.Core.Tests.Transformers;
 
 public class CsvToRunHistoryTransformerTests
 {
-    private readonly CsvToRunHistoryTransformer _sut = new();
+    private readonly ICsvParser _csvParser = new CsvParser();
+    private readonly CsvToRunHistoryTransformer _sut;
+
+    public CsvToRunHistoryTransformerTests()
+    {
+        _sut = new CsvToRunHistoryTransformer(_csvParser);
+    }
 
     [Fact]
     public void ConvertToRunHistory_SingleValidRunRow_ReturnsOneRunEvent()
@@ -26,6 +34,7 @@ public class CsvToRunHistoryTransformerTests
 
     [Theory]
     [InlineData(2024, 12, 31)]
+    [InlineData(2024, 2, 29)]
     [InlineData(2025, 1, 1)]
     public void ConvertToRunHistory_WhenPassedCorrectDateFormat_ParsesDateCorrectly(int year, int month, int day)
     {
@@ -63,6 +72,29 @@ public class CsvToRunHistoryTransformerTests
         // Assert
         RunEvent runEvent = result.ShouldHaveSingleItem();
         runEvent.Distance.ShouldBe(distance);
+    }
+
+    [Theory]
+    [InlineData(0D)]
+    [InlineData(0.1D)]
+    [InlineData(0.5D)]
+    [InlineData(1D)]
+    [InlineData(10D)]
+    [InlineData(100D)]
+    public void ConvertToRunHistory_WhenPassedValidDuration_ParsesDurationCorrectly(int duration)
+    {
+        // Arrange
+        TimeSpan expectedDuration = TimeSpan.FromHours(duration);
+        string csv = new TrainingPeaksCsvBuilder()
+            .AddRunningRow(totalTimeInHours: duration)
+            .Build();
+
+        // Act
+        IEnumerable<RunEvent> result = _sut.Transform(csv);
+
+        // Assert
+        RunEvent runEvent = result.ShouldHaveSingleItem();
+        runEvent.Duration.ShouldBe(expectedDuration);
     }
 
     [Theory]
