@@ -29,7 +29,7 @@ public class TrainingPeaksCsvBuilder
     /// <returns>a csv string containing the TrainingPeaks headers with any added rows on newlines</returns>
     public string Build()
     {
-        IEnumerable<string> csvRows = _rows.Select(row => CreateRow(row));
+        IEnumerable<string> csvRows = _rows.Select(CreateRow);
         return $"{CreateHeaders()}\n{string.Join('\n', csvRows)}";
     }
 
