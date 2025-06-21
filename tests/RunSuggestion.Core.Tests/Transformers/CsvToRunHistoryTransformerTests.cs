@@ -81,7 +81,7 @@ public class CsvToRunHistoryTransformerTests
     [InlineData(1D)]
     [InlineData(10D)]
     [InlineData(100D)]
-    public void ConvertToRunHistory_WhenPassedValidDuration_ParsesDurationCorrectly(int duration)
+    public void ConvertToRunHistory_WhenPassedValidDuration_ParsesDurationCorrectly(double duration)
     {
         // Arrange
         TimeSpan expectedDuration = TimeSpan.FromHours(duration);
