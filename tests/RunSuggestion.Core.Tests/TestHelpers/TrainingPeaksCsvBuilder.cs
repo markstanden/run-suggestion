@@ -5,19 +5,22 @@ namespace RunSuggestion.Core.Tests.TestHelpers;
 
 public class TrainingPeaksCsvBuilder
 {
-    public const string RUNNING_TITLE = "Running";
-    public const string RUNNING_WORKOUT_TYPE = "Run";
+    public const string RunningTitle = "Running";
+    public const string RunningWorkoutType = "Run";
 
-    public const string DEFAULT_TITLE = RUNNING_TITLE;
-    public const string DEFAULT_WORKOUT_TYPE = RUNNING_WORKOUT_TYPE;
-    public const string DEFAULT_WORKOUT_DAY = "2024-12-31";
-    public const double DEFAULT_DISTANCE_IN_METERS = 5000;
-    public const double DEFAULT_TOTAL_TIME_IN_HOURS = 0.5;
-    public const int DEFAULT_HEART_RATE_AVERAGE = 100;
-    public const int DEFAULT_HEART_RATE_MAX = 200;
-    public const int DEFAULT_RPE = 3;
-    public const int DEFAULT_FEELING = 5;
+    public const string DefaultTitle = RunningTitle;
+    public const string DefaultWorkoutType = RunningWorkoutType;
+    public const string DefaultWorkoutDay = "2024-12-31";
+    public const double DefaultDistanceInMeters = 5000;
+    public const double DefaultTotalTimeInHours = 0.5;
+    public const int DefaultHeartRateAverage = 100;
+    public const int DefaultHeartRateMax = 200;
+    public const int DefaultRpe = 3;
+    public const int DefaultFeeling = 5;
 
+    /// <summary>
+    /// Internal class field to store the CSV rows added to the string output by the Build() method
+    /// </summary>
     private IEnumerable<TrainingPeaksActivity> _rows = new List<TrainingPeaksActivity>();
 
     /// <summary>
@@ -57,15 +60,15 @@ public class TrainingPeaksCsvBuilder
     /// <param name="feeling">How the user felt (1-5 garmin emoji scale)</param>
     /// <returns>The current builder instance for method chaining</returns>
     public TrainingPeaksCsvBuilder AddRow(
-        string title = DEFAULT_TITLE,
-        string workoutType = DEFAULT_WORKOUT_TYPE,
-        string workoutDay = DEFAULT_WORKOUT_DAY,
-        double distanceInMeters = DEFAULT_DISTANCE_IN_METERS,
-        double totalTimeInHours = DEFAULT_TOTAL_TIME_IN_HOURS,
-        int heartRateAverage = DEFAULT_HEART_RATE_AVERAGE,
-        int heartRateMax = DEFAULT_HEART_RATE_MAX,
-        int rpe = DEFAULT_RPE,
-        int feeling = DEFAULT_FEELING
+        string title = DefaultTitle,
+        string workoutType = DefaultWorkoutType,
+        string workoutDay = DefaultWorkoutDay,
+        double distanceInMeters = DefaultDistanceInMeters,
+        double totalTimeInHours = DefaultTotalTimeInHours,
+        int heartRateAverage = DefaultHeartRateAverage,
+        int heartRateMax = DefaultHeartRateMax,
+        int rpe = DefaultRpe,
+        int feeling = DefaultFeeling
     )
     {
         TrainingPeaksActivity activity = new()
@@ -97,18 +100,18 @@ public class TrainingPeaksCsvBuilder
     /// <param name="feeling">How the user felt (1-5 garmin emoji scale)</param>
     /// <returns>The current builder instance for method chaining</returns>
     public TrainingPeaksCsvBuilder AddRunningRow(
-        string workoutDay = DEFAULT_WORKOUT_DAY,
-        double distanceInMeters = DEFAULT_DISTANCE_IN_METERS,
-        double totalTimeInHours = DEFAULT_TOTAL_TIME_IN_HOURS,
-        int heartRateAverage = DEFAULT_HEART_RATE_AVERAGE,
-        int heartRateMax = DEFAULT_HEART_RATE_MAX,
-        int rpe = DEFAULT_RPE,
-        int feeling = DEFAULT_FEELING
+        string workoutDay = DefaultWorkoutDay,
+        double distanceInMeters = DefaultDistanceInMeters,
+        double totalTimeInHours = DefaultTotalTimeInHours,
+        int heartRateAverage = DefaultHeartRateAverage,
+        int heartRateMax = DefaultHeartRateMax,
+        int rpe = DefaultRpe,
+        int feeling = DefaultFeeling
     )
     {
         return AddRow(
-            title: RUNNING_TITLE,
-            workoutType: RUNNING_WORKOUT_TYPE,
+            title: RunningTitle,
+            workoutType: RunningWorkoutType,
             workoutDay: workoutDay,
             distanceInMeters: distanceInMeters,
             totalTimeInHours: totalTimeInHours,
