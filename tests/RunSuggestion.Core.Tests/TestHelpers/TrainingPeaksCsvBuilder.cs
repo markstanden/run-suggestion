@@ -46,7 +46,15 @@ public class TrainingPeaksCsvBuilder
     /// default values are set for all params, allowing individual fields to be overridden and tested,
     /// without needed to specify unnecessary (for the test) values.
     /// </summary>
-    /// <param name="activity">The TrainingPeaksActivity to add</param>
+    /// <param name="title">The activity title (e.g., "Running", "Cardio")</param>
+    /// <param name="workoutType">The workout type subcategory (e.g., "Run", "Other")</param>
+    /// <param name="workoutDay">The workout date in the TrainingPeaks default (yyyy-MM-dd) format</param>
+    /// <param name="distanceInMeters">Total distance in metres</param>
+    /// <param name="totalTimeInHours">Total duration in fractional hours</param>
+    /// <param name="heartRateAverage">Average heart rate during activity</param>
+    /// <param name="heartRateMax">Maximum heart rate during activity</param>
+    /// <param name="rpe">Rate of perceived exertion (RPE) (expected values 1-10 where ten is maximum effort)</param>
+    /// <param name="feeling">How the user felt (1-5 garmin emoji scale)</param>
     /// <returns>The current builder instance for method chaining</returns>
     public TrainingPeaksCsvBuilder AddRow(
         string title = DEFAULT_TITLE,
@@ -80,14 +88,14 @@ public class TrainingPeaksCsvBuilder
     /// workout title and workoutType set to Running specific values.
     /// Other values are set to defaults by default
     /// </summary>
-    /// <param name="workoutDay"></param>
-    /// <param name="distanceInMeters"></param>
-    /// <param name="totalTimeInHours"></param>
-    /// <param name="heartRateAverage"></param>
-    /// <param name="heartRateMax"></param>
-    /// <param name="rpe"></param>
-    /// <param name="feeling"></param>
-    /// <returns></returns>
+    /// <param name="workoutDay">The workout date in the TrainingPeaks default (yyyy-MM-dd) format</param>
+    /// <param name="distanceInMeters">Total distance in metres</param>
+    /// <param name="totalTimeInHours">Total duration in fractional hours</param>
+    /// <param name="heartRateAverage">Average heart rate during activity</param>
+    /// <param name="heartRateMax">Maximum heart rate during activity</param>
+    /// <param name="rpe">Rate of perceived exertion (RPE) (expected values 1-10 where ten is maximum effort)</param>
+    /// <param name="feeling">How the user felt (1-5 garmin emoji scale)</param>
+    /// <returns>The current builder instance for method chaining</returns>
     public TrainingPeaksCsvBuilder AddRunningRow(
         string workoutDay = DEFAULT_WORKOUT_DAY,
         double distanceInMeters = DEFAULT_DISTANCE_IN_METERS,
