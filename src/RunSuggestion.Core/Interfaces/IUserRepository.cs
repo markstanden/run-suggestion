@@ -2,7 +2,7 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Core.Interfaces;
 
-public interface IUserRespository
+public interface IUserRepository
 {
     /// <summary>
     /// Adds run history items to a user's run history.
@@ -11,5 +11,5 @@ public interface IUserRespository
     /// <param name="userId">The userId to associate the run history events with</param>
     /// <param name="runEvents">The run events to add to the user's history.</param>
     /// <returns></returns>
-    int AddRunHistory(int userId, IEnumerable<RunEvent> runEvents);
+    Task<int> AddRunHistory(int userId, IEnumerable<RunEvent> runEvents);
 }
