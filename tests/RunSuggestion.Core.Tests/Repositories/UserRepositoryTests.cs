@@ -139,5 +139,23 @@ public class UserRepositoryTests
         // Assert
         result.ShouldBe(rowCount);
     }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(Int32.MinValue)]
+    public async Task AddRunEventAsync_WithInvalidUserId_ThrowsArgumentException(int? invalidId)
+    {
+        // Arrange
+        IEnumerable<RunEvent> runEvents = [CreateFakeRunEvent()];
+
+        // Act
+        var addsWithInvalidId = async () => await _sut.AddRunEventsAsync(invalidId!.Value, runEvents);
+
+        // Assert
+        Exception ex = await addsWithInvalidId.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldContain("userId");
+    } 
     #endregion
 }
