@@ -129,20 +129,23 @@ public class UserRepositoryTests
     }
     
     [Fact]
-    public async Task AddRunEventAsync_WithNullEventDate_ThrowsArgumentException()
+    public async Task AddRunEventAsync_WithNullRunEvent_ThrowsArgumentException()
     {
         // Arrange
-        DateTime tomorrow = DateTime.Today.AddDays(1);
+        RunEvent nullEvent = null!;
+
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(dateTime: tomorrow)];
+        IEnumerable<RunEvent> runEvents = [nullEvent];
 
         // Act
-        var addsWithInvalidDate = async () => await _sut.AddRunEventsAsync(userId, runEvents);
+        var addsWithNullEvent = async () => await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Assert
-        Exception ex = await addsWithInvalidDate.ShouldThrowAsync<ArgumentException>();
+        Exception ex = await addsWithNullEvent.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("Invalid");
         ex.Message.ShouldContain("RunEvent");
     } 
+    
+    
     #endregion
 }
