@@ -36,9 +36,10 @@ public class UserRepositoryTests
     }
 
     [Theory]
-    [InlineData(null)]
-    [InlineData("550e8400-e29b-41d4-a716-446655440000")]
-    [InlineData("another-entra-id-guid")]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
+    [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
+    [InlineData("Unique identification string")]
     public async Task CreateUserAsync_WithOrWithoutAnEntraId_ReturnsInternalUserId(string? entraId)
     {
         // Act
@@ -49,19 +50,38 @@ public class UserRepositoryTests
     }
 
     [Theory]
-    [InlineData("550e8400-e29b-41d4-a716-446655440000")]
-    [InlineData("another-entra-id-guid")]
-    public async Task CreateUserAsync_WithADuplicateEntraId_ShouldThrowInvalidArgument(string? entraId)
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
+    [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
+    [InlineData("Unique identification string")]
+    public async Task CreateUserAsync_WithADuplicateEntraId_ShouldThrowInvalidArgument(string entraId)
     {
         // Arrange
         int userId1 = await _sut.CreateUserAsync(entraId);
 
         // Act
-        var duplicateEntraId = () => _sut.CreateUserAsync(entraId);
+        var duplicateEntraId = async () => await _sut.CreateUserAsync(entraId);
 
         // Assert
-        Exception ex = duplicateEntraId.ShouldThrow<ArgumentException>();
+        Exception ex = await duplicateEntraId.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("EntraID");
         ex.Message.ShouldContain("already exists");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\n")]
+    [InlineData("\r")]
+    [InlineData("\r\n")]
+    [InlineData(null)]
+    public async Task CreateUserAsync_WithNullEntraId_ShouldThrowInvalidArgument(string? invalidEntraId)
+    {
+        // Act
+        var nullEntraId = async () => await _sut.CreateUserAsync(invalidEntraId!);
+
+        // Assert
+        Exception ex = await nullEntraId.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldContain("entraID");
     }
 }
