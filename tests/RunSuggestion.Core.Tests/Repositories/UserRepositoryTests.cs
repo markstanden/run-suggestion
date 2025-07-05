@@ -141,7 +141,6 @@ public class UserRepositoryTests
     }
     
     [Theory]
-    [InlineData(null)]
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(Int32.MinValue)]
@@ -154,8 +153,24 @@ public class UserRepositoryTests
         var addsWithInvalidId = async () => await _sut.AddRunEventsAsync(invalidId!.Value, runEvents);
 
         // Assert
-        Exception ex = await addsWithInvalidId.ShouldThrowAsync<ArgumentException>();
+        Exception ex = await addsWithInvalidId.ShouldThrowAsync<ArgumentOutOfRangeException>();
         ex.Message.ShouldContain("userId");
+    }
+    
+    [Fact]
+    public async Task AddRunEventAsync_WithFutureRunEventDate_ThrowsArgumentException()
+    {
+        // Arrange
+        DateTime tomorrow = DateTime.Today.AddDays(1);
+        int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
+        IEnumerable<RunEvent> runEvents = [CreateFakeRunEvent(dateTime: tomorrow)];
+
+        // Act
+        var addsWithInvalidDate = async () => await _sut.AddRunEventsAsync(userId, runEvents);
+
+        // Assert
+        Exception ex = await addsWithInvalidDate.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldContain("date");
     } 
     #endregion
 }
