@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
     // allows the database to be accessed for the life of the class.
     // It would be more efficient to open and close the connection on read and write
     private readonly SqliteConnection _connection;
-    
+
     /// <summary>
     /// Dependency Injection constructor method to create a connection to the database and initialise.
     /// Important in our case as for the prototype we are using an in memory SqlLite database, which will not
@@ -43,8 +43,11 @@ public class UserRepository : IUserRepository
     // inheritdoc gets documentation from the interface to prevent documentation duplication
     /// <inheritdoc />
     /// <exception cref="ArgumentException">Thrown when EntraID already exists</exception>
-    public async Task<int> CreateUserAsync(string? entraId)
+    public async Task<int> CreateUserAsync(string entraId)
     {
+        // Throw early if EntraId is obviously invalid.
+        ArgumentException.ThrowIfNullOrWhiteSpace(entraId, nameof(entraId));
+
         try
         {
             return await _connection.ExecuteAsync(SqlQueries.InsertUserSql, new { EntraId = entraId });

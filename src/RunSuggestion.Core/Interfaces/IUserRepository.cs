@@ -10,7 +10,7 @@ public interface IUserRepository
     /// </summary>
     /// <param name="entraId">The GUID provided by entra to uniquely identify this user</param>
     /// <returns>The internal userId of the user.</returns>
-    Task<int> CreateUserAsync(string? entraId);
+    Task<int> CreateUserAsync(string entraId);
 
     /// <summary>
     /// Retrieves a UserData object by userId from the database
