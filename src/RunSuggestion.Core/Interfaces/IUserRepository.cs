@@ -18,14 +18,14 @@ public interface IUserRepository
     /// <param name="userId">The internal Id used to uniquely identify this user</param>
     /// <returns>The full user data associated with the user</returns>
     Task<UserData?> GetUserDataByUserIdAsync(int userId);
-    
+
     /// <summary>
     /// Retrieves a UserData object by entraId from the database
     /// </summary>
     /// <param name="entraId">The external Id used to uniquely identify this user by azure entra</param>
     /// <returns>The full user data associated with the user</returns>
     Task<UserData?> GetUserDataByEntraIdAsync(string entraId);
-    
+
     /// <summary>
     /// Adds run history items to a user's run history.
     /// Returns the number of affected rows.

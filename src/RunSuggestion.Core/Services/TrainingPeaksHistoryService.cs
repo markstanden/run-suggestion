@@ -3,7 +3,7 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Core.Services;
 
-public class TrainingPeaksHistoryService: IRunHistoryAdder
+public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
     private readonly IRunHistoryTransformer _runHistoryTransformer;
 

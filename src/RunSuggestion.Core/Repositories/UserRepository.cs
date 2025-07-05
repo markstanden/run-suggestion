@@ -15,14 +15,14 @@ public class UserRepository : IUserRepository
     private readonly string _insertRunEventsSql = File.ReadAllText("Sql/InsertRunEvents.sql");
     private readonly string _insertUserSql = File.ReadAllText("Sql/InsertUser.sql");
 
-    
+
     public UserRepository(string connectionString)
     {
         _connection = new SqliteConnection(connectionString);
         _connection.Open();
         InitializeDatabase();
     }
-    
+
     private void InitializeDatabase()
     {
         _connection.Open();
@@ -45,9 +45,9 @@ public class UserRepository : IUserRepository
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
         IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
-            _selectRunEventsSql, 
+            _selectRunEventsSql,
             new { UserId = userId });
-            
+
         return new UserData { UserId = userId, RunHistory = runEvents.ToArray() };
     }
 
@@ -58,15 +58,16 @@ public class UserRepository : IUserRepository
 
     public async Task<int> AddRunHistoryAsync(int userId, IEnumerable<RunEvent> runEvents)
     {
-        var insertParameters = runEvents.Select(runEvent => 
-            new {
-                UserId = userId, 
-                Date = runEvent.Date, 
-                Distance = runEvent.Distance, 
-                Effort = runEvent.Effort, 
+        var insertParameters = runEvents.Select(runEvent =>
+            new
+            {
+                UserId = userId,
+                Date = runEvent.Date,
+                Distance = runEvent.Distance,
+                Effort = runEvent.Effort,
                 Duration = runEvent.Duration
             });
-        
+
         return await _connection.ExecuteAsync(_insertRunEventsSql, insertParameters);
     }
 }
