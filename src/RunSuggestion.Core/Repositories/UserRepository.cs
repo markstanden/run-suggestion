@@ -32,7 +32,14 @@ public class UserRepository : IUserRepository
 
     public async Task<int> CreateUserAsync(string? entraId)
     {
-        return await _connection.ExecuteAsync(_insertUserSql, new { EntraId = entraId });
+        try
+        {
+            return await _connection.ExecuteAsync(_insertUserSql, new { EntraId = entraId });
+        }
+        catch (SqliteException ex)
+        {
+            throw new ArgumentException("EntraID already exists");
+        }
     }
 
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
