@@ -170,7 +170,8 @@ public class UserRepositoryTests
 
         // Assert
         Exception ex = await addsWithInvalidDate.ShouldThrowAsync<ArgumentException>();
-        ex.Message.ShouldContain("date");
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("RunEvent");
     } 
     #endregion
 }
