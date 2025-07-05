@@ -1,5 +1,6 @@
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Repositories;
+using RunSuggestion.Core.Tests.TestHelpers;
 using Range = System.Range;
 
 namespace RunSuggestion.Core.Tests.Repositories;
@@ -14,36 +15,6 @@ public class UserRepositoryTests
     {
         _sut = new UserRepository(TestConnectionString);
     }
-    #endregion
-
-    #region Test Helper Methods
-    private string CreateFakeEntraId() => Guid.NewGuid().ToString();
-
-    /// <summary>
-    /// Test helper to create a fake run event.
-    /// The pattern of providing default null values for parameters and then assigning a default value within the helper
-    /// Allows default values to be provided by functions, which are not allowed in method signature. 
-    /// </summary>
-    /// <param name="userId">The UserId to assign the RunEvent to, defaults to 0</param>
-    /// <param name="dateTime">The date the event took place, defaults to Now</param>
-    /// <param name="distanceMetres">the distance of the run in metres - defaults to 5km</param>
-    /// <param name="effort">The effort score for the run (1-10), defaults to 5</param>
-    /// <param name="duration">The duration of the event as a TimeSpan.  Defaults to 30mins</param>
-    /// <returns>RunEvent</returns>
-    private RunEvent CreateFakeRunEvent(
-        int? userId = null, 
-        DateTime? dateTime = null, 
-        int? distanceMetres = null,
-        byte? effort = null,
-        TimeSpan? duration = null) => new RunEvent
-    {
-        Id = userId ?? 0,
-        Date = dateTime ?? DateTime.Now,
-        Distance = distanceMetres ?? 5000,
-        Effort = effort ?? 5,
-        Duration = duration ?? TimeSpan.FromMinutes(30)
-    };
-
     #endregion
 
     #region CreateUserAsync Tests
@@ -72,11 +43,11 @@ public class UserRepositoryTests
         // Pre-seed the database with the required number of users
         foreach (var _ in Enumerable.Range(0, existingEntries))
         {
-            await _sut.CreateUserAsync(CreateFakeEntraId());
+            await _sut.CreateUserAsync(Fakes.CreateEntraId());
         }
 
         // Act
-        int result = await _sut.CreateUserAsync(CreateFakeEntraId());
+        int result = await _sut.CreateUserAsync(Fakes.CreateEntraId());
 
         // Assert
         result.ShouldBeGreaterThan(existingEntries);
@@ -129,9 +100,9 @@ public class UserRepositoryTests
     public async Task AddRunEventAsync_WithMultipleRunEvents_ReturnsExpectedRowsAffected(int rowCount)
     {
         // Arrange
-        int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
+        int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
         IEnumerable<RunEvent> runEvents = Enumerable.Range(0, rowCount)
-            .Select(_ => CreateFakeRunEvent());
+            .Select(_ => Fakes.CreateRunEvent());
 
         // Act
         int result = await _sut.AddRunEventsAsync(userId, runEvents);
@@ -147,7 +118,7 @@ public class UserRepositoryTests
     public async Task AddRunEventAsync_WithInvalidUserId_ThrowsArgumentException(int? invalidId)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = [CreateFakeRunEvent()];
+        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent()];
 
         // Act
         var addsWithInvalidId = async () => await _sut.AddRunEventsAsync(invalidId!.Value, runEvents);
@@ -158,12 +129,12 @@ public class UserRepositoryTests
     }
     
     [Fact]
-    public async Task AddRunEventAsync_WithFutureRunEventDate_ThrowsArgumentException()
+    public async Task AddRunEventAsync_WithNullEventDate_ThrowsArgumentException()
     {
         // Arrange
         DateTime tomorrow = DateTime.Today.AddDays(1);
-        int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
-        IEnumerable<RunEvent> runEvents = [CreateFakeRunEvent(dateTime: tomorrow)];
+        int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(dateTime: tomorrow)];
 
         // Act
         var addsWithInvalidDate = async () => await _sut.AddRunEventsAsync(userId, runEvents);
