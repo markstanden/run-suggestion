@@ -120,11 +120,11 @@ public class UserRepositoryTests
     #endregion
 
     #region AddRunEventAsync Tests
-    [Fact]
-    public async Task AddRunHistory_WithSingleRunEvent_ReturnsOneRowAffected()
+    [Theory]
+    [InlineData(1)]
+    public async Task AddRunHistory_WithMultipleRunEvents_ReturnsExpectedRowsAffected(int rowCount)
     {
         // Arrange
-        int expectedRowCount = 1;
         int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
         RunEvent runEvent = CreateFakeRunEvent();
 
@@ -132,7 +132,7 @@ public class UserRepositoryTests
         int result = await _sut.AddRunHistoryAsync(userId, [runEvent]);
 
         // Assert
-        result.ShouldBe(expectedRowCount);
+        result.ShouldBe(rowCount);
     }
     #endregion
 }
