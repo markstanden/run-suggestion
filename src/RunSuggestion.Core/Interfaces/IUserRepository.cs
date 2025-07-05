@@ -33,7 +33,7 @@ public interface IUserRepository
     /// <param name="userId">The internal userId to associate the run history events with</param>
     /// <param name="runEvents">The run events to add to the user's history.</param>
     /// <returns>The number of added rows within the database</returns>
-    Task<int> AddRunHistoryAsync(int userId, IEnumerable<RunEvent> runEvents);
+    Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent> runEvents);
 
     /// <summary>
     /// Retrieves all run events for a specific user

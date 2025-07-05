@@ -79,7 +79,7 @@ public class UserRepository : IUserRepository
     }
 
     /// <inheritdoc />
-    public async Task<int> AddRunHistoryAsync(int userId, IEnumerable<RunEvent> runEvents)
+    public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent> runEvents)
     {
         var insertParameters = runEvents.Select(runEvent =>
             new

@@ -118,18 +118,23 @@ public class UserRepositoryTests
         ex.Message.ShouldContain("entraID");
     }
     #endregion
-
+    
     #region AddRunEventAsync Tests
     [Theory]
+    [InlineData(0)]
     [InlineData(1)]
-    public async Task AddRunHistory_WithMultipleRunEvents_ReturnsExpectedRowsAffected(int rowCount)
+    [InlineData(2)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task AddRunEventAsync_WithMultipleRunEvents_ReturnsExpectedRowsAffected(int rowCount)
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
-        RunEvent runEvent = CreateFakeRunEvent();
+        IEnumerable<RunEvent> runEvents = Enumerable.Range(0, rowCount)
+            .Select(_ => CreateFakeRunEvent());
 
         // Act
-        int result = await _sut.AddRunHistoryAsync(userId, [runEvent]);
+        int result = await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Assert
         result.ShouldBe(rowCount);
