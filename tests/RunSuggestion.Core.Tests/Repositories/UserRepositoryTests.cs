@@ -33,4 +33,17 @@ public class UserRepositoryTests
         // Assert
         result.ShouldBe(expectedRowCount);
     }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("550e8400-e29b-41d4-a716-446655440000")]
+    [InlineData("another-entra-id-guid")]
+    public async Task CreateUserAsync_WithOrWithoutAnEntraId_ReturnsInternalUserId(string? entraId)
+    {
+        // Act
+        int userId = await _sut.CreateUserAsync(entraId);
+    
+        // Assert
+        userId.ShouldBeGreaterThan(0);
+    }
 }
