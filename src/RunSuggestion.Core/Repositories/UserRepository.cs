@@ -93,4 +93,18 @@ public class UserRepository : IUserRepository
 
         return await _connection.ExecuteAsync(SqlQueries.InsertRunEventsSql, insertParameters);
     }
+
+    /// <inheritdoc />
+    /// <see href="https://www.learndapper.com/dapper-query/selecting-single-rows#dapper-queryasync">
+    /// Dapper's QueryAsync method on the official documentation page
+    /// </see>
+    public async Task<IEnumerable<RunEvent>> GetRunEventsByUserIdAsync(int userId)
+    {
+        // Dapper's QueryAsync method returns a collection of passed Model - RunEvent in this case
+        IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
+            SqlQueries.SelectRunEventsSql,
+            new { UserId = userId });
+
+        return runEvents;
+    }
 }
