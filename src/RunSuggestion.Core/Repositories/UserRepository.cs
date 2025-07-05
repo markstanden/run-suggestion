@@ -1,3 +1,4 @@
+using CsvHelper;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using RunSuggestion.Core.Interfaces;
@@ -81,6 +82,13 @@ public class UserRepository : IUserRepository
     /// <inheritdoc />
     public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent> runEvents)
     {
+        if (userId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
+        }
+
+        Validate(runEvents);
+        
         var insertParameters = runEvents.Select(runEvent =>
             new
             {
@@ -106,5 +114,20 @@ public class UserRepository : IUserRepository
             new { UserId = userId });
 
         return runEvents;
+    }
+
+    private bool Validate(IEnumerable<RunEvent> runEvents)
+    {
+        ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
+
+        foreach (var runEvent in runEvents)
+        {
+            if (runEvent.Date > DateTime.Now)
+            {
+                throw new ArgumentException("Run event date cannot be in the future", nameof(runEvent.Date));
+            }
+        }
+
+        return true;
     }
 }
