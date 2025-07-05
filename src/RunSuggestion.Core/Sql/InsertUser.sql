@@ -1,7 +1,7 @@
 INSERT INTO Users (
-    UserId
+    EntraId
 )
 VALUES (
-    @UserId
+    @EntraId
 )
-RETURNING Id;
+RETURNING UserId;
