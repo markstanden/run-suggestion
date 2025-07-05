@@ -42,6 +42,9 @@ public class UserRepository : IUserRepository
 
     // inheritdoc gets documentation from the interface to prevent documentation duplication
     /// <inheritdoc />
+    /// <see href="https://www.learndapper.com/dapper-query/selecting-scalar-values#dapper-executescalarasync">
+    /// Dapper's ExecuteScalarAsync method on the official documentation page
+    /// </see>
     /// <exception cref="ArgumentException">Thrown when EntraID already exists</exception>
     public async Task<int> CreateUserAsync(string entraId)
     {
@@ -50,7 +53,8 @@ public class UserRepository : IUserRepository
 
         try
         {
-            return await _connection.ExecuteAsync(SqlQueries.InsertUserSql, new { EntraId = entraId });
+            // Dapper's ExecuteScalar method returns a single value from the SQL query.
+            return await _connection.ExecuteScalarAsync<int>(SqlQueries.InsertUserSql, new { EntraId = entraId });
         }
         catch (SqliteException)
         {
