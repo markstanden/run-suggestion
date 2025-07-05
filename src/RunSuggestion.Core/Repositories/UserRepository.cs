@@ -8,7 +8,13 @@ namespace RunSuggestion.Core.Repositories;
 
 public class UserRepository : IUserRepository
 {
+    // Holding the connection as an instance variable prevents closure of the database and
+    // allows the database to be accessed for the life of the class.
+    // It would be more efficient to open and close the connection on read and write
     private readonly SqliteConnection _connection;
+    
+    // Removing the SQL strings from the repository and importing this way
+    // allows for the SQL files to have syntax highlighting and IDE support for the SQL dialect.
     private readonly string _createUserTableSql = File.ReadAllText("Sql/CreateUsersTable.sql");
     private readonly string _createRunEventsTableSql = File.ReadAllText("Sql/CreateRunEventsTable.sql");
     private readonly string _selectRunEventsSql = File.ReadAllText("Sql/SelectRunEvents.sql");
@@ -19,10 +25,12 @@ public class UserRepository : IUserRepository
     public UserRepository(string connectionString)
     {
         _connection = new SqliteConnection(connectionString);
-        _connection.Open();
         InitializeDatabase();
     }
 
+    /// <summary>
+    /// Initialises the in memory database - creating user, runEvent and recommendationHistory tables.
+    /// </summary>
     private void InitializeDatabase()
     {
         _connection.Open();
@@ -30,6 +38,9 @@ public class UserRepository : IUserRepository
         _connection.Execute(_createRunEventsTableSql);
     }
 
+    // inheritdoc gets documentation from the interface to prevent documentation duplication
+    /// <inheritdoc />
+    /// <exception cref="ArgumentException">Thrown when EntraID already exists</exception>
     public async Task<int> CreateUserAsync(string? entraId)
     {
         try
@@ -42,6 +53,7 @@ public class UserRepository : IUserRepository
         }
     }
 
+    /// <inheritdoc />
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
         IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
@@ -51,11 +63,13 @@ public class UserRepository : IUserRepository
         return new UserData { UserId = userId, RunHistory = runEvents.ToArray() };
     }
 
+    /// <inheritdoc />
     public Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
     {
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public async Task<int> AddRunHistoryAsync(int userId, IEnumerable<RunEvent> runEvents)
     {
         var insertParameters = runEvents.Select(runEvent =>
