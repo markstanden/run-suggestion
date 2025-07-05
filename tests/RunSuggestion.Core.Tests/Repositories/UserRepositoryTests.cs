@@ -18,9 +18,9 @@ public class UserRepositoryTests
     {
         // Arrange
         int expectedRowCount = 1;
-        int id = await _sut.CreateUser(Guid.NewGuid().ToString());
+        int userId = await _sut.CreateUserAsync(Guid.NewGuid().ToString());
         RunEvent runEvent = new() {
-            Id = id,
+            Id = userId,
             Date = DateTime.Today,
             Distance = 5000,
             Effort = 5,
@@ -28,7 +28,7 @@ public class UserRepositoryTests
         };
         
         // Act
-        int result = await _sut.AddRunHistory(expectedRowCount, [runEvent]);
+        int result = await _sut.AddRunHistoryAsync(userId, [runEvent]);
         
         // Assert
         result.ShouldBe(expectedRowCount);

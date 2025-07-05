@@ -30,12 +30,12 @@ public class UserRepository : IUserRepository
         _connection.Execute(_createRunEventsTableSql);
     }
 
-    public async Task<int> CreateUser(string userId)
+    public async Task<int> CreateUserAsync(string? entraId)
     {
-        return await _connection.ExecuteAsync(_insertUserSql, new { UserId = userId });
+        return await _connection.ExecuteAsync(_insertUserSql, new { EntraId = entraId });
     }
 
-    public async Task<UserData?> GetRunEventsByUserIdAsync(int userId)
+    public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
         IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
             _selectRunEventsSql, 
@@ -43,8 +43,13 @@ public class UserRepository : IUserRepository
             
         return new UserData { UserId = userId, RunHistory = runEvents.ToArray() };
     }
-    
-    public async Task<int> AddRunHistory(int userId, IEnumerable<RunEvent> runEvents)
+
+    public Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<int> AddRunHistoryAsync(int userId, IEnumerable<RunEvent> runEvents)
     {
         var insertParameters = runEvents.Select(runEvent => 
             new {
