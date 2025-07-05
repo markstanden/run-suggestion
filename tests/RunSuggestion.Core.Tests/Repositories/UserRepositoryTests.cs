@@ -6,6 +6,7 @@ namespace RunSuggestion.Core.Tests.Repositories;
 
 public class UserRepositoryTests
 {
+    #region Common Setup
     private readonly UserRepository _sut;
     private const string TestConnectionString = "Data Source=:memory:";
 
@@ -13,31 +14,13 @@ public class UserRepositoryTests
     {
         _sut = new UserRepository(TestConnectionString);
     }
+    #endregion
 
+    #region Test Helper Methods
     private string CreateFakeEntraId() => Guid.NewGuid().ToString();
+    #endregion
 
-    [Fact]
-    public async Task AddRunHistory_WithSingleRunEvent_ReturnsOneRowAffected()
-    {
-        // Arrange
-        int expectedRowCount = 1;
-        int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
-        RunEvent runEvent = new()
-        {
-            Id = userId,
-            Date = DateTime.Today,
-            Distance = 5000,
-            Effort = 5,
-            Duration = TimeSpan.FromMinutes(30)
-        };
-
-        // Act
-        int result = await _sut.AddRunHistoryAsync(userId, [runEvent]);
-
-        // Assert
-        result.ShouldBe(expectedRowCount);
-    }
-
+    #region CreateUserAsync Tests
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
     [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
@@ -108,6 +91,29 @@ public class UserRepositoryTests
         Exception ex = await nullEntraId.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("entraID");
     }
+    #endregion
 
+    #region AddRunEventAsync Tests
+    [Fact]
+    public async Task AddRunHistory_WithSingleRunEvent_ReturnsOneRowAffected()
+    {
+        // Arrange
+        int expectedRowCount = 1;
+        int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
+        RunEvent runEvent = new()
+        {
+            Id = userId,
+            Date = DateTime.Today,
+            Distance = 5000,
+            Effort = 5,
+            Duration = TimeSpan.FromMinutes(30)
+        };
 
+        // Act
+        int result = await _sut.AddRunHistoryAsync(userId, [runEvent]);
+
+        // Assert
+        result.ShouldBe(expectedRowCount);
+    }
+    #endregion
 }
