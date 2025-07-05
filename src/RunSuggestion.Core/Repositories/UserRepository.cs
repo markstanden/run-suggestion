@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
+using RunSuggestion.Core.Sql;
 
 namespace RunSuggestion.Core.Repositories;
 
@@ -12,14 +13,8 @@ public class UserRepository : IUserRepository
     // allows the database to be accessed for the life of the class.
     // It would be more efficient to open and close the connection on read and write
     private readonly SqliteConnection _connection;
-    
-    // Removing the SQL strings from the repository and importing this way
-    // allows for the SQL files to have syntax highlighting and IDE support for the SQL dialect.
-    private readonly string _createUserTableSql = File.ReadAllText("Sql/CreateUsersTable.sql");
-    private readonly string _createRunEventsTableSql = File.ReadAllText("Sql/CreateRunEventsTable.sql");
-    private readonly string _selectRunEventsSql = File.ReadAllText("Sql/SelectRunEvents.sql");
-    private readonly string _insertRunEventsSql = File.ReadAllText("Sql/InsertRunEvents.sql");
-    private readonly string _insertUserSql = File.ReadAllText("Sql/InsertUser.sql");
+
+
 
 
     public UserRepository(string connectionString)
@@ -34,8 +29,8 @@ public class UserRepository : IUserRepository
     private void InitializeDatabase()
     {
         _connection.Open();
-        _connection.Execute(_createUserTableSql);
-        _connection.Execute(_createRunEventsTableSql);
+        _connection.Execute(SqlQueries.CreateUserTableSql);
+        _connection.Execute(SqlQueries.CreateRunEventsTableSql);
     }
 
     // inheritdoc gets documentation from the interface to prevent documentation duplication
@@ -45,7 +40,7 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            return await _connection.ExecuteAsync(_insertUserSql, new { EntraId = entraId });
+            return await _connection.ExecuteAsync(SqlQueries.InsertUserSql, new { EntraId = entraId });
         }
         catch (SqliteException)
         {
@@ -57,7 +52,7 @@ public class UserRepository : IUserRepository
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
         IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
-            _selectRunEventsSql,
+            SqlQueries.SelectRunEventsSql,
             new { UserId = userId });
 
         return new UserData { UserId = userId, RunHistory = runEvents.ToArray() };
@@ -82,6 +77,6 @@ public class UserRepository : IUserRepository
                 Duration = runEvent.Duration
             });
 
-        return await _connection.ExecuteAsync(_insertRunEventsSql, insertParameters);
+        return await _connection.ExecuteAsync(SqlQueries.InsertRunEventsSql, insertParameters);
     }
 }
