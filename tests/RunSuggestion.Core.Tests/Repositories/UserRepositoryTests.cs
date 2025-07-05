@@ -1,5 +1,6 @@
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Repositories;
+using Range = System.Range;
 
 namespace RunSuggestion.Core.Tests.Repositories;
 
@@ -40,7 +41,7 @@ public class UserRepositoryTests
     [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
     [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
     [InlineData("Unique identification string")]
-    public async Task CreateUserAsync_WithOrWithoutAnEntraId_ReturnsInternalUserId(string? entraId)
+    public async Task CreateUserAsync_WithAValidEntraId_ReturnsInternalUserId(string entraId)
     {
         // Act
         int userId = await _sut.CreateUserAsync(entraId);
@@ -49,6 +50,27 @@ public class UserRepositoryTests
         userId.ShouldBeGreaterThan(0);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task CreateUserAsync_WithAValidEntraId_ShouldReturnAValidUserId(int existingEntries)
+    {
+        // Arrange
+        // Preseed database with the required amount of users
+        foreach (var _ in Enumerable.Range(0, existingEntries))
+        {
+            await _sut.CreateUserAsync(Guid.NewGuid().ToString());
+        }
+        
+        // Act
+        int result = await _sut.CreateUserAsync(Guid.NewGuid().ToString());
+
+        // Assert
+        result.ShouldBeGreaterThan(existingEntries);
+    }
+    
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
     [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
@@ -75,7 +97,7 @@ public class UserRepositoryTests
     [InlineData("\r")]
     [InlineData("\r\n")]
     [InlineData(null)]
-    public async Task CreateUserAsync_WithNullEntraId_ShouldThrowInvalidArgument(string? invalidEntraId)
+    public async Task CreateUserAsync_WithAnInvalidEntraId_ShouldThrowInvalidArgument(string? invalidEntraId)
     {
         // Act
         var nullEntraId = async () => await _sut.CreateUserAsync(invalidEntraId!);
@@ -84,4 +106,6 @@ public class UserRepositoryTests
         Exception ex = await nullEntraId.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("entraID");
     }
+
+
 }
