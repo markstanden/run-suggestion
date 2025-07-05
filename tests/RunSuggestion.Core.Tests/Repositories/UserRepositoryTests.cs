@@ -14,12 +14,14 @@ public class UserRepositoryTests
         _sut = new UserRepository(TestConnectionString);
     }
 
+    private string CreateFakeEntraId() => Guid.NewGuid().ToString();
+
     [Fact]
     public async Task AddRunHistory_WithSingleRunEvent_ReturnsOneRowAffected()
     {
         // Arrange
         int expectedRowCount = 1;
-        int userId = await _sut.CreateUserAsync(Guid.NewGuid().ToString());
+        int userId = await _sut.CreateUserAsync(CreateFakeEntraId());
         RunEvent runEvent = new()
         {
             Id = userId,
@@ -58,19 +60,19 @@ public class UserRepositoryTests
     public async Task CreateUserAsync_WithAValidEntraId_ShouldReturnAValidUserId(int existingEntries)
     {
         // Arrange
-        // Preseed database with the required amount of users
+        // Pre-seed the database with the required number of users
         foreach (var _ in Enumerable.Range(0, existingEntries))
         {
-            await _sut.CreateUserAsync(Guid.NewGuid().ToString());
+            await _sut.CreateUserAsync(CreateFakeEntraId());
         }
-        
+
         // Act
-        int result = await _sut.CreateUserAsync(Guid.NewGuid().ToString());
+        int result = await _sut.CreateUserAsync(CreateFakeEntraId());
 
         // Assert
         result.ShouldBeGreaterThan(existingEntries);
     }
-    
+
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
     [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
