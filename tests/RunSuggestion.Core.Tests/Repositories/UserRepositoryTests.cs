@@ -46,4 +46,21 @@ public class UserRepositoryTests
         // Assert
         userId.ShouldBeGreaterThan(0);
     }
+    
+    [Theory]
+    [InlineData("550e8400-e29b-41d4-a716-446655440000")]
+    [InlineData("another-entra-id-guid")]
+    public async Task CreateUserAsync_WithADuplicateEntraId_ShouldThrowInvalidArgument(string? entraId)
+    {
+        // Arrange
+        int userId1 = await _sut.CreateUserAsync(entraId);
+        
+        // Act
+        var duplicateEntraId = () => _sut.CreateUserAsync(entraId);
+    
+        // Assert
+        Exception ex = duplicateEntraId.ShouldThrow<ArgumentException>();
+        ex.Message.ShouldContain("EntraID");
+        ex.Message.ShouldContain("already exists");
+    }
 }
