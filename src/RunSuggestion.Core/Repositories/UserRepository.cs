@@ -36,7 +36,7 @@ public class UserRepository : IUserRepository
         {
             return await _connection.ExecuteAsync(_insertUserSql, new { EntraId = entraId });
         }
-        catch (SqliteException ex)
+        catch (SqliteException)
         {
             throw new ArgumentException("EntraID already exists");
         }
