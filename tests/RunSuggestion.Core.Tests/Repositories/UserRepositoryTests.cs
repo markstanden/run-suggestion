@@ -197,6 +197,32 @@ public class UserRepositoryTests
         // Assert
         result.Count().ShouldBe(eventQty);
     }
+    
+    [Theory]
+    [InlineData(1, 5)]
+    [InlineData(2, 3)]
+    [InlineData(3, 10)]
+    [InlineData(5, 2)]
+    public async Task GetRunEventsByUserIdAsync_WithMultipleUsersAndEvents_ReturnsExpectedEventCountForUser(int userCount, int eventsPerUser)
+    {
+        // Arrange
+        List<int> userIds = [];
+        foreach (var _ in Enumerable.Range(0, userCount))
+        {
+            int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+            userIds.Add(userId);
+       
+            IEnumerable<RunEvent> events = Enumerable.Range(0, eventsPerUser)
+                .Select(_ => Fakes.CreateRunEvent());
+            await _sut.AddRunEventsAsync(userId, events);
+        }
+
+        // Act
+        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userIds.First());
+
+        // Assert
+        result.Count().ShouldBe(eventsPerUser);
+    }
 
     #endregion
 }
