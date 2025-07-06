@@ -39,9 +39,9 @@ public static class Fakes
     /// <summary>
     /// Convenience method to create multiple default run events in a single call
     /// </summary>
-    /// <param name="count">The number of RunEvents to return</param>
+    /// <param name="count">The number of RunEvents to return, defaults to 1</param>
     /// <returns>Collection of RunEvents with 'count' items</returns>
-    public static IEnumerable<RunEvent> CreateRunEvents(int count)
+    public static IEnumerable<RunEvent> CreateRunEvents(int count = 1)
     {
         return Enumerable.Range(0, count)
             .Select(_ => CreateRunEvent());

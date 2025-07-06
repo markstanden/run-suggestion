@@ -16,6 +16,24 @@ public class UserRepositoryTests
         _sut = new UserRepository(TestConnectionString);
     }
     #endregion
+    
+    #region Common Test Helpers
+    
+    /// <summary>
+    /// Preseeds the database with the specified number of users each with a specified number of events registered
+    /// </summary>
+    /// <param name="userCount">The number of users to register, defaults to 100</param>
+    /// <param name="eventsPerUser">The number of events to register per user, defaults to 10</param>
+    private async Task PreseedDatabase(int userCount = 100, int eventsPerUser = 10)
+    {
+        foreach (int _ in Enumerable.Range(0, userCount))
+        {
+            int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+            await _sut.AddRunEventsAsync(userId, Fakes.CreateRunEvents(eventsPerUser));
+        }
+    }
+    
+    #endregion
 
     #region CreateUserAsync Tests
     [Theory]
@@ -118,7 +136,7 @@ public class UserRepositoryTests
     public async Task AddRunEventAsync_WithInvalidUserId_ThrowsArgumentException(int? invalidId)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(1);
+        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents();
 
         // Act
         var addsWithInvalidId = async () => await _sut.AddRunEventsAsync(invalidId!.Value, runEvents);
@@ -250,13 +268,7 @@ public class UserRepositoryTests
     public async Task GetRunEventsByUserIdAsync_WithInvalidUserId_ReturnsEmptyCollection(int invalidUserId)
     {
         // Arrange
-        int userPreseedCount = 100;
-        int eventsPerInsertion = 10;
-        foreach (int _ in Enumerable.Range(0, userPreseedCount))
-        {
-            int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-            await _sut.AddRunEventsAsync(userId, Fakes.CreateRunEvents(eventsPerInsertion));
-        }
+        await PreseedDatabase();
 
         // Act
         IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(invalidUserId);
