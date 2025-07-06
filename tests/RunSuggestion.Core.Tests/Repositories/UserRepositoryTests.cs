@@ -241,5 +241,28 @@ public class UserRepositoryTests
         result.Count().ShouldBe(expectedRecordCount);
     }
     
+    [Theory]
+    [InlineData(1000)] 
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(int.MaxValue)]
+    [InlineData(int.MinValue)]
+    public async Task GetRunEventsByUserIdAsync_WithInvalidUserId_ReturnsEmptyCollection(int invalidUserId)
+    {
+        // Arrange
+        int userPreseedCount = 100;
+        int eventsPerInsertion = 10;
+        foreach (int _ in Enumerable.Range(0, userPreseedCount))
+        {
+            int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+            await _sut.AddRunEventsAsync(userId, Fakes.CreateRunEvents(eventsPerInsertion));
+        }
+
+        // Act
+        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(invalidUserId);
+
+        // Assert
+        result.ShouldBeEmpty();
+    }
     #endregion
 }
