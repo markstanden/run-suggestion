@@ -65,11 +65,26 @@ public class UserRepository : IUserRepository
     /// <inheritdoc />
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
-        IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
-            SqlQueries.SelectRunEventsSql,
+        if (userId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
+        }
+
+        var queryResult = await _connection.QueryFirstAsync(
+            SqlQueries.SelectUserDataByUserIdSql,
             new { UserId = userId });
 
-        return new UserData { UserId = userId, RunHistory = runEvents.ToArray() };
+        if (queryResult.UserId is null)
+        {
+            return null;
+        }
+
+        return new UserData
+        {
+            UserId = (int)queryResult.UserId,
+            EntraId = queryResult.EntraId,
+            RunHistory = await GetRunEventsByUserIdAsync(userId)
+        };
     }
 
     /// <inheritdoc />

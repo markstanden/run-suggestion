@@ -10,6 +10,11 @@ public class UserData
     public int UserId { get; init; }
 
     /// <summary>
+    /// Unique authentication GUID for the user.
+    /// </summary>
+    public string? EntraId { get; set; }
+
+    /// <summary>
     /// The current run history of the user.
     /// Used to calculate current running load and weekly averages
     /// </summary>

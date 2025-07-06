@@ -18,7 +18,17 @@ public static class SqlQueries
     public static readonly string CreateRunEventsTableSql = GetFromFile("Sql/CreateRunEventsTable.sql");
 
     /// <summary>
-    /// SqlLite query to return a Users RunEvents history from the RunEvents table
+    /// SqlLite query to return a user's Account Data from a provided UserId from the Users table
+    /// </summary>
+    public static readonly string SelectUserDataByUserIdSql = GetFromFile("Sql/SelectUserDataByUserId.sql");
+
+    /// <summary>
+    /// SqlLite query to return a user's Account Data from a provided EntraId from the Users table
+    /// </summary>
+    public static readonly string SelectUserDataByEntraIdSql = GetFromFile("Sql/SelectUserDataByEntraId.sql");
+
+    /// <summary>
+    /// SqlLite query to return a user's RunEvents history from the RunEvents table
     /// </summary>
     public static readonly string SelectRunEventsSql = GetFromFile("Sql/SelectRunEvents.sql");
 
