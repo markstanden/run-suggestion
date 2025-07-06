@@ -97,7 +97,7 @@ public class UserRepository : IUserRepository
                 Date = runEvent?.Date,
                 Distance = runEvent?.Distance,
                 Effort = runEvent?.Effort,
-                Duration = runEvent?.Duration
+                Duration = runEvent?.Duration.Ticks
             });
 
         try
@@ -116,11 +116,22 @@ public class UserRepository : IUserRepository
     /// </see>
     public async Task<IEnumerable<RunEvent>> GetRunEventsByUserIdAsync(int userId)
     {
-        // Dapper's QueryAsync method returns a collection of passed Model - RunEvent in this case
-        IEnumerable<RunEvent> runEvents = await _connection.QueryAsync<RunEvent>(
+        // Dapper's QueryAsync method returns a collection of the database model
+        var queryResult = await _connection.QueryAsync(
             SqlQueries.SelectRunEventsSql,
             new { UserId = userId });
 
+        // Manually convert between the database model and the domain model.
+        // We need to keep this in line with the database schema.
+        IEnumerable<RunEvent> runEvents = queryResult.Select(resultRow => new RunEvent
+        {
+            RunEventId = (int)resultRow.RunEventId,
+            Date = DateTime.Parse(resultRow.Date),
+            Distance = (int)resultRow.Distance,
+            Effort = (byte)resultRow.Effort,
+            Duration = TimeSpan.FromTicks(resultRow.Duration)
+        });
+        
         return runEvents;
     }
 }

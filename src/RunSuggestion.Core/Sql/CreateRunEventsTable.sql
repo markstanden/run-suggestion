@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS RunEvents (
     Date TEXT NOT NULL,
     Distance INTEGER NOT NULL,
     Effort INTEGER NOT NULL,
-    Duration TEXT NOT NULL,
+    Duration BIGINT NOT NULL,
     FOREIGN KEY (UserId) REFERENCES Users (UserId)
 );

@@ -8,7 +8,7 @@ public class RunBase
     /// <summary>
     /// The serial for the ID within the database
     /// </summary>
-    public int Id { get; init; }
+    public int RunEventId { get; init; }
 
     /// <summary>
     /// The date that the run took place

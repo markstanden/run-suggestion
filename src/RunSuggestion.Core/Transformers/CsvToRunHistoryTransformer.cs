@@ -47,7 +47,7 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
     private RunEvent MapToRunEvent(TrainingPeaksActivity activity) =>
         new RunEvent()
         {
-            Id = 0,
+            RunEventId = 0,
             Date = activity.WorkoutDay,
             Distance = (int)Math.Round(activity.DistanceInMeters),
             Effort = (byte)(activity.Rpe ?? 0),

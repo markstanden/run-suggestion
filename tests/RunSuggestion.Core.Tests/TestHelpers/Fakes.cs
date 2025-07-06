@@ -29,7 +29,7 @@ public static class Fakes
         byte? effort = null,
         TimeSpan? duration = null) => new RunEvent
     {
-        Id = userId ?? 0,
+        RunEventId = userId ?? 0,
         Date = dateTime ?? DateTime.Now,
         Distance = distanceMetres ?? 5000,
         Effort = effort ?? 5,
