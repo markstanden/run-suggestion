@@ -118,7 +118,7 @@ public class UserRepositoryTests
     public async Task AddRunEventAsync_WithInvalidUserId_ThrowsArgumentException(int? invalidId)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent()];
+        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(1);
 
         // Act
         var addsWithInvalidId = async () => await _sut.AddRunEventsAsync(invalidId!.Value, runEvents);
@@ -132,10 +132,8 @@ public class UserRepositoryTests
     public async Task AddRunEventAsync_WithNullRunEvents_ThrowsArgumentException()
     {
         // Arrange
-        IEnumerable<RunEvent> nullEvents = null!;
-
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-        IEnumerable<RunEvent> runEvents = nullEvents;
+        IEnumerable<RunEvent> runEvents = null!;
 
         // Act
         var addsWithNullEventCollection = async () => await _sut.AddRunEventsAsync(userId, runEvents);
