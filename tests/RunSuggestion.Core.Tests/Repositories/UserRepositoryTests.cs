@@ -139,10 +139,10 @@ public class UserRepositoryTests
         IEnumerable<RunEvent> runEvents = nullEvents;
 
         // Act
-        var addsWithNullEvent = async () => await _sut.AddRunEventsAsync(userId, runEvents);
+        var addsWithNullEventCollection = async () => await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Assert
-        Exception ex = await addsWithNullEvent.ShouldThrowAsync<ArgumentException>();
+        Exception ex = await addsWithNullEventCollection.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("RunEvents");
     }
     
@@ -176,22 +176,26 @@ public class UserRepositoryTests
     #endregion
 
     #region GetRunEventsByUserIdAsync Tests
-
-    [Fact]
-    public async Task GetRunEventsByUserIdAsync_WithValidUserId_ReturnsRunEvents()
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task GetRunEventsByUserIdAsync_WithMultipleEvents_ReturnsAllEvents(int eventQty)
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-        RunEvent expectedEvent = Fakes.CreateRunEvent();
-        await _sut.AddRunEventsAsync(userId, [expectedEvent]);
+        IEnumerable<RunEvent> expectedEvents = Enumerable.Range(0, eventQty)
+            .Select(_ => Fakes.CreateRunEvent());
+        await _sut.AddRunEventsAsync(userId, expectedEvents);
 
         // Act
         IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userId);
 
         // Assert
-        RunEvent actualEvent = result.ShouldHaveSingleItem();
-        actualEvent.Date.ShouldBe(expectedEvent.Date);
-        actualEvent.Distance.ShouldBe(expectedEvent.Distance);
+        result.Count().ShouldBe(eventQty);
     }
 
     #endregion
