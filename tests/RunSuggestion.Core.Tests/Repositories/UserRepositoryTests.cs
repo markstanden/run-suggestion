@@ -203,7 +203,7 @@ public class UserRepositoryTests
     {
         // Arrange
         List<int> userIds = [];
-        foreach (var _ in Enumerable.Range(0, userCount))
+        foreach (int _ in Enumerable.Range(0, userCount))
         {
             int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
             userIds.Add(userId);
@@ -219,5 +219,27 @@ public class UserRepositoryTests
         result.Count().ShouldBe(eventsPerUser);
     }
 
+    [Theory]
+    [InlineData(2, 1000)]
+    [InlineData(10, 100)]
+    [InlineData(100, 10)]
+    public async Task GetRunEventsByUserIdAsync_WithMultipleInsertions_ReturnsAllEvents(int totalInsertions, int eventsPerInsertion)
+    {
+        // Arrange
+        int expectedRecordCount = totalInsertions * eventsPerInsertion;
+        int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+        foreach (int _ in Enumerable.Range(0, totalInsertions))
+        {
+            IEnumerable<RunEvent> events = Fakes.CreateRunEvents(eventsPerInsertion);
+            await _sut.AddRunEventsAsync(userId, events);
+        }
+
+        // Act
+        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userId);
+
+        // Assert
+        result.Count().ShouldBe(expectedRecordCount);
+    }
+    
     #endregion
 }
