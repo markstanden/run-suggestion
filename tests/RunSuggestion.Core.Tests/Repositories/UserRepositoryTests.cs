@@ -98,18 +98,17 @@ public class UserRepositoryTests
     [InlineData(2)]
     [InlineData(10)]
     [InlineData(100)]
-    public async Task AddRunEventAsync_WithMultipleRunEvents_ReturnsExpectedRowsAffected(int rowCount)
+    public async Task AddRunEventAsync_WithMultipleRunEvents_ReturnsExpectedRowsAffected(int eventQty)
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-        IEnumerable<RunEvent> runEvents = Enumerable.Range(0, rowCount)
-            .Select(_ => Fakes.CreateRunEvent());
+        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(eventQty);
 
         // Act
         int result = await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Assert
-        result.ShouldBe(rowCount);
+        result.ShouldBe(eventQty);
     }
     
     [Theory]
@@ -159,7 +158,7 @@ public class UserRepositoryTests
     {
         // Arrange
         RunEvent CreateNullEvent(int _) => null!;
-        IEnumerable<RunEvent> validEvents = Enumerable.Range(0, validEventQty).Select(_ => Fakes.CreateRunEvent());
+        IEnumerable<RunEvent> validEvents = Fakes.CreateRunEvents(validEventQty);
         IEnumerable<RunEvent> fakeEvents = Enumerable.Range(0, nullEventQty).Select(CreateNullEvent);
         IEnumerable<RunEvent> shuffledEvents = validEvents
             .Concat(fakeEvents)
@@ -187,9 +186,8 @@ public class UserRepositoryTests
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-        IEnumerable<RunEvent> expectedEvents = Enumerable.Range(0, eventQty)
-            .Select(_ => Fakes.CreateRunEvent());
-        await _sut.AddRunEventsAsync(userId, expectedEvents);
+        IEnumerable<RunEvent> events = Fakes.CreateRunEvents(eventQty);
+        await _sut.AddRunEventsAsync(userId, events);
 
         // Act
         IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userId);
@@ -211,9 +209,8 @@ public class UserRepositoryTests
         {
             int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
             userIds.Add(userId);
-       
-            IEnumerable<RunEvent> events = Enumerable.Range(0, eventsPerUser)
-                .Select(_ => Fakes.CreateRunEvent());
+
+            IEnumerable<RunEvent> events = Fakes.CreateRunEvents(eventsPerUser);
             await _sut.AddRunEventsAsync(userId, events);
         }
 

@@ -35,4 +35,15 @@ public static class Fakes
         Effort = effort ?? 5,
         Duration = duration ?? TimeSpan.FromMinutes(30)
     };
+
+    /// <summary>
+    /// Convenience method to create multiple default run events in a single call
+    /// </summary>
+    /// <param name="count">The number of RunEvents to return</param>
+    /// <returns>Collection of RunEvents with 'count' items</returns>
+    public static IEnumerable<RunEvent> CreateRunEvents(int count)
+    {
+        return Enumerable.Range(0, count)
+            .Select(_ => CreateRunEvent());
+    }
 }
