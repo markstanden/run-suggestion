@@ -25,7 +25,7 @@ public class RunEventValidator: IValidator<RunEvent>
         ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
 
         return runEvents.SelectMany((runEvent, index) => { 
-            List<string> validationErrors = new();
+            List<string> validationErrors = [];
             if (!IsValidDate(runEvent.Date))
             {
                 validationErrors.Add($"{index}: Invalid run date {runEvent.Date:d} - cannot be in the future");
