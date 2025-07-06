@@ -91,6 +91,7 @@ public class UserRepositoryTests
     #endregion
     
     #region AddRunEventAsync Tests
+    
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -172,6 +173,26 @@ public class UserRepositoryTests
         result.ShouldBe(validEventQty);
     } 
     
-    
+    #endregion
+
+    #region GetRunEventsByUserIdAsync Tests
+
+    [Fact]
+    public async Task GetRunEventsByUserIdAsync_WithValidUserId_ReturnsRunEvents()
+    {
+        // Arrange
+        int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+        RunEvent expectedEvent = Fakes.CreateRunEvent();
+        await _sut.AddRunEventsAsync(userId, [expectedEvent]);
+
+        // Act
+        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userId);
+
+        // Assert
+        RunEvent actualEvent = result.ShouldHaveSingleItem();
+        actualEvent.Date.ShouldBe(expectedEvent.Date);
+        actualEvent.Distance.ShouldBe(expectedEvent.Distance);
+    }
+
     #endregion
 }
