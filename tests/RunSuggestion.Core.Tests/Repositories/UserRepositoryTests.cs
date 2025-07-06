@@ -129,21 +129,47 @@ public class UserRepositoryTests
     }
     
     [Fact]
-    public async Task AddRunEventAsync_WithNullRunEvent_ThrowsArgumentException()
+    public async Task AddRunEventAsync_WithNullRunEvents_ThrowsArgumentException()
     {
         // Arrange
-        RunEvent nullEvent = null!;
+        IEnumerable<RunEvent> nullEvents = null!;
 
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
-        IEnumerable<RunEvent> runEvents = [nullEvent];
+        IEnumerable<RunEvent> runEvents = nullEvents;
 
         // Act
         var addsWithNullEvent = async () => await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Assert
         Exception ex = await addsWithNullEvent.ShouldThrowAsync<ArgumentException>();
-        ex.Message.ShouldContain("Invalid");
-        ex.Message.ShouldContain("RunEvent");
+        ex.Message.ShouldContain("RunEvents");
+    }
+    
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(0, 1)]
+    [InlineData(1, 0)]
+    [InlineData(1, 1)]
+    [InlineData(1, 10)]
+    [InlineData(100, 1)]
+    [InlineData(100, 10)]
+    [InlineData(100, 100)]
+    public async Task AddRunEventAsync_WithNullRunEvents_ShouldGracefullyDiscardAndShouldNotThrowException(int validEventQty, int nullEventQty)
+    {
+        // Arrange
+        RunEvent CreateNullEvent(int _) => null!;
+        IEnumerable<RunEvent> validEvents = Enumerable.Range(0, validEventQty).Select(_ => Fakes.CreateRunEvent());
+        IEnumerable<RunEvent> fakeEvents = Enumerable.Range(0, nullEventQty).Select(CreateNullEvent);
+        IEnumerable<RunEvent> shuffledEvents = validEvents
+            .Concat(fakeEvents)
+            .OrderBy(_ => Random.Shared.Next());
+        int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
+
+        // Act
+        int result = await _sut.AddRunEventsAsync(userId, shuffledEvents);
+
+        // Assert
+        result.ShouldBe(validEventQty);
     } 
     
     

@@ -1,4 +1,3 @@
-using CsvHelper;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using RunSuggestion.Core.Interfaces;
@@ -80,26 +79,35 @@ public class UserRepository : IUserRepository
     }
 
     /// <inheritdoc />
-    public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent> runEvents)
+    public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent?> runEvents)
     {
         if (userId <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
         }
 
-        Validate(runEvents);
-        
-        var insertParameters = runEvents.Select(runEvent =>
+        ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
+
+        var insertParameters = runEvents
+            .Where(runEvent => runEvent is not null)
+            .Select(runEvent =>
             new
             {
                 UserId = userId,
-                Date = runEvent.Date,
-                Distance = runEvent.Distance,
-                Effort = runEvent.Effort,
-                Duration = runEvent.Duration
+                Date = runEvent?.Date,
+                Distance = runEvent?.Distance,
+                Effort = runEvent?.Effort,
+                Duration = runEvent?.Duration
             });
 
-        return await _connection.ExecuteAsync(SqlQueries.InsertRunEventsSql, insertParameters);
+        try
+        {
+            return await _connection.ExecuteAsync(SqlQueries.InsertRunEventsSql, insertParameters);
+        }
+        catch (SqliteException ex)
+        {
+            throw new ArgumentException("Required RunEvent data is missing");
+        }
     }
 
     /// <inheritdoc />
@@ -114,20 +122,5 @@ public class UserRepository : IUserRepository
             new { UserId = userId });
 
         return runEvents;
-    }
-
-    private bool Validate(IEnumerable<RunEvent> runEvents)
-    {
-        ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
-
-        foreach (var runEvent in runEvents)
-        {
-            if (runEvent.Date > DateTime.Now)
-            {
-                throw new ArgumentException("Run event date cannot be in the future", nameof(runEvent.Date));
-            }
-        }
-
-        return true;
     }
 }
