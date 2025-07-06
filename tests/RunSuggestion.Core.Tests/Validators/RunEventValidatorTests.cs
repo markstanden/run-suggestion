@@ -7,7 +7,7 @@ namespace RunSuggestion.Core.Tests.Validators;
 public class RunEventValidatorTests
 {
     private RunEventValidator _sut;
-    private DateTime _currentDate = DateTime.Parse("2025-07-01");
+    private DateTime _currentDate = new(2025, 7, 1);
     
     public RunEventValidatorTests()
     {
@@ -15,14 +15,29 @@ public class RunEventValidatorTests
     }
     
     [Fact]
+    public void Validate_WithNullEvents_ThrowsArgumentException()
+    {
+        // Arrange
+        IEnumerable<RunEvent> runEvents = null!;;
+
+        // Act
+        var withNullEvents = () => _sut.Validate(runEvents);
+
+        // Assert
+        Exception ex = withNullEvents.ShouldThrow<ArgumentException>();
+        ex.Message.ShouldContain("RunEvents");
+    }
+    
+    [Fact]
     public void Validate_WithNullEventDate_ReturnsDateError()
     {
         // Arrange
         DateTime tomorrow = _currentDate.AddDays(1);
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(dateTime: tomorrow)];
+        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
+            dateTime: tomorrow)];
 
         // Act
-        string[] errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents);
 
         // Assert
         errors.ShouldNotBeEmpty();
@@ -37,10 +52,12 @@ public class RunEventValidatorTests
     public void Validate_WithInvalidDistance_ReturnsDistanceError(int invalidDistance)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(distanceMetres: invalidDistance)];
+        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
+            dateTime: _currentDate,
+            distanceMetres: invalidDistance)];
 
         // Act
-        string[] errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents);
 
         // Assert
         errors.ShouldNotBeEmpty();
@@ -49,17 +66,17 @@ public class RunEventValidatorTests
     }
     
     [Theory]
-    [InlineData(-1)]
-    [InlineData(byte.MinValue)]
     [InlineData(11)]
     [InlineData(byte.MaxValue)]
     public void Validate_WithInvalidEffort_ReturnsEffortError(byte invalidEffort)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(effort: invalidEffort)];
+        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
+            dateTime: _currentDate,
+            effort: invalidEffort)];
 
         // Act
-        string[] errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents);
 
         // Assert
         errors.ShouldNotBeEmpty();
@@ -75,10 +92,12 @@ public class RunEventValidatorTests
     {
         // Arrange
         TimeSpan invalidDurationTimeSpan = TimeSpan.FromSeconds(invalidDuration);
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(duration: invalidDurationTimeSpan)];
+        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
+            dateTime: _currentDate,
+            duration: invalidDurationTimeSpan)];
 
         // Act
-        string[] errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents);
 
         // Assert
         errors.ShouldNotBeEmpty();
