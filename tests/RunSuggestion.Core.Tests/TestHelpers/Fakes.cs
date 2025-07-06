@@ -8,7 +8,7 @@ public static class Fakes
     /// Method returns a fake entra id
     /// </summary>
     /// <returns>GUID string to simulate a entraId</returns>
-    public static string CreateEntraId() 
+    public static string CreateEntraId()
         => Guid.NewGuid().ToString();
 
     /// <summary>
@@ -23,18 +23,18 @@ public static class Fakes
     /// <param name="duration">The duration of the event as a TimeSpan.  Defaults to 30mins</param>
     /// <returns>RunEvent</returns>
     public static RunEvent CreateRunEvent(
-        int? userId = null, 
-        DateTime? dateTime = null, 
+        int? userId = null,
+        DateTime? dateTime = null,
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new RunEvent
-    {
-        RunEventId = userId ?? 0,
-        Date = dateTime ?? DateTime.Now,
-        Distance = distanceMetres ?? 5000,
-        Effort = effort ?? 5,
-        Duration = duration ?? TimeSpan.FromMinutes(30)
-    };
+        {
+            RunEventId = userId ?? 0,
+            Date = dateTime ?? DateTime.Now,
+            Distance = distanceMetres ?? 5000,
+            Effort = effort ?? 5,
+            Duration = duration ?? TimeSpan.FromMinutes(30)
+        };
 
     /// <summary>
     /// Convenience method to create multiple default run events in a single call

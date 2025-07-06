@@ -8,17 +8,17 @@ public class RunEventValidatorTests
 {
     private RunEventValidator _sut;
     private DateTime _currentDate = new(2025, 7, 1);
-    
+
     public RunEventValidatorTests()
     {
         _sut = new RunEventValidator(_currentDate);
     }
-    
+
     [Fact]
     public void Validate_WithNullEvents_ThrowsArgumentException()
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = null!;;
+        IEnumerable<RunEvent> runEvents = null!; ;
 
         // Act
         var withNullEvents = () => _sut.Validate(runEvents);
@@ -27,7 +27,7 @@ public class RunEventValidatorTests
         Exception ex = withNullEvents.ShouldThrow<ArgumentException>();
         ex.Message.ShouldContain("RunEvents");
     }
-    
+
     [Fact]
     public void Validate_WithNullEventDate_ReturnsDateError()
     {
@@ -44,7 +44,7 @@ public class RunEventValidatorTests
         errors.First().ShouldContain("Invalid");
         errors.First().ShouldContain("Date");
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -64,7 +64,7 @@ public class RunEventValidatorTests
         errors.First().ShouldContain("Invalid");
         errors.First().ShouldContain("Distance");
     }
-    
+
     [Theory]
     [InlineData(11)]
     [InlineData(byte.MaxValue)]
@@ -83,7 +83,7 @@ public class RunEventValidatorTests
         errors.First().ShouldContain("Invalid");
         errors.First().ShouldContain("Effort");
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]

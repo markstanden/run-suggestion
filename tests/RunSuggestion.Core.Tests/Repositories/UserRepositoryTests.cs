@@ -1,7 +1,7 @@
 using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Tests.TestHelpers;
-using Range = System.Range;
 
 namespace RunSuggestion.Core.Tests.Repositories;
 
@@ -16,9 +16,9 @@ public class UserRepositoryTests
         _sut = new UserRepository(TestConnectionString);
     }
     #endregion
-    
+
     #region Common Test Helpers
-    
+
     /// <summary>
     /// Preseeds the database with the specified number of users each with a specified number of events registered
     /// </summary>
@@ -32,7 +32,7 @@ public class UserRepositoryTests
             await _sut.AddRunEventsAsync(userId, Fakes.CreateRunEvents(eventsPerUser));
         }
     }
-    
+
     #endregion
 
     #region CreateUserAsync Tests
@@ -109,7 +109,7 @@ public class UserRepositoryTests
     #endregion
     
     #region AddRunEventAsync Tests
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -128,7 +128,7 @@ public class UserRepositoryTests
         // Assert
         result.ShouldBe(eventQty);
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -145,7 +145,7 @@ public class UserRepositoryTests
         Exception ex = await addsWithInvalidId.ShouldThrowAsync<ArgumentOutOfRangeException>();
         ex.Message.ShouldContain("userId");
     }
-    
+
     [Fact]
     public async Task AddRunEventAsync_WithNullRunEvents_ThrowsArgumentException()
     {
@@ -160,7 +160,7 @@ public class UserRepositoryTests
         Exception ex = await addsWithNullEventCollection.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("RunEvents");
     }
-    
+
     [Theory]
     [InlineData(0, 0)]
     [InlineData(0, 1)]
@@ -186,12 +186,12 @@ public class UserRepositoryTests
 
         // Assert
         result.ShouldBe(validEventQty);
-    } 
-    
+    }
+
     #endregion
 
     #region GetRunEventsByUserIdAsync Tests
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -211,7 +211,7 @@ public class UserRepositoryTests
         // Assert
         result.Count().ShouldBe(eventQty);
     }
-    
+
     [Theory]
     [InlineData(1, 5)]
     [InlineData(2, 3)]
@@ -258,9 +258,9 @@ public class UserRepositoryTests
         // Assert
         result.Count().ShouldBe(expectedRecordCount);
     }
-    
+
     [Theory]
-    [InlineData(1000)] 
+    [InlineData(1000)]
     [InlineData(-1)]
     [InlineData(0)]
     [InlineData(int.MaxValue)]

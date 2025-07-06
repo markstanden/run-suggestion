@@ -131,7 +131,7 @@ public class UserRepository : IUserRepository
             Effort = (byte)resultRow.Effort,
             Duration = TimeSpan.FromTicks(resultRow.Duration)
         });
-        
+
         return runEvents;
     }
 }

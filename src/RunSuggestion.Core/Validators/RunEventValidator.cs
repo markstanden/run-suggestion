@@ -3,10 +3,10 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Core.Validators;
 
-public class RunEventValidator: IValidator<RunEvent>
+public class RunEventValidator : IValidator<RunEvent>
 {
     private DateTime _currentDate;
-    
+
     public RunEventValidator(DateTime? currentDate)
     {
         _currentDate = currentDate ?? DateTime.Now;
@@ -24,7 +24,8 @@ public class RunEventValidator: IValidator<RunEvent>
     {
         ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
 
-        return runEvents.SelectMany((runEvent, index) => { 
+        return runEvents.SelectMany((runEvent, index) =>
+        {
             List<string> validationErrors = [];
             if (!IsValidDate(runEvent.Date))
             {
@@ -48,7 +49,7 @@ public class RunEventValidator: IValidator<RunEvent>
             return validationErrors;
         });
     }
-    
+
     /// <summary>
     /// A valid RunEvent date is either today or in the past.
     /// Uses the instance _currentDate to allow for injected dates for
@@ -57,7 +58,7 @@ public class RunEventValidator: IValidator<RunEvent>
     /// <param name="date">The date to validate</param>
     /// <returns>true if valid</returns>
     private bool IsValidDate(DateTime date) => date <= _currentDate;
-    
+
     /// <summary>
     /// A valid RunEvent distance is greater than 0 metres, with no ceiling.
     /// </summary>
@@ -71,7 +72,7 @@ public class RunEventValidator: IValidator<RunEvent>
     /// <param name="effort">The effort score to validate</param>
     /// <returns>true if valid</returns>
     private bool IsValidEffort(byte effort) => effort <= 10;
-    
+
     /// <summary>
     /// A valid RunEvent duration is greater than 0, with currently no minimum or maximum length.
     /// </summary>
