@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 
 namespace RunSuggestion.Core.Transformers;
 
@@ -47,7 +47,7 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
     private RunEvent MapToRunEvent(TrainingPeaksActivity activity) =>
         new RunEvent()
         {
-            Id = 0,
+            RunEventId = 0,
             Date = activity.WorkoutDay,
             Distance = (int)Math.Round(activity.DistanceInMeters),
             Effort = (byte)(activity.Rpe ?? 0),

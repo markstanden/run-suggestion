@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Tests.TestHelpers;
 using RunSuggestion.Core.Transformers;
@@ -81,7 +81,7 @@ public class CsvToRunHistoryTransformerTests
     [InlineData(1D)]
     [InlineData(10D)]
     [InlineData(100D)]
-    public void ConvertToRunHistory_WhenPassedValidDuration_ParsesDurationCorrectly(int duration)
+    public void ConvertToRunHistory_WhenPassedValidDuration_ParsesDurationCorrectly(double duration)
     {
         // Arrange
         TimeSpan expectedDuration = TimeSpan.FromHours(duration);

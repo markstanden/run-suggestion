@@ -1,14 +1,14 @@
-namespace RunSuggestion.Core.Models;
+namespace RunSuggestion.Core.Models.Runs;
 
 /// <summary>
 /// Base class used to reduce repetition between internal run models
 /// </summary>
-public class RunActivity
+public class RunBase
 {
     /// <summary>
     /// The serial for the ID within the database
     /// </summary>
-    public int Id { get; init; }
+    public int RunEventId { get; init; }
 
     /// <summary>
     /// The date that the run took place

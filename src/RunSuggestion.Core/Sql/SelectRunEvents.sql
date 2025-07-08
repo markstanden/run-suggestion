@@ -1,0 +1,1 @@
+SELECT * FROM RunEvents WHERE UserId = @UserId

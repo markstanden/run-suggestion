@@ -1,4 +1,4 @@
-using RunSuggestion.Core.Models;
+using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Core.Interfaces;
 
