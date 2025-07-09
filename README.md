@@ -59,14 +59,38 @@ This is a personal workaround for the following [terraform issue](https://github
 
 1. Clone the repository
 2. Initialize the infrastructure:
-   ```
+   ```bash
    tf init
    ```
 3. Build the solution:
-   ```
+   ```bash
    dotnet build
    ```
 4. Run tests:
-   ```
+   ```bash
    dotnet test
+   ```
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions to automate basic quality checks, with the pipeline running on pushes or PRs to 
+- `main`
+- `dev`
+- `prod`
+
+The pipeline jobs are held in my [coding-standards repo](https://github.com/markstanden/coding-standards), allowing for usage across multiple projects.
+
+- **Format Check**: Enforces code formatting standards using `.editorconfig` and dotnet's built in code formatter:
+   ```bash
+   dotnet format --verify-no-changes
+   ```
+
+- **Build**: Compiles the solution and validates dependencies using dotnet's build command to flag errors.
+   ```bash
+   dotnet build
+   ```
+
+- **Unit Tests**: Runs all tests marked with `[Trait("Category", "Unit")]`
+   ```bash
+   dotnet test --filter "Category=Unit"
    ```
