@@ -8,20 +8,20 @@ on:
 jobs:
   call-format:
     name: Code Formatting Compliance Check
-    uses: markstanden/coding-standards/.github/workflows/format.yml@main
+    uses: markstanden/coding-standards/dotnet/workflows/format.yml@e9d0a31
     with:
       dotnet-version: '8.0.x'
 
   call-build:
     name: Build Solution
-    uses: markstanden/coding-standards/.github/workflows/build.yml@main
+    uses: markstanden/coding-standards/dotnet/workflows/build.yml@e9d0a31
     needs: call-format
     with:
       dotnet-version: '8.0.x'
 
   call-unit-tests:
     name: Run Unit Tests
-    uses: markstanden/coding-standards/.github/workflows/unit-tests.yml@main
+    uses: markstanden/coding-standards/dotnet/workflows/unit-tests.yml@e9d0a31
     needs: call-build
     with:
       dotnet-version: '8.0.x'
