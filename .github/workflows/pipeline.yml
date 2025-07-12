@@ -25,4 +25,4 @@ jobs:
     needs: call-build
     with:
       dotnet-version: '8.0.x'
-      test-filter: 'Category=Unit'
+      test-filter: 'FullyQualifiedName~Unit.Tests'
