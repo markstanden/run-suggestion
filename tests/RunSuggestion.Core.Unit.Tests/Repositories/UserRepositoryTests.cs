@@ -130,15 +130,15 @@ public class UserRepositoryTests
         userData.RunHistory.Count().ShouldBe(eventQty);
     }
 
-    [Fact]
-    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectRunHistory()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectRunHistory(int runEventQty)
     {
         // Arrange
-        DateTime baseDate = DateTime.UtcNow;
-        RunEvent runEvent1 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-1));
-        RunEvent runEvent2 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-2));
-        RunEvent runEvent3 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-3));
-        List<RunEvent> runEvents = [runEvent1, runEvent2, runEvent3];
+        List<RunEvent> runEvents = Fakes.CreateRunEvents(runEventQty).ToList();
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
@@ -147,6 +147,7 @@ public class UserRepositoryTests
 
         // Assert
         userData.ShouldNotBeNull();
+        userData.RunHistory.Count().ShouldBe(runEventQty);
         userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
     }
 
@@ -155,10 +156,10 @@ public class UserRepositoryTests
     [InlineData(1)]
     [InlineData(10)]
     [InlineData(100)]
-    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectUserId(int eventQty)
+    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectUserId(int runEventQty)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(eventQty);
+        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(runEventQty);
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
