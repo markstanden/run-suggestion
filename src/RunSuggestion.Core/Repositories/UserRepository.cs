@@ -112,14 +112,7 @@ public class UserRepository : IUserRepository
             return null;
         }
         
-        int resultUserId = (int)queryResult.UserId;
-
-        return new UserData
-        {
-            UserId = resultUserId,
-            EntraId = queryResult.EntraId,
-            RunHistory = await GetRunEventsByUserIdAsync(resultUserId)
-        };
+        return await CreateUserDataFromQueryResult(queryResult);
     }
 
     /// <inheritdoc />
@@ -204,5 +197,16 @@ public class UserRepository : IUserRepository
         {
             throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
         }
+    }
+    
+    private async Task<UserData> CreateUserDataFromQueryResult(dynamic queryResult)
+    {
+        int userId = (int)queryResult.UserId;
+        return new UserData
+        {
+            UserId = userId,
+            EntraId = queryResult.EntraId,
+            RunHistory = await GetRunEventsByUserIdAsync(userId)
+        };
     }
 }
