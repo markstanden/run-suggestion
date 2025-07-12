@@ -138,7 +138,7 @@ public class UserRepositoryTests
         RunEvent runEvent1 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-1));
         RunEvent runEvent2 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-2));
         RunEvent runEvent3 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-3));
-        IEnumerable<RunEvent> runEvents = [runEvent1, runEvent2, runEvent3];
+        List<RunEvent> runEvents = [runEvent1, runEvent2, runEvent3];
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
