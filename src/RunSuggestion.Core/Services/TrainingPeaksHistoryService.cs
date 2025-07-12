@@ -3,6 +3,9 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Core.Services;
 
+/// <summary>
+/// Orchestrator of the data ingestion, the history service handles 
+/// </summary>
 public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
     private readonly IRunHistoryTransformer _runHistoryTransformer;
@@ -12,18 +15,16 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         _runHistoryTransformer = runHistoryTransformer;
     }
 
-    /// <summary>
-    /// Adds the user's TrainingPeaks run history to the provided userid
-    /// History is provided as a CSV string, from the sites export facility.
-    /// </summary>
-    /// <param name="userId">The User's Unique identifier</param>
-    /// <param name="historyCsv">The User's run history provided as a CSV.</param>
-    /// <returns>The number of records added to the user history</returns>
-    public async Task<int> AddRunHistory(int userId, string historyCsv)
+    /// <inheritdoc />
+    public async Task<int> AddRunHistory(string entraId, string historyCsv)
     {
+        // TODO: Obtain user's internal Id and existing history 
+        
         // TODO: Transform into IEnumerable<RunEvent>
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv);
 
+        // TODO: merge the histories?
+        
         // TODO: Add to Database
 
         // TODO: Return affected rows
