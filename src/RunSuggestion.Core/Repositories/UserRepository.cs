@@ -119,7 +119,7 @@ public class UserRepository : IUserRepository
         {
             return await _connection.ExecuteAsync(SqlQueries.InsertRunEventsSql, insertParameters);
         }
-        catch (SqliteException ex)
+        catch (SqliteException)
         {
             throw new ArgumentException("Required RunEvent data is missing");
         }
