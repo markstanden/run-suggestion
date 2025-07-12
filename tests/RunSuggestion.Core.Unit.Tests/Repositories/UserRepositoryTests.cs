@@ -204,6 +204,53 @@ public class UserRepositoryTests
 
     #endregion
 
+    #region GetUserDataByEntraIdAsync Tests
+    
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
+    [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
+    public async Task GetUserDataByEntraIdAsync_WithValidEntraId_ReturnsExpectedUserIdData(string entraId)
+    {
+        // Arrange
+        int userId = await _sut.CreateUserAsync(entraId);
+        List<RunEvent> runEvents = Fakes.CreateRunEvents(3).ToList();
+        await _sut.AddRunEventsAsync(userId, runEvents);
+
+        // Act
+        UserData? userData = await _sut.GetUserDataByEntraIdAsync(entraId);
+
+        // Assert
+        userData.ShouldNotBeNull();
+        userData.EntraId.ShouldBe(entraId);
+        userData.UserId.ShouldBe(userId);
+    }
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task GetUserDataByEntraIdAsync_WithValidEntraId_ReturnsExpectedRunHistoryData(int runEventQty)
+    {
+        // Arrange
+        string entraId = Fakes.CreateEntraId();
+        int userId = await _sut.CreateUserAsync(entraId);
+        List<RunEvent> runEvents = Fakes.CreateRunEvents(runEventQty).ToList();
+        await _sut.AddRunEventsAsync(userId, runEvents);
+
+        // Act
+        UserData? userData = await _sut.GetUserDataByEntraIdAsync(entraId);
+
+        // Assert
+        userData.ShouldNotBeNull();
+        userData.EntraId.ShouldBe(entraId);
+        userData.RunHistory.Count().ShouldBe(runEventQty);
+        userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
+    }
+    
+    #endregion
+    
     #region AddRunEventAsync Tests
 
     [Theory]
