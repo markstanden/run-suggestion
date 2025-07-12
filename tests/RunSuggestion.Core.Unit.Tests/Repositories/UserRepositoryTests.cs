@@ -147,9 +147,7 @@ public class UserRepositoryTests
 
         // Assert
         userData.ShouldNotBeNull();
-        userData.RunHistory.ShouldContain(runEvent1);
-        userData.RunHistory.ShouldContain(runEvent2);
-        userData.RunHistory.ShouldContain(runEvent3);
+        userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
     }
 
     [Theory]
@@ -173,11 +171,24 @@ public class UserRepositoryTests
     }
 
     [Theory]
-    [InlineData(1000)]
     [InlineData(-1)]
     [InlineData(0)]
-    [InlineData(int.MaxValue)]
     [InlineData(int.MinValue)]
+    public async Task GetUserDataByUserIdAsync_WithInvalidUserId_ThrowsArgumentException(int invalidUserId)
+    {
+        // Act
+        var withInvalidUserId = async () => await _sut.GetUserDataByUserIdAsync(invalidUserId);
+
+        // Assert
+        Exception ex = await withInvalidUserId.ShouldThrowAsync<ArgumentOutOfRangeException>();
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("userId");
+    }
+    
+    [Theory]
+    [InlineData(1000)]
+    [InlineData(99999)]
+    [InlineData(int.MaxValue)]
     public async Task GetUserDataByUserIdAsync_WithNonExistentUserId_ReturnsNull(int invalidUserId)
     {
         // Arrange
