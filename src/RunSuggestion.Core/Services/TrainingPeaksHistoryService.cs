@@ -1,5 +1,6 @@
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Users;
 
 namespace RunSuggestion.Core.Services;
 
@@ -29,16 +30,20 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         {
             throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(historyCsv));
         }
-        
-        
-        // TODO: Obtain user's internal Id and existing history 
-        
+
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        if (userData is null)
+        {
+            return 0;
+        }
+
         // TODO: Transform into IEnumerable<RunEvent>
-        IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv);
+        IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
 
         // TODO: merge the histories?
         
         // TODO: Add to Database
+        await _userRepository.AddRunEventsAsync(userData.UserId, runHistory);
 
         // TODO: Return affected rows
         return runHistory.Count();
