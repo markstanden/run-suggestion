@@ -26,8 +26,7 @@ public class RunEvent : RunBase, IEquatable<RunEvent>
         // Check if the objects have the same values (structural equality)
         // short-circuiting will provide performance benefits and fail early,
         // so test the most likely to be unique first.
-        return RunEventId == other.RunEventId &&
-               Date.Equals(other.Date) &&
+        return Date.Equals(other.Date) &&
                Distance == other.Distance &&
                Duration.Equals(other.Duration) &&
                Effort == other.Effort;
@@ -53,6 +52,6 @@ public class RunEvent : RunBase, IEquatable<RunEvent>
     /// <returns>A hash code for the RunEvent</returns>   
     public override int GetHashCode()
     {
-        return HashCode.Combine(RunEventId, Date, Distance, Duration, Effort);
+        return HashCode.Combine(Date, Distance, Duration, Effort);
     }
 }
