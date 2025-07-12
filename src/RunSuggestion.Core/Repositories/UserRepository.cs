@@ -95,9 +95,37 @@ public class UserRepository : IUserRepository
     }
 
     /// <inheritdoc />
-    public Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
+    /// Dapper implementation notes:
+    /// QuerySingleOrDefaultAsync will return null if a record is not matched,
+    /// and will throw if more than one record is matched, which would indicate a data integrity issue in our case
+    /// <see href="https://www.learndapper.com/dapper-query/selecting-single-rows">
+    /// Dapper's single row query options on the official documentation page
+    /// </see>
+    /// <exception cref="ArgumentException">Thrown if the EntraId is invalid</exception>
+    public async Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(entraId))
+        {
+            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
+        }
+        
+        dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
+            SqlQueries.SelectUserDataByEntraIdSql,
+            new { EntraId = entraId });
+
+        if (queryResult?.UserId is null)
+        {
+            return null;
+        }
+        
+        int resultUserId = (int)queryResult.UserId;
+
+        return new UserData
+        {
+            UserId = resultUserId,
+            EntraId = queryResult.EntraId,
+            RunHistory = await GetRunEventsByUserIdAsync(resultUserId)
+        };
     }
 
     /// <inheritdoc />
