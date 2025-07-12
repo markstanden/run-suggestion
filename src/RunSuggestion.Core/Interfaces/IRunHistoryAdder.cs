@@ -8,5 +8,5 @@ public interface IRunHistoryAdder
     /// <param name="userId">The User's Unique identifier</param>
     /// <param name="history">The User's run history</param>
     /// <returns>The number of records added to the user history</returns>
-    int AddRunHistory(int userId, string history);
+    Task<int> AddRunHistory(int userId, string history);
 }

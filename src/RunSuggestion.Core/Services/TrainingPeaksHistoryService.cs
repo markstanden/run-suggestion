@@ -19,7 +19,7 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
     /// <param name="userId">The User's Unique identifier</param>
     /// <param name="historyCsv">The User's run history provided as a CSV.</param>
     /// <returns>The number of records added to the user history</returns>
-    public int AddRunHistory(int userId, string historyCsv)
+    public async Task<int> AddRunHistory(int userId, string historyCsv)
     {
         // TODO: Transform into IEnumerable<RunEvent>
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv);
@@ -29,4 +29,6 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         // TODO: Return affected rows
         return runHistory.Count();
     }
+    
+    
 }
