@@ -83,12 +83,7 @@ public class UserRepository : IUserRepository
             return null;
         }
 
-        return new UserData
-        {
-            UserId = (int)queryResult.UserId,
-            EntraId = queryResult.EntraId,
-            RunHistory = await GetRunEventsByUserIdAsync(userId)
-        };
+        return await CreateUserDataFromQueryResult(queryResult);
     }
 
     /// <inheritdoc />
