@@ -18,6 +18,17 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
     /// <inheritdoc />
     public async Task<int> AddRunHistory(string entraId, string historyCsv)
     {
+        if (string.IsNullOrWhiteSpace(entraId))
+        {
+            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
+        }
+
+        if (string.IsNullOrWhiteSpace(historyCsv))
+        {
+            throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(historyCsv));
+        }
+        
+        
         // TODO: Obtain user's internal Id and existing history 
         
         // TODO: Transform into IEnumerable<RunEvent>
