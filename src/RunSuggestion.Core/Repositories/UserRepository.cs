@@ -45,11 +45,11 @@ public class UserRepository : IUserRepository
     /// <see href="https://www.learndapper.com/dapper-query/selecting-scalar-values#dapper-executescalarasync">
     /// Dapper's ExecuteScalarAsync method on the official documentation page
     /// </see>
-    /// <exception cref="ArgumentException">Thrown when EntraID already exists</exception>
+    /// <exception cref="ArgumentException">Thrown when EntraID already exists, or is invalid</exception>
     public async Task<int> CreateUserAsync(string entraId)
     {
         // Throw early if EntraId is obviously invalid.
-        ArgumentException.ThrowIfNullOrWhiteSpace(entraId, nameof(entraId));
+        ValidateEntraId(entraId);
 
         try
         {
@@ -101,10 +101,7 @@ public class UserRepository : IUserRepository
     /// <exception cref="ArgumentException">Thrown if the EntraId is invalid</exception>
     public async Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
     {
-        if (string.IsNullOrWhiteSpace(entraId))
-        {
-            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
-        }
+        ValidateEntraId(entraId);
         
         dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
             SqlQueries.SelectUserDataByEntraIdSql,
@@ -186,6 +183,14 @@ public class UserRepository : IUserRepository
         if (userId <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
+        }
+    }
+    
+    private static void ValidateEntraId(string entraId)
+    {
+        if (string.IsNullOrWhiteSpace(entraId))
+        {
+            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
         }
     }
 }
