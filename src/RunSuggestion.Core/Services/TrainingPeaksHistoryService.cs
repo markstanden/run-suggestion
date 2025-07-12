@@ -32,9 +32,10 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         }
 
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        int userId = userData?.UserId ?? 0;
         if (userData is null)
         {
-            return 0;
+            userId = await _userRepository.CreateUserAsync(entraId);
         }
 
         // TODO: Transform into IEnumerable<RunEvent>
@@ -43,7 +44,7 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         // TODO: merge the histories?
         
         // TODO: Add to Database
-        await _userRepository.AddRunEventsAsync(userData.UserId, runHistory);
+        await _userRepository.AddRunEventsAsync(userId, runHistory);
 
         // TODO: Return affected rows
         return runHistory.Count();
