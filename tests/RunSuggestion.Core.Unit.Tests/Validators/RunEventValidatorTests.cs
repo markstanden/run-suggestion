@@ -1,8 +1,8 @@
 using RunSuggestion.Core.Models.Runs;
-using RunSuggestion.Core.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers;
 using RunSuggestion.Core.Validators;
 
-namespace RunSuggestion.Core.Tests.Validators;
+namespace RunSuggestion.Core.Unit.Tests.Validators;
 
 public class RunEventValidatorTests
 {

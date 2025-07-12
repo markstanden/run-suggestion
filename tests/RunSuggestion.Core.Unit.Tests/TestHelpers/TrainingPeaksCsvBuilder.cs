@@ -1,7 +1,7 @@
 using System.Globalization;
 using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 
-namespace RunSuggestion.Core.Tests.TestHelpers;
+namespace RunSuggestion.Core.Unit.Tests.TestHelpers;
 
 public class TrainingPeaksCsvBuilder
 {

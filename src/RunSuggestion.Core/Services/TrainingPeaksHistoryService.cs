@@ -1,32 +1,52 @@
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Users;
 
 namespace RunSuggestion.Core.Services;
 
+/// <summary>
+/// Orchestrator of the data ingestion, the history service handles 
+/// </summary>
 public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
     private readonly IRunHistoryTransformer _runHistoryTransformer;
+    private readonly IUserRepository _userRepository;
 
-    public TrainingPeaksHistoryService(IRunHistoryTransformer runHistoryTransformer)
+    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer)
     {
-        _runHistoryTransformer = runHistoryTransformer;
+        _runHistoryTransformer = runHistoryTransformer; 
+        _userRepository = userRepository;
     }
 
-    /// <summary>
-    /// Adds the user's TrainingPeaks run history to the provided userid
-    /// History is provided as a CSV string, from the sites export facility.
-    /// </summary>
-    /// <param name="userId">The User's Unique identifier</param>
-    /// <param name="historyCsv">The User's run history provided as a CSV.</param>
-    /// <returns>The number of records added to the user history</returns>
-    public int AddRunHistory(int userId, string historyCsv)
+    /// <inheritdoc />
+    public async Task<int> AddRunHistory(string entraId, string historyCsv)
     {
-        // TODO: Transform into IEnumerable<RunEvent>
-        IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv);
+        if (string.IsNullOrWhiteSpace(entraId))
+        {
+            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
+        }
 
-        // TODO: Add to Database
+        if (string.IsNullOrWhiteSpace(historyCsv))
+        {
+            throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(historyCsv));
+        }
+
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        int userId = userData?.UserId ?? 0;
+        if (userData is null)
+        {
+            userId = await _userRepository.CreateUserAsync(entraId);
+        }
+        
+        IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
+
+        // TODO: merge the histories?
+        
+        int affectedRows = await _userRepository.AddRunEventsAsync(userId, runHistory);
 
         // TODO: Return affected rows
         return runHistory.Count();
     }
+    
+    
 }
