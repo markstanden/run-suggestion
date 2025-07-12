@@ -67,14 +67,14 @@ public class UserRepository : IUserRepository
     {
         if (userId <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
+            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
         }
 
         var queryResult = await _connection.QueryFirstAsync(
             SqlQueries.SelectUserDataByUserIdSql,
             new { UserId = userId });
 
-        if (queryResult.UserId is null)
+        if (queryResult?.UserId is null)
         {
             return null;
         }
@@ -98,7 +98,7 @@ public class UserRepository : IUserRepository
     {
         if (userId <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
+            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
         }
 
         ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
