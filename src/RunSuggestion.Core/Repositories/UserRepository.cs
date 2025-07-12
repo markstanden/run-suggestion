@@ -72,10 +72,7 @@ public class UserRepository : IUserRepository
     /// <exception cref="ArgumentOutOfRangeException">Thrown if UserID is invalid</exception>
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
-        }
+        ValidateUserId(userId);
         
         dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
             SqlQueries.SelectUserDataByUserIdSql,
@@ -133,10 +130,7 @@ public class UserRepository : IUserRepository
     /// <exception cref="ArgumentNullException">Thrown if runEvents is null</exception>
     public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent?> runEvents)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
-        }
+        ValidateUserId(userId);
 
         ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
 
@@ -185,5 +179,13 @@ public class UserRepository : IUserRepository
         });
 
         return runEvents;
+    }
+    
+    private static void ValidateUserId(int userId)
+    {
+        if (userId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
+        }
     }
 }
