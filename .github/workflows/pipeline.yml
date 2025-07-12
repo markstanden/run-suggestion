@@ -1,5 +1,6 @@
 name: Code Quality Pipeline
 on:
+  workflow_dispatch:
   pull_request:
     branches: ["main", "dev", "prod"]
   push:
