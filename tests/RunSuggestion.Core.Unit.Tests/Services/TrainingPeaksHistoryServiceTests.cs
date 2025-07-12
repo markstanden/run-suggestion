@@ -25,7 +25,7 @@ public class TrainingPeaksHistoryServiceTests
         int anyUserId = 1;
         string validCsv = new TrainingPeaksCsvBuilder().Build();
         var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount);
-        _mockTransformer.Setup(x => x.Transform(It.Is<string>(s => s == validCsv)))
+        _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
 
         // Act
@@ -33,5 +33,19 @@ public class TrainingPeaksHistoryServiceTests
 
         // Assert
         result.ShouldBe(expectedEventCount);
+    }
+    
+    [Fact]
+    public void AddRunHistory_WhenPassedValidCsv_CallsTransformerOnceWithCsv()
+    {
+        // Arrange
+        int anyUserId = 1;
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        
+        // Act
+        _sut.AddRunHistory(anyUserId, validCsv);
+
+        // Assert
+        _mockTransformer.Verify(x => x.Transform(validCsv), Times.Once);
     }
 }
