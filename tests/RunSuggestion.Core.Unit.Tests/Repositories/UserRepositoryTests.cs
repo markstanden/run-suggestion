@@ -190,7 +190,7 @@ public class UserRepositoryTests
     [InlineData(1000)]
     [InlineData(99999)]
     [InlineData(int.MaxValue)]
-    public async Task GetUserDataByUserIdAsync_WithNonExistentUserId_ReturnsNull(int invalidUserId)
+    public async Task GetUserDataByUserIdAsync_WithValidNonExistentUserId_ReturnsNull(int invalidUserId)
     {
         // Arrange
         await PreseedDatabase();
@@ -253,7 +253,7 @@ public class UserRepositoryTests
     [InlineData("unused-entra-authentication-id")]
     [InlineData("12345678-1234-1234-1234-123456789abc")]
     [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
-    public async Task GetUserDataByEntraIdAsync_WithNonExistentEntraId_ReturnsNull(string unusedEntraId)
+    public async Task GetUserDataByEntraIdAsync_WithValidNonExistentEntraId_ReturnsNull(string unusedEntraId)
     {
         // Arrange
         string usedEntraId = "00000000-0000-0000-0000-000000000000";
@@ -436,11 +436,8 @@ public class UserRepositoryTests
 
     [Theory]
     [InlineData(1000)]
-    [InlineData(-1)]
-    [InlineData(0)]
     [InlineData(int.MaxValue)]
-    [InlineData(int.MinValue)]
-    public async Task GetRunEventsByUserIdAsync_WithInvalidUserId_ReturnsEmptyCollection(int invalidUserId)
+    public async Task GetRunEventsByUserIdAsync_WithValidNonExistentUserId_ReturnsEmptyCollection(int invalidUserId)
     {
         // Arrange
         await PreseedDatabase();
@@ -450,6 +447,21 @@ public class UserRepositoryTests
 
         // Assert
         result.ShouldBeEmpty();
+    }
+    
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(int.MinValue)]
+    public async Task GetRunEventsByUserIdAsync_WithInvalidUserId_ThrowsArgumentException(int invalidUserId)
+    {
+        // Act
+        var withInvalidUserId = async () => await _sut.GetRunEventsByUserIdAsync(invalidUserId);
+
+        // Assert
+        Exception ex = await withInvalidUserId.ShouldThrowAsync<ArgumentOutOfRangeException>();
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("userId");
     }
     #endregion
 }
