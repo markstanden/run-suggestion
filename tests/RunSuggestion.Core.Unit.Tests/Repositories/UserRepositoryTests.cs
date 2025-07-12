@@ -1,9 +1,9 @@
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
-using RunSuggestion.Core.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers;
 
-namespace RunSuggestion.Core.Tests.Repositories;
+namespace RunSuggestion.Core.Unit.Tests.Repositories;
 
 public class UserRepositoryTests
 {

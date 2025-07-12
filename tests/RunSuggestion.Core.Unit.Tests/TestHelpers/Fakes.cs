@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Models.Runs;
 
-namespace RunSuggestion.Core.Tests.TestHelpers;
+namespace RunSuggestion.Core.Unit.Tests.TestHelpers;
 
 public static class Fakes
 {

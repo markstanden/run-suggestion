@@ -2,10 +2,10 @@ using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Services;
-using RunSuggestion.Core.Tests.TestHelpers;
 using RunSuggestion.Core.Transformers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers;
 
-namespace RunSuggestion.Core.Tests.Transformers;
+namespace RunSuggestion.Core.Unit.Tests.Transformers;
 
 public class CsvToRunHistoryTransformerTests
 {
