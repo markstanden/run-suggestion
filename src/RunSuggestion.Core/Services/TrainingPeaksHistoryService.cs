@@ -37,14 +37,12 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         {
             userId = await _userRepository.CreateUserAsync(entraId);
         }
-
-        // TODO: Transform into IEnumerable<RunEvent>
+        
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
 
         // TODO: merge the histories?
         
-        // TODO: Add to Database
-        await _userRepository.AddRunEventsAsync(userId, runHistory);
+        int affectedRows = await _userRepository.AddRunEventsAsync(userId, runHistory);
 
         // TODO: Return affected rows
         return runHistory.Count();
