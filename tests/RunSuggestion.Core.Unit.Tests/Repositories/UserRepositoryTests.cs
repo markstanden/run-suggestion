@@ -266,6 +266,21 @@ public class UserRepositoryTests
         userData.ShouldBeNull();
     }
     
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public async Task GetUserDataByEntraIdAsync_WithInvalidEntraId_ThrowsArgumentException(string? invalidEntraId)
+    {
+        // Act
+        var withInvalidEntraId = async () => await _sut.GetUserDataByEntraIdAsync(invalidEntraId!);
+
+        // Assert
+        Exception ex = await withInvalidEntraId.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("entraId");
+    }
+    
     #endregion
     
     #region AddRunEventAsync Tests
