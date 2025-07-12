@@ -194,6 +194,11 @@ public class UserRepository : IUserRepository
         }
     }
     
+    /// <summary>
+    /// Helper method to look-up and wrap run history from a dapper dynamic query result. 
+    /// </summary>
+    /// <param name="queryResult">the dynamic result of the Sql query</param>
+    /// <returns>A strongly typed UserData object, complete with run history.</returns>
     private async Task<UserData> CreateUserDataFromQueryResult(dynamic queryResult)
     {
         int userId = (int)queryResult.UserId;
