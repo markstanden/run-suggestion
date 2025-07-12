@@ -159,6 +159,8 @@ public class UserRepository : IUserRepository
     /// </see>
     public async Task<IEnumerable<RunEvent>> GetRunEventsByUserIdAsync(int userId)
     {
+        ValidateUserId(userId);
+        
         // Dapper's QueryAsync method returns a collection of the database model
         var queryResult = await _connection.QueryAsync(
             SqlQueries.SelectRunEventsSql,
