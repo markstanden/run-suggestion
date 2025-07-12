@@ -63,14 +63,21 @@ public class UserRepository : IUserRepository
     }
 
     /// <inheritdoc />
+    /// Dapper implementation notes:
+    /// QuerySingleOrDefaultAsync will return null if a record is not matched,
+    /// and will throw if more than one record is matched, which would indicate a data integrity issue in our case
+    /// <see href="https://www.learndapper.com/dapper-query/selecting-single-rows">
+    /// Dapper's single row query options on the official documentation page
+    /// </see>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if UserID is invalid</exception>
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
         if (userId <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
         }
-
-        var queryResult = await _connection.QueryFirstAsync(
+        
+        dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
             SqlQueries.SelectUserDataByUserIdSql,
             new { UserId = userId });
 
@@ -94,6 +101,8 @@ public class UserRepository : IUserRepository
     }
 
     /// <inheritdoc />
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if UserID is invalid</exception>
+    /// <exception cref="ArgumentNullException">Thrown if runEvents is null</exception>
     public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent?> runEvents)
     {
         if (userId <= 0)
