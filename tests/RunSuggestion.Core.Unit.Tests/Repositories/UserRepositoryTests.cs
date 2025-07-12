@@ -249,6 +249,23 @@ public class UserRepositoryTests
         userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
     }
     
+    [Theory]
+    [InlineData("unused-entra-authentication-id")]
+    [InlineData("12345678-1234-1234-1234-123456789abc")]
+    [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
+    public async Task GetUserDataByEntraIdAsync_WithNonExistentEntraId_ReturnsNull(string unusedEntraId)
+    {
+        // Arrange
+        string usedEntraId = "00000000-0000-0000-0000-000000000000";
+        await _sut.CreateUserAsync(usedEntraId);
+
+        // Act
+        UserData? userData = await _sut.GetUserDataByEntraIdAsync(unusedEntraId);
+
+        // Assert
+        userData.ShouldBeNull();
+    }
+    
     #endregion
     
     #region AddRunEventAsync Tests
