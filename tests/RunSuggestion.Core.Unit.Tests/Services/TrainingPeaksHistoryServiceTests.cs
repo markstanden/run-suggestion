@@ -1,4 +1,6 @@
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Unit.Tests.TestHelpers;
 
@@ -7,11 +9,12 @@ namespace RunSuggestion.Core.Unit.Tests.Services;
 public class TrainingPeaksHistoryServiceTests
 {
     private readonly Mock<IRunHistoryTransformer> _mockTransformer = new();
+    private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly TrainingPeaksHistoryService _sut;
 
     public TrainingPeaksHistoryServiceTests()
     {
-        _sut = new TrainingPeaksHistoryService(_mockTransformer.Object);
+        _sut = new TrainingPeaksHistoryService(_mockRepository.Object, _mockTransformer.Object);
     }
     
     [Theory]
@@ -64,7 +67,48 @@ public class TrainingPeaksHistoryServiceTests
         _mockTransformer.Verify(x => x.Transform(validCsv), Times.Once);
     }
     
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task AddRunHistory_WithExistingUser_CallsRepositoryWithCorrectUserId(int expectedUserId)
+    {
+        // Arrange
+        string entraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        UserData userData = new() { UserId = expectedUserId, EntraId = entraId };
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(entraId))
+            .ReturnsAsync(userData);
+
+        // Act
+        await _sut.AddRunHistory(entraId, validCsv);
+
+        // Assert
+        _mockRepository.Verify(x => x.AddRunEventsAsync(expectedUserId, It.IsAny<IEnumerable<RunEvent>>()), Times.Once);
+    }
     
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task AddRunHistory_WithNewUser_CallsRepositoryWithCorrectUserId(int expectedUserId)
+    {
+        // Arrange
+        string entraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        // Call to get userdata returns null for a not found user
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(entraId))
+            .ReturnsAsync(null as UserData);
+        // Call to create a new user returns our expectedUserId
+        _mockRepository.Setup(x => x.CreateUserAsync(entraId))
+            .ReturnsAsync(expectedUserId);
+
+        // Act
+        await _sut.AddRunHistory(entraId, validCsv);
+
+        // Assert
+        _mockRepository.Verify(x => x.AddRunEventsAsync(expectedUserId, It.IsAny<IEnumerable<RunEvent>>()), Times.Once);
+    }
     
     [Theory]
     [InlineData(0)]

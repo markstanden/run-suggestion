@@ -9,10 +9,12 @@ namespace RunSuggestion.Core.Services;
 public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
     private readonly IRunHistoryTransformer _runHistoryTransformer;
+    private readonly IUserRepository _userRepository;
 
-    public TrainingPeaksHistoryService(IRunHistoryTransformer runHistoryTransformer)
+    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer)
     {
-        _runHistoryTransformer = runHistoryTransformer;
+        _runHistoryTransformer = runHistoryTransformer; 
+        _userRepository = userRepository;
     }
 
     /// <inheritdoc />
