@@ -180,6 +180,11 @@ public class UserRepository : IUserRepository
         return runEvents;
     }
     
+    /// <summary>
+    /// Helper method to consistently validate userId
+    /// </summary>
+    /// <param name="userId">The userId to validate</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if userId is invalid</exception>
     private static void ValidateUserId(int userId)
     {
         if (userId <= 0)
@@ -188,6 +193,11 @@ public class UserRepository : IUserRepository
         }
     }
     
+    /// <summary>
+    /// Helper method to consistently validate entraId
+    /// </summary>
+    /// <param name="entraId">The entraId to validate</param>
+    /// <exception cref="ArgumentException">Thrown if entraId is invalid</exception>
     private static void ValidateEntraId(string entraId)
     {
         if (string.IsNullOrWhiteSpace(entraId))
