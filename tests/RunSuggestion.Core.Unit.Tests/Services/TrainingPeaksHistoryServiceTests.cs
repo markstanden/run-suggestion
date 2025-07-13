@@ -235,4 +235,28 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockRepository.Verify(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()), Times.Never);
     }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task AddRunHistory_WithMultipleValidationErrors_IncludesAllErrorsInException(int errorCount)
+    {
+        // Arrange
+        string validEntraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        IEnumerable<string> errors = Enumerable.Range(1, errorCount).Select(x => $"Error {x}").ToList();
+
+        _mockValidator.Setup(x => x.Validate(It.IsAny<IEnumerable<RunEvent>>()))
+            .Returns(errors);
+
+        // Act
+        var withMultipleErrors = async () => await _sut.AddRunHistory(validEntraId, validCsv);
+
+        // Assert
+        Exception ex = await withMultipleErrors.ShouldThrowAsync<ArgumentException>();
+        foreach (var error in errors){
+            ex.Message.ShouldContain(error);
+        }
+    }
 }
