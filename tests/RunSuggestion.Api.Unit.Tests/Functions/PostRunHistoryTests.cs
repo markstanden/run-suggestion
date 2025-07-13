@@ -23,7 +23,8 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
-        HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext());
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
         
         // Act
         await _sut.Run(request);
