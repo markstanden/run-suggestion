@@ -38,6 +38,8 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
         
+        _validator.Validate(runHistory);
+        
         return await _userRepository.AddRunEventsAsync(userId, runHistory);
     }
     
