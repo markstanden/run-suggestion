@@ -15,7 +15,7 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
 
     public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer, IValidator<RunEvent> validator)
     {
-        _runHistoryTransformer = runHistoryTransformer; 
+        _runHistoryTransformer = runHistoryTransformer;
         _userRepository = userRepository;
         _validator = validator;
     }

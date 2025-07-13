@@ -185,7 +185,7 @@ public class UserRepositoryTests
         ex.Message.ShouldContain("Invalid");
         ex.Message.ShouldContain("userId");
     }
-    
+
     [Theory]
     [InlineData(1000)]
     [InlineData(99999)]
@@ -205,7 +205,7 @@ public class UserRepositoryTests
     #endregion
 
     #region GetUserDataByEntraIdAsync Tests
-    
+
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
     [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
@@ -225,7 +225,7 @@ public class UserRepositoryTests
         userData.EntraId.ShouldBe(entraId);
         userData.UserId.ShouldBe(userId);
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -248,7 +248,7 @@ public class UserRepositoryTests
         userData.RunHistory.Count().ShouldBe(runEventQty);
         userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
     }
-    
+
     [Theory]
     [InlineData("unused-entra-authentication-id")]
     [InlineData("12345678-1234-1234-1234-123456789abc")]
@@ -265,7 +265,7 @@ public class UserRepositoryTests
         // Assert
         userData.ShouldBeNull();
     }
-    
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -280,9 +280,9 @@ public class UserRepositoryTests
         ex.Message.ShouldContain("Invalid");
         ex.Message.ShouldContain("entraId");
     }
-    
+
     #endregion
-    
+
     #region AddRunEventAsync Tests
 
     [Theory]
@@ -448,7 +448,7 @@ public class UserRepositoryTests
         // Assert
         result.ShouldBeEmpty();
     }
-    
+
     [Theory]
     [InlineData(-1)]
     [InlineData(0)]

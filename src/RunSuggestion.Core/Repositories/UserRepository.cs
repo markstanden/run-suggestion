@@ -73,7 +73,7 @@ public class UserRepository : IUserRepository
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
         ValidateUserId(userId);
-        
+
         dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
             SqlQueries.SelectUserDataByUserIdSql,
             new { UserId = userId });
@@ -97,7 +97,7 @@ public class UserRepository : IUserRepository
     public async Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
     {
         ValidateEntraId(entraId);
-        
+
         dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
             SqlQueries.SelectUserDataByEntraIdSql,
             new { EntraId = entraId });
@@ -106,7 +106,7 @@ public class UserRepository : IUserRepository
         {
             return null;
         }
-        
+
         return await CreateUserDataFromQueryResult(queryResult);
     }
 
@@ -148,7 +148,7 @@ public class UserRepository : IUserRepository
     public async Task<IEnumerable<RunEvent>> GetRunEventsByUserIdAsync(int userId)
     {
         ValidateUserId(userId);
-        
+
         // Dapper's QueryAsync method returns a collection of the database model
         var queryResult = await _connection.QueryAsync(
             SqlQueries.SelectRunEventsSql,
@@ -167,7 +167,7 @@ public class UserRepository : IUserRepository
 
         return runEvents;
     }
-    
+
     /// <summary>
     /// Helper method to consistently validate userId
     /// </summary>
@@ -180,7 +180,7 @@ public class UserRepository : IUserRepository
             throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
         }
     }
-    
+
     /// <summary>
     /// Helper method to consistently validate entraId
     /// </summary>
@@ -193,7 +193,7 @@ public class UserRepository : IUserRepository
             throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
         }
     }
-    
+
     /// <summary>
     /// Helper method to look-up and wrap run history from a dapper dynamic query result. 
     /// </summary>

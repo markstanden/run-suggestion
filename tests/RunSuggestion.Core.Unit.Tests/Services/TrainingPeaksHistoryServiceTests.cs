@@ -17,7 +17,7 @@ public class TrainingPeaksHistoryServiceTests
     {
         _sut = new TrainingPeaksHistoryService(_mockRepository.Object, _mockTransformer.Object, _mockValidator.Object);
     }
-    
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -53,21 +53,21 @@ public class TrainingPeaksHistoryServiceTests
         ex.Message.ShouldContain("Invalid");
         ex.Message.ShouldContain("csv");
     }
-    
+
     [Fact]
     public async Task AddRunHistory_WhenPassedValidCsv_CallsTransformerOnceWithPassedCsv()
     {
         // Arrange
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        
+
         // Act
         await _sut.AddRunHistory(validEntraId, validCsv);
 
         // Assert
         _mockTransformer.Verify(x => x.Transform(validCsv), Times.Once);
     }
-    
+
     [Theory]
     [InlineData(1)]
     [InlineData(10)]
@@ -87,7 +87,7 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockRepository.Verify(x => x.AddRunEventsAsync(expectedUserId, It.IsAny<IEnumerable<RunEvent>>()), Times.Once);
     }
-    
+
     [Theory]
     [InlineData(1)]
     [InlineData(10)]
@@ -110,7 +110,7 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockRepository.Verify(x => x.AddRunEventsAsync(expectedUserId, It.IsAny<IEnumerable<RunEvent>>()), Times.Once);
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -133,7 +133,7 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockRepository.Verify(x => x.AddRunEventsAsync(It.IsAny<int>(), expectedRunEvents), Times.Once);
     }
-    
+
     [Theory]
     [InlineData(0, 0)]
     [InlineData(1, 0)]
@@ -161,7 +161,7 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         result.ShouldBe(actualAffectedLines);
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -173,7 +173,7 @@ public class TrainingPeaksHistoryServiceTests
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
         IEnumerable<RunEvent> expectedRunEvents = Fakes.CreateRunEvents(eventCount).ToList();
-    
+
         _mockTransformer.Setup(x => x.Transform(validCsv))
             .Returns(expectedRunEvents);
         _mockValidator.Setup(x => x.Validate(expectedRunEvents))
@@ -185,7 +185,7 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockValidator.Verify(x => x.Validate(expectedRunEvents), Times.Once);
     }
-    
+
     [Theory]
     [InlineData("0: Invalid run date 2027/01/01 - cannot be in the future")]
     [InlineData("1: Invalid run distance - it must be a positive integer")]
@@ -197,7 +197,7 @@ public class TrainingPeaksHistoryServiceTests
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
         IEnumerable<RunEvent> expectedRunEvents = Fakes.CreateRunEvents().ToList();
-    
+
         _mockTransformer.Setup(x => x.Transform(validCsv))
             .Returns(expectedRunEvents);
         _mockValidator.Setup(x => x.Validate(expectedRunEvents))
@@ -210,14 +210,14 @@ public class TrainingPeaksHistoryServiceTests
         Exception ex = await withInvalidRunEvents.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain(error);
     }
-    
+
     [Fact]
     public async Task AddRunHistory_WithAnyValidationFailure_DoesNotCallRepositoryAddRunEventMethodWithInvalidRunEvents()
     {
         // Arrange
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-    
+
         _mockValidator.Setup(x => x.Validate(It.IsAny<IEnumerable<RunEvent>>()))
             .Returns(["Any validation error"]);
 
@@ -235,7 +235,7 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockRepository.Verify(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()), Times.Never);
     }
-    
+
     [Theory]
     [InlineData(1)]
     [InlineData(10)]
@@ -255,7 +255,8 @@ public class TrainingPeaksHistoryServiceTests
 
         // Assert
         Exception ex = await withMultipleErrors.ShouldThrowAsync<ArgumentException>();
-        foreach (var error in errors){
+        foreach (var error in errors)
+        {
             ex.Message.ShouldContain(error);
         }
     }

@@ -18,11 +18,11 @@ public class RunEvent : RunBase, IEquatable<RunEvent>
     {
         // Fail fast if the comparison object is null
         if (other is null) return false;
-        
+
         // Check if the objects reference the same object (Referencial equality)
         // if so they are guaranteed to have the same values (Structural equality)
         if (ReferenceEquals(this, other)) return true;
-        
+
         // Check if the objects have the same values (structural equality)
         // short-circuiting will provide performance benefits and fail early,
         // so test the most likely to be unique first.
