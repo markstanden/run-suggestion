@@ -210,4 +210,29 @@ public class TrainingPeaksHistoryServiceTests
         Exception ex = await withInvalidRunEvents.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain(error);
     }
+    
+    [Fact]
+    public async Task AddRunHistory_WithAnyValidationFailure_DoesNotCallRepositoryAddRunEventMethodWithInvalidRunEvents()
+    {
+        // Arrange
+        string validEntraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+    
+        _mockValidator.Setup(x => x.Validate(It.IsAny<IEnumerable<RunEvent>>()))
+            .Returns(["Any validation error"]);
+
+        // Act
+        try
+        {
+            await _sut.AddRunHistory(validEntraId, validCsv);
+        }
+        catch (ArgumentException)
+        {
+            // This should throw, but I don't want to assert that as part of this test,
+            // as I need to check that the actual assertion below fails.
+        }
+
+        // Assert
+        _mockRepository.Verify(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()), Times.Never);
+    }
 }
