@@ -35,13 +35,15 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
 
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
         int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
-        
+
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
-        
-        _validator.Validate(runHistory);
-        
+
+        IEnumerable<string> errors = _validator.Validate(runHistory).ToList();
+        if (errors.Any())
+        {
+            throw new ArgumentException(string.Join(Environment.NewLine, errors));
+        }
+
         return await _userRepository.AddRunEventsAsync(userId, runHistory);
     }
-    
-    
 }
