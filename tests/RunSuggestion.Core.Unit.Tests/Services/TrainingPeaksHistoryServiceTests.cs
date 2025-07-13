@@ -115,22 +115,22 @@ public class TrainingPeaksHistoryServiceTests
     [InlineData(1)]
     [InlineData(10)]
     [InlineData(100)]
-    public async Task AddRunHistory_WhenTransformerReturnsValidRunEvents_ReturnsExpectedAffectedLines(int expectedEventCount)
+    public async Task AddRunHistory_WhenTransformerReturnsValidRunEvents_CallsRepositoryWithCorrectRunEvents(int expectedEventCount)
     {
         // Arrange
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount);
+        var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount).ToList();
         _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
         _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()))
             .ReturnsAsync(expectedEventCount);
 
         // Act
-        int result = await _sut.AddRunHistory(validEntraId, validCsv);
+        await _sut.AddRunHistory(validEntraId, validCsv);
 
         // Assert
-        result.ShouldBe(expectedEventCount);
+        _mockRepository.Verify(x => x.AddRunEventsAsync(It.IsAny<int>(), expectedRunEvents), Times.Once);
     }
     
     [Theory]
