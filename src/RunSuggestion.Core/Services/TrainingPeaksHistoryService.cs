@@ -11,11 +11,13 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
     private readonly IRunHistoryTransformer _runHistoryTransformer;
     private readonly IUserRepository _userRepository;
+    private readonly IValidator<RunEvent> _validator;
 
-    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer)
+    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer, IValidator<RunEvent> validator)
     {
         _runHistoryTransformer = runHistoryTransformer; 
         _userRepository = userRepository;
+        _validator = validator;
     }
 
     /// <inheritdoc />

@@ -10,11 +10,12 @@ public class TrainingPeaksHistoryServiceTests
 {
     private readonly Mock<IRunHistoryTransformer> _mockTransformer = new();
     private readonly Mock<IUserRepository> _mockRepository = new();
+    private readonly Mock<IValidator<RunEvent>> _mockValidator = new();
     private readonly TrainingPeaksHistoryService _sut;
 
     public TrainingPeaksHistoryServiceTests()
     {
-        _sut = new TrainingPeaksHistoryService(_mockRepository.Object, _mockTransformer.Object);
+        _sut = new TrainingPeaksHistoryService(_mockRepository.Object, _mockTransformer.Object, _mockValidator.Object);
     }
     
     [Theory]
@@ -120,7 +121,7 @@ public class TrainingPeaksHistoryServiceTests
         // Arrange
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount).ToList();
+        IEnumerable<RunEvent> expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount).ToList();
         _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
         _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()))
@@ -149,7 +150,7 @@ public class TrainingPeaksHistoryServiceTests
         // Arrange
         string validEntraId = Fakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount);
+        IEnumerable<RunEvent> expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount);
         _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
         _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>())).ReturnsAsync(actualAffectedLines);
@@ -159,5 +160,29 @@ public class TrainingPeaksHistoryServiceTests
 
         // Assert
         result.ShouldBe(actualAffectedLines);
+    }
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task AddRunHistory_AfterTransformation_CallsValidatorWithTransformedEvents(int eventCount)
+    {
+        // Arrange
+        string validEntraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        IEnumerable<RunEvent> expectedRunEvents = Fakes.CreateRunEvents(eventCount).ToList();
+    
+        _mockTransformer.Setup(x => x.Transform(validCsv))
+            .Returns(expectedRunEvents);
+        _mockValidator.Setup(x => x.Validate(expectedRunEvents))
+            .Returns([]);
+
+        // Act
+        await _sut.AddRunHistory(validEntraId, validCsv);
+
+        // Assert
+        _mockValidator.Verify(x => x.Validate(expectedRunEvents), Times.Once);
     }
 }
