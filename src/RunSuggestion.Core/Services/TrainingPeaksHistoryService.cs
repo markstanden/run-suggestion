@@ -32,11 +32,7 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         }
 
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
-        int userId = userData?.UserId ?? 0;
-        if (userData is null)
-        {
-            userId = await _userRepository.CreateUserAsync(entraId);
-        }
+        int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
         
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
 
