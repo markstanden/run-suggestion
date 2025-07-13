@@ -8,6 +8,8 @@ namespace RunSuggestion.Api.Functions;
 
 public class PostRunHistory
 {
+    private const string LogMessageUploadStarted = "Run history upload started";
+    
     private readonly ILogger<PostRunHistory> _logger;
     private readonly IAuthenticator _authenticator;
     private readonly IRunHistoryAdder _runHistoryAdder;
@@ -20,11 +22,10 @@ public class PostRunHistory
     }
 
     [Function("PostRunHistory")]
-    public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
-        _logger.LogInformation("C# HTTP trigger function processed a request.");
+        _logger.LogInformation(LogMessageUploadStarted);
         return new OkObjectResult("Welcome to Azure Functions!");
-
     }
 
 }
