@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 
-namespace RunSuggestion.Api.Tests.Functions;
+namespace RunSuggestion.Api.Unit.Tests.Functions;
 
 public class PostRunHistoryTests
 {

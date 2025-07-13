@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.Core", "src\R
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E1E21B6B-A00E-4919-A541-5025AF800539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.Api.Tests", "tests\RunSuggestion.Api.Tests\RunSuggestion.Api.Tests.csproj", "{7CC900CB-44AD-4FB8-B53B-D79C61C49EF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.Api.Unit.Tests", "tests\RunSuggestion.Api.Unit.Tests\RunSuggestion.Api.Unit.Tests.csproj", "{7CC900CB-44AD-4FB8-B53B-D79C61C49EF7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.Core.Unit.Tests", "tests\RunSuggestion.Core.Unit.Tests\RunSuggestion.Core.Unit.Tests.csproj", "{C7481DDB-9A6C-48A3-B0CD-4519BC5F5E09}"
 EndProject
