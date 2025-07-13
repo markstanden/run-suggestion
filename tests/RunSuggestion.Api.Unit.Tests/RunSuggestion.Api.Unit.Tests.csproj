@@ -7,7 +7,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RootNamespace>RunSuggestion.Api.Tests</RootNamespace>
+    <RootNamespace>RunSuggestion.Api.Unit.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
