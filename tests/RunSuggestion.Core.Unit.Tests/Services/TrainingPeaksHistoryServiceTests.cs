@@ -185,4 +185,29 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         _mockValidator.Verify(x => x.Validate(expectedRunEvents), Times.Once);
     }
+    
+    [Theory]
+    [InlineData("0: Invalid run date 2027/01/01 - cannot be in the future")]
+    [InlineData("1: Invalid run distance - it must be a positive integer")]
+    [InlineData("10: Invalid run effort - it must be between 0 and 10")]
+    [InlineData("100: Invalid run duration - it must be greater than 0")]
+    public async Task AddRunHistory_WithRunHistoryValidationErrors_ThrowsArgumentExceptionWithReasonForValidationFailure(string error)
+    {
+        // Arrange
+        string validEntraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        IEnumerable<RunEvent> expectedRunEvents = Fakes.CreateRunEvents().ToList();
+    
+        _mockTransformer.Setup(x => x.Transform(validCsv))
+            .Returns(expectedRunEvents);
+        _mockValidator.Setup(x => x.Validate(expectedRunEvents))
+            .Returns([error]);
+
+        // Act
+        var withInvalidRunEvents = async () => await _sut.AddRunHistory(validEntraId, validCsv!);
+
+        // Assert
+        Exception ex = await withInvalidRunEvents.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldContain(error);
+    }
 }
