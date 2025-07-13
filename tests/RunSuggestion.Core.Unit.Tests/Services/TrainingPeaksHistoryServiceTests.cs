@@ -130,4 +130,30 @@ public class TrainingPeaksHistoryServiceTests
         // Assert
         result.ShouldBe(expectedEventCount);
     }
+    
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(10, 0)]
+    [InlineData(10, 1)]
+    [InlineData(10, 9)]
+    [InlineData(100, 0)]
+    [InlineData(100, 1)]
+    [InlineData(100, 99)]
+    public async Task AddRunHistory_WhenRepositoryReturnsLessAffectedLinesThanProvidedRunEvents_ReturnsActualAffectedLines(int expectedEventCount, int actualAffectedLines)
+    {
+        // Arrange
+        string validEntraId = Fakes.CreateEntraId();
+        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount);
+        _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
+            .Returns(expectedRunEvents);
+        _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>())).ReturnsAsync(actualAffectedLines);
+
+        // Act
+        int result = await _sut.AddRunHistory(validEntraId, validCsv);
+
+        // Assert
+        result.ShouldBe(actualAffectedLines);
+    }
 }
