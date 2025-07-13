@@ -123,6 +123,8 @@ public class TrainingPeaksHistoryServiceTests
         var expectedRunEvents = Fakes.CreateRunEvents(expectedEventCount);
         _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
+        _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()))
+            .ReturnsAsync(expectedEventCount);
 
         // Act
         int result = await _sut.AddRunHistory(validEntraId, validCsv);
