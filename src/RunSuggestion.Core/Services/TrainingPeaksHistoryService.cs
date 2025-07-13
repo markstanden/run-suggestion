@@ -41,7 +41,7 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         int affectedRows = await _userRepository.AddRunEventsAsync(userId, runHistory);
 
         // TODO: Return affected rows
-        return runHistory.Count();
+        return affectedRows;
     }
     
     
