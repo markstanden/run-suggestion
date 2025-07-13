@@ -136,13 +136,15 @@ public class TrainingPeaksHistoryServiceTests
     [Theory]
     [InlineData(0, 0)]
     [InlineData(1, 0)]
+    [InlineData(1, 1)]
     [InlineData(10, 0)]
     [InlineData(10, 1)]
-    [InlineData(10, 9)]
+    [InlineData(10, 10)]
     [InlineData(100, 0)]
     [InlineData(100, 1)]
     [InlineData(100, 99)]
-    public async Task AddRunHistory_WhenRepositoryReturnsLessAffectedLinesThanProvidedRunEvents_ReturnsActualAffectedLines(int expectedEventCount, int actualAffectedLines)
+    [InlineData(100, 100)]
+    public async Task AddRunHistory_WhenRepositoryMethodReturns_ReturnsActualAffectedLines(int expectedEventCount, int actualAffectedLines)
     {
         // Arrange
         string validEntraId = Fakes.CreateEntraId();
