@@ -11,7 +11,7 @@ public class AuthenticationService : IAuthenticator
         // TODO: Validate token
 
         // TODO: Extract entraId from token
-        
+
         // TODO: Return real token - for now we'll just return the first 16 characters of the passed token
         return token?.Substring(0, 16);
     }

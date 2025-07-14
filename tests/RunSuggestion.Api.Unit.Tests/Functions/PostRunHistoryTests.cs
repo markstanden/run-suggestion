@@ -25,7 +25,7 @@ public class PostRunHistoryTests
         // Arrange
         DefaultHttpContext context = new();
         HttpRequest request = new DefaultHttpRequest(context);
-        
+
         // Act
         await _sut.Run(request);
 
@@ -39,8 +39,8 @@ public class PostRunHistoryTests
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
-    
-    
+
+
     [Theory]
     [InlineData("Bearer fake-token-12345")]
     [InlineData("Bearer fake-token-with-different-format")]
