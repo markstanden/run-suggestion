@@ -8,5 +8,5 @@ public interface IAuthenticator
     /// </summary>
     /// <param name="token">bearer token provided by the user to authenticate</param>
     /// <returns>EntraId if authentication succeeds, null if it fails.</returns>
-    string? Authenticate(string token);
+    string? Authenticate(string? token);
 }
