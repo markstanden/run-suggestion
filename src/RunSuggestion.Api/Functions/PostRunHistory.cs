@@ -25,6 +25,9 @@ public class PostRunHistory
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
         _logger.LogInformation(LogMessageUploadStarted);
+        
+        string authHeader = request.Headers["Authorization"].ToString();
+        _authenticator.Authenticate(authHeader);
         return new OkObjectResult("Welcome to Azure Functions!");
     }
 
