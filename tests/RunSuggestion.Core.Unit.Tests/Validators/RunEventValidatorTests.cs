@@ -1,8 +1,8 @@
 using RunSuggestion.Core.Models.Runs;
-using RunSuggestion.Core.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers;
 using RunSuggestion.Core.Validators;
 
-namespace RunSuggestion.Core.Tests.Validators;
+namespace RunSuggestion.Core.Unit.Tests.Validators;
 
 public class RunEventValidatorTests
 {
@@ -37,7 +37,7 @@ public class RunEventValidatorTests
             dateTime: tomorrow)];
 
         // Act
-        IEnumerable<string> errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
 
         // Assert
         errors.ShouldNotBeEmpty();
@@ -57,7 +57,7 @@ public class RunEventValidatorTests
             distanceMetres: invalidDistance)];
 
         // Act
-        IEnumerable<string> errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
 
         // Assert
         errors.ShouldNotBeEmpty();
@@ -76,7 +76,7 @@ public class RunEventValidatorTests
             effort: invalidEffort)];
 
         // Act
-        IEnumerable<string> errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
 
         // Assert
         errors.ShouldNotBeEmpty();
@@ -97,7 +97,7 @@ public class RunEventValidatorTests
             duration: invalidDurationTimeSpan)];
 
         // Act
-        IEnumerable<string> errors = _sut.Validate(runEvents);
+        IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
 
         // Assert
         errors.ShouldNotBeEmpty();

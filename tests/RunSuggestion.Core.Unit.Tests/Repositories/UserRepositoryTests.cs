@@ -1,9 +1,9 @@
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
-using RunSuggestion.Core.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers;
 
-namespace RunSuggestion.Core.Tests.Repositories;
+namespace RunSuggestion.Core.Unit.Tests.Repositories;
 
 public class UserRepositoryTests
 {
@@ -130,15 +130,15 @@ public class UserRepositoryTests
         userData.RunHistory.Count().ShouldBe(eventQty);
     }
 
-    [Fact]
-    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectRunHistory()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectRunHistory(int runEventQty)
     {
         // Arrange
-        DateTime baseDate = DateTime.UtcNow;
-        RunEvent runEvent1 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-1));
-        RunEvent runEvent2 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-2));
-        RunEvent runEvent3 = Fakes.CreateRunEvent(dateTime: baseDate.AddDays(-3));
-        IEnumerable<RunEvent> runEvents = [runEvent1, runEvent2, runEvent3];
+        List<RunEvent> runEvents = Fakes.CreateRunEvents(runEventQty).ToList();
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
@@ -147,9 +147,8 @@ public class UserRepositoryTests
 
         // Assert
         userData.ShouldNotBeNull();
-        userData.RunHistory.ShouldContain(runEvent1);
-        userData.RunHistory.ShouldContain(runEvent2);
-        userData.RunHistory.ShouldContain(runEvent3);
+        userData.RunHistory.Count().ShouldBe(runEventQty);
+        userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
     }
 
     [Theory]
@@ -157,10 +156,10 @@ public class UserRepositoryTests
     [InlineData(1)]
     [InlineData(10)]
     [InlineData(100)]
-    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectUserId(int eventQty)
+    public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectUserId(int runEventQty)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(eventQty);
+        IEnumerable<RunEvent> runEvents = Fakes.CreateRunEvents(runEventQty);
         int userId = await _sut.CreateUserAsync(Fakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
@@ -173,12 +172,25 @@ public class UserRepositoryTests
     }
 
     [Theory]
-    [InlineData(1000)]
     [InlineData(-1)]
     [InlineData(0)]
-    [InlineData(int.MaxValue)]
     [InlineData(int.MinValue)]
-    public async Task GetUserDataByUserIdAsync_WithNonExistentUserId_ReturnsNull(int invalidUserId)
+    public async Task GetUserDataByUserIdAsync_WithInvalidUserId_ThrowsArgumentException(int invalidUserId)
+    {
+        // Act
+        var withInvalidUserId = async () => await _sut.GetUserDataByUserIdAsync(invalidUserId);
+
+        // Assert
+        Exception ex = await withInvalidUserId.ShouldThrowAsync<ArgumentOutOfRangeException>();
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("userId");
+    }
+
+    [Theory]
+    [InlineData(1000)]
+    [InlineData(99999)]
+    [InlineData(int.MaxValue)]
+    public async Task GetUserDataByUserIdAsync_WithValidNonExistentUserId_ReturnsNull(int invalidUserId)
     {
         // Arrange
         await PreseedDatabase();
@@ -188,6 +200,85 @@ public class UserRepositoryTests
 
         // Assert
         userData.ShouldBeNull();
+    }
+
+    #endregion
+
+    #region GetUserDataByEntraIdAsync Tests
+
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0")]
+    [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
+    public async Task GetUserDataByEntraIdAsync_WithValidEntraId_ReturnsExpectedUserIdData(string entraId)
+    {
+        // Arrange
+        int userId = await _sut.CreateUserAsync(entraId);
+        List<RunEvent> runEvents = Fakes.CreateRunEvents(3).ToList();
+        await _sut.AddRunEventsAsync(userId, runEvents);
+
+        // Act
+        UserData? userData = await _sut.GetUserDataByEntraIdAsync(entraId);
+
+        // Assert
+        userData.ShouldNotBeNull();
+        userData.EntraId.ShouldBe(entraId);
+        userData.UserId.ShouldBe(userId);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task GetUserDataByEntraIdAsync_WithValidEntraId_ReturnsExpectedRunHistoryData(int runEventQty)
+    {
+        // Arrange
+        string entraId = Fakes.CreateEntraId();
+        int userId = await _sut.CreateUserAsync(entraId);
+        List<RunEvent> runEvents = Fakes.CreateRunEvents(runEventQty).ToList();
+        await _sut.AddRunEventsAsync(userId, runEvents);
+
+        // Act
+        UserData? userData = await _sut.GetUserDataByEntraIdAsync(entraId);
+
+        // Assert
+        userData.ShouldNotBeNull();
+        userData.EntraId.ShouldBe(entraId);
+        userData.RunHistory.Count().ShouldBe(runEventQty);
+        userData.RunHistory.ShouldBe(runEvents, ignoreOrder: true);
+    }
+
+    [Theory]
+    [InlineData("unused-entra-authentication-id")]
+    [InlineData("12345678-1234-1234-1234-123456789abc")]
+    [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
+    public async Task GetUserDataByEntraIdAsync_WithValidNonExistentEntraId_ReturnsNull(string unusedEntraId)
+    {
+        // Arrange
+        string usedEntraId = "00000000-0000-0000-0000-000000000000";
+        await _sut.CreateUserAsync(usedEntraId);
+
+        // Act
+        UserData? userData = await _sut.GetUserDataByEntraIdAsync(unusedEntraId);
+
+        // Assert
+        userData.ShouldBeNull();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public async Task GetUserDataByEntraIdAsync_WithInvalidEntraId_ThrowsArgumentException(string? invalidEntraId)
+    {
+        // Act
+        var withInvalidEntraId = async () => await _sut.GetUserDataByEntraIdAsync(invalidEntraId!);
+
+        // Assert
+        Exception ex = await withInvalidEntraId.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("entraId");
     }
 
     #endregion
@@ -345,11 +436,8 @@ public class UserRepositoryTests
 
     [Theory]
     [InlineData(1000)]
-    [InlineData(-1)]
-    [InlineData(0)]
     [InlineData(int.MaxValue)]
-    [InlineData(int.MinValue)]
-    public async Task GetRunEventsByUserIdAsync_WithInvalidUserId_ReturnsEmptyCollection(int invalidUserId)
+    public async Task GetRunEventsByUserIdAsync_WithValidNonExistentUserId_ReturnsEmptyCollection(int invalidUserId)
     {
         // Arrange
         await PreseedDatabase();
@@ -359,6 +447,21 @@ public class UserRepositoryTests
 
         // Assert
         result.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(int.MinValue)]
+    public async Task GetRunEventsByUserIdAsync_WithInvalidUserId_ThrowsArgumentException(int invalidUserId)
+    {
+        // Act
+        var withInvalidUserId = async () => await _sut.GetRunEventsByUserIdAsync(invalidUserId);
+
+        // Assert
+        Exception ex = await withInvalidUserId.ShouldThrowAsync<ArgumentOutOfRangeException>();
+        ex.Message.ShouldContain("Invalid");
+        ex.Message.ShouldContain("userId");
     }
     #endregion
 }

@@ -45,11 +45,11 @@ public class UserRepository : IUserRepository
     /// <see href="https://www.learndapper.com/dapper-query/selecting-scalar-values#dapper-executescalarasync">
     /// Dapper's ExecuteScalarAsync method on the official documentation page
     /// </see>
-    /// <exception cref="ArgumentException">Thrown when EntraID already exists</exception>
+    /// <exception cref="ArgumentException">Thrown when EntraID already exists, or is invalid</exception>
     public async Task<int> CreateUserAsync(string entraId)
     {
         // Throw early if EntraId is obviously invalid.
-        ArgumentException.ThrowIfNullOrWhiteSpace(entraId, nameof(entraId));
+        ValidateEntraId(entraId);
 
         try
         {
@@ -63,43 +63,59 @@ public class UserRepository : IUserRepository
     }
 
     /// <inheritdoc />
+    /// Dapper implementation notes:
+    /// QuerySingleOrDefaultAsync will return null if a record is not matched,
+    /// and will throw if more than one record is matched, which would indicate a data integrity issue in our case
+    /// <see href="https://www.learndapper.com/dapper-query/selecting-single-rows">
+    /// Dapper's single row query options on the official documentation page
+    /// </see>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if UserID is invalid</exception>
     public async Task<UserData?> GetUserDataByUserIdAsync(int userId)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
-        }
+        ValidateUserId(userId);
 
-        var queryResult = await _connection.QueryFirstAsync(
+        dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
             SqlQueries.SelectUserDataByUserIdSql,
             new { UserId = userId });
 
-        if (queryResult.UserId is null)
+        if (queryResult?.UserId is null)
         {
             return null;
         }
 
-        return new UserData
-        {
-            UserId = (int)queryResult.UserId,
-            EntraId = queryResult.EntraId,
-            RunHistory = await GetRunEventsByUserIdAsync(userId)
-        };
+        return await CreateUserDataFromQueryResult(queryResult);
     }
 
     /// <inheritdoc />
-    public Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
+    /// Dapper implementation notes:
+    /// QuerySingleOrDefaultAsync will return null if a record is not matched,
+    /// and will throw if more than one record is matched, which would indicate a data integrity issue in our case
+    /// <see href="https://www.learndapper.com/dapper-query/selecting-single-rows">
+    /// Dapper's single row query options on the official documentation page
+    /// </see>
+    /// <exception cref="ArgumentException">Thrown if the EntraId is invalid</exception>
+    public async Task<UserData?> GetUserDataByEntraIdAsync(string entraId)
     {
-        throw new NotImplementedException();
+        ValidateEntraId(entraId);
+
+        dynamic? queryResult = await _connection.QuerySingleOrDefaultAsync(
+            SqlQueries.SelectUserDataByEntraIdSql,
+            new { EntraId = entraId });
+
+        if (queryResult?.UserId is null)
+        {
+            return null;
+        }
+
+        return await CreateUserDataFromQueryResult(queryResult);
     }
 
     /// <inheritdoc />
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if UserID is invalid</exception>
+    /// <exception cref="ArgumentNullException">Thrown if runEvents is null</exception>
     public async Task<int> AddRunEventsAsync(int userId, IEnumerable<RunEvent?> runEvents)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "UserId must be a positive integer");
-        }
+        ValidateUserId(userId);
 
         ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
 
@@ -119,7 +135,7 @@ public class UserRepository : IUserRepository
         {
             return await _connection.ExecuteAsync(SqlQueries.InsertRunEventsSql, insertParameters);
         }
-        catch (SqliteException ex)
+        catch (SqliteException)
         {
             throw new ArgumentException("Required RunEvent data is missing");
         }
@@ -131,6 +147,8 @@ public class UserRepository : IUserRepository
     /// </see>
     public async Task<IEnumerable<RunEvent>> GetRunEventsByUserIdAsync(int userId)
     {
+        ValidateUserId(userId);
+
         // Dapper's QueryAsync method returns a collection of the database model
         var queryResult = await _connection.QueryAsync(
             SqlQueries.SelectRunEventsSql,
@@ -148,5 +166,47 @@ public class UserRepository : IUserRepository
         });
 
         return runEvents;
+    }
+
+    /// <summary>
+    /// Helper method to consistently validate userId
+    /// </summary>
+    /// <param name="userId">The userId to validate</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if userId is invalid</exception>
+    private static void ValidateUserId(int userId)
+    {
+        if (userId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
+        }
+    }
+
+    /// <summary>
+    /// Helper method to consistently validate entraId
+    /// </summary>
+    /// <param name="entraId">The entraId to validate</param>
+    /// <exception cref="ArgumentException">Thrown if entraId is invalid</exception>
+    private static void ValidateEntraId(string entraId)
+    {
+        if (string.IsNullOrWhiteSpace(entraId))
+        {
+            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
+        }
+    }
+
+    /// <summary>
+    /// Helper method to look-up and wrap run history from a dapper dynamic query result. 
+    /// </summary>
+    /// <param name="queryResult">the dynamic result of the Sql query</param>
+    /// <returns>A strongly typed UserData object, complete with run history.</returns>
+    private async Task<UserData> CreateUserDataFromQueryResult(dynamic queryResult)
+    {
+        int userId = (int)queryResult.UserId;
+        return new UserData
+        {
+            UserId = userId,
+            EntraId = queryResult.EntraId,
+            RunHistory = await GetRunEventsByUserIdAsync(userId)
+        };
     }
 }
