@@ -58,4 +58,23 @@ public class PostRunHistoryTests
         // Assert
         _mockAuthenticator.Verify(x => x.Authenticate(authToken), Times.Once);
     }
+    
+    [Theory]
+    [InlineData("fake-entra-id-12345")]
+    [InlineData("fake-entra-id-with-different-format")]
+    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    public async Task PostRunHistory_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
+    {
+        // Arrange
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(entraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockHistoryAdder.Verify(x => x.AddRunHistory(entraId, It.IsAny<string>()), Times.Once);
+    }
 }
