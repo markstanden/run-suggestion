@@ -27,7 +27,9 @@ public class PostRunHistory
         _logger.LogInformation(LogMessageUploadStarted);
 
         string authHeader = request.Headers["Authorization"].ToString();
-        _authenticator.Authenticate(authHeader);
+        string? entraId = _authenticator.Authenticate(authHeader) ?? string.Empty;
+
+        await _runHistoryAdder.AddRunHistory(entraId, string.Empty);        
         return new OkObjectResult("Welcome to Azure Functions!");
     }
 
