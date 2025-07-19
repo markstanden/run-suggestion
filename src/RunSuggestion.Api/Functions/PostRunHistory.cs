@@ -41,9 +41,18 @@ public class PostRunHistory
             return new UnauthorizedResult();
         }
 
-        _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}", LogMessageAuthenticationSuccess, entraId[^5..]);
+        _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
+                               LogMessageAuthenticationSuccess,
+                               GetLastFiveChars(entraId));
 
         await _runHistoryAdder.AddRunHistory(entraId, string.Empty);
         return new OkObjectResult("Welcome to Azure Functions!");
     }
+
+    /// <summary>
+    /// Returns the last 5 characters of the passed string
+    /// </summary>
+    /// <param name="fullString"></param>
+    /// <returns>the last 5 characters of the passed string</returns>
+    private static string GetLastFiveChars(string fullString) => fullString[^5..];
 }
