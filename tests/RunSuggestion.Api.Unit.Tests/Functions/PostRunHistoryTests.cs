@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 
@@ -157,7 +158,8 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
-        string csv = "asd";
+        IEnumerable<TrainingPeaksActivity> activities = TrainingPeaksActivityFakes.CreateRandomRuns(csvRows);
+        string csv = TrainingPeaksCsvBuilder.CsvFromActivities(activities);
         DefaultHttpContext context = new();
         HttpRequest request = new DefaultHttpRequest(context);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))

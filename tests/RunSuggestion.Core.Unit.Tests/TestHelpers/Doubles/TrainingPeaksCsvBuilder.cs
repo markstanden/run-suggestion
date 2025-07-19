@@ -121,6 +121,32 @@ public class TrainingPeaksCsvBuilder
         );
 
     /// <summary>
+    /// Adds multiple TrainingPeaksActivities from a collection to the csv being built
+    /// </summary>
+    /// <param name="activities">Collection of TrainingPeaksActivities to add</param>
+    /// <returns>The current builder instance for method chaining</returns>
+    public TrainingPeaksCsvBuilder AddRows(IEnumerable<TrainingPeaksActivity> activities)
+    {
+        foreach (TrainingPeaksActivity activity in activities)
+        {
+            AddRow(activity);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a CSV string directly from a collection of TrainingPeaksActivities
+    /// </summary>
+    /// <param name="activities">Collection of TrainingPeaksActivities to convert to CSV</param>
+    /// <returns>CSV string with headers and activity data</returns>
+    public static string CsvFromActivities(IEnumerable<TrainingPeaksActivity> activities)
+    {
+        TrainingPeaksCsvBuilder builder = new();
+        builder.AddRows(activities);
+        return builder.Build();
+    }
+
+    /// <summary>
     /// Private convenience method to create the required TrainingPeaks CSV headers
     /// </summary>
     /// <returns>a string containing the headers only</returns>
