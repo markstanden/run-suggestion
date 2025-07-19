@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
@@ -58,7 +59,7 @@ public class PostRunHistoryTests
         // Assert
         _mockAuthenticator.Verify(x => x.Authenticate(authToken), Times.Once);
     }
-    
+
     [Theory]
     [InlineData("fake-entra-id-12345")]
     [InlineData("fake-entra-id-with-different-format")]
@@ -76,5 +77,41 @@ public class PostRunHistoryTests
 
         // Assert
         _mockHistoryAdder.Verify(x => x.AddRunHistory(entraId, It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task PostRunHistory_WhenAuthenticationFails_Returns401UnauthorizedResponse()
+    {
+        // Arrange
+        int expectedStatusCode = StatusCodes.Status401Unauthorized;
+        string? nullEntraId = null;
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(nullEntraId);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        UnauthorizedResult unauthorizedResult = result.ShouldBeOfType<UnauthorizedResult>();
+        unauthorizedResult.StatusCode.ShouldBe(expectedStatusCode);
+    }
+
+    [Fact]
+    public async Task PostRunHistory_WhenAuthenticationFails_DoesNotCallHistoryAdder()
+    {
+        // Arrange
+        string? nullEntraId = null;
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(nullEntraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockHistoryAdder.Verify(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 }
