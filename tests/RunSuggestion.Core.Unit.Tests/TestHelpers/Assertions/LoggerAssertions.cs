@@ -70,4 +70,26 @@ public static class LoggerAssertions
     {
         mockLogger.ShouldHaveLogged(level, expectedMessage, Times.Once);
     }
+
+    /// <summary>
+    /// Verifies that a logger mock logged a message containing all the expected text fragments at the specified level.
+    /// </summary>
+    /// <typeparam name="T">The type being logged by the logger</typeparam>
+    /// <param name="mockLogger">The mock logger to verify</param>
+    /// <param name="level">The expected log level</param>
+    /// <param name="expectedMessages">Text fragments that should all be contained in the same log message</param>
+    public static void ShouldHaveLoggedAllOnce<T>(
+        this Mock<ILogger<T>> mockLogger,
+        LogLevel level,
+        params string[] expectedMessages)
+    {
+        mockLogger.Verify(
+            x => x.Log(
+                level,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => expectedMessages.All(msg => v.ToString()!.Contains(msg))),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
 }

@@ -90,8 +90,9 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, "Successfully Authenticated user");
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLastFive);
+        _mockLogger.ShouldHaveLoggedAllOnce(LogLevel.Information,
+                                            "Successfully Authenticated user",
+                                            expectedLastFive);
     }
 
     [Fact]
