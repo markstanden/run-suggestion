@@ -32,7 +32,7 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLogged(LogLevel.Information, "Run history upload started");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, "Run history upload started");
     }
 
 
@@ -71,6 +71,27 @@ public class PostRunHistoryTests
 
         // Assert
         _mockHistoryAdder.Verify(x => x.AddRunHistory(entraId, It.IsAny<string>()), Times.Once);
+    }
+
+    [Theory]
+    [InlineData("fake-entra-id-12345")]
+    [InlineData("fake-entra-id-with-different-format")]
+    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    public async Task PostRunHistory_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
+    {
+        // Arrange
+        string expectedLastFive = entraId.Substring(entraId.Length - 5);
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(entraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
+                                         $"Successfully Authenticated user: ...{expectedLastFive}");
     }
 
     [Fact]
@@ -123,6 +144,6 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLogged(LogLevel.Warning, "Failed to authenticate user.");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "Failed to authenticate user.");
     }
 }
