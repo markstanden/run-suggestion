@@ -10,6 +10,7 @@ public class PostRunHistory
 {
     private const string LogMessageUploadStarted = "Run history upload started.";
     private const string LogMessageAuthenticationFailure = "Failed to authenticate user.";
+    private const string LogMessageAuthenticationSuccess = "Successfully Authenticated user";
 
     private const string AuthorizationHeader = "Authorization";
 
@@ -39,6 +40,8 @@ public class PostRunHistory
             _logger.LogWarning(LogMessageAuthenticationFailure);
             return new UnauthorizedResult();
         }
+
+        _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}", LogMessageAuthenticationSuccess, entraId[^5..]);
 
         await _runHistoryAdder.AddRunHistory(entraId, string.Empty);
         return new OkObjectResult("Welcome to Azure Functions!");
