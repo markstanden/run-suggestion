@@ -159,11 +159,10 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
-        string token = Guid.NewGuid().ToString();
+        string authToken = $"Bearer {Guid.NewGuid()}";
         IEnumerable<TrainingPeaksActivity> activities = TrainingPeaksActivityFakes.CreateRandomRuns(csvRows);
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(activities);
-        HttpRequest request =
-            HttpRequestHelper.CreateHttpRequestWithHeader("Authorization", $"Bearer {token}", "POST", csv, "text/csv");
+        HttpRequest request = CreateCsvUploadRequest(authToken, csv);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
 
@@ -173,4 +172,64 @@ public class PostRunHistoryTests
         // Assert
         _mockHistoryAdder.Verify(x => x.AddRunHistory(It.IsAny<string>(), csv), Times.Once);
     }
+
+    [Fact]
+    public async Task PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        HttpRequest request = CreateCsvUploadRequest(authToken, string.Empty);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(EntraIdFakes.CreateEntraId());
+        _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(0);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        okResult.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    [InlineData(1000)]
+    public async Task PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_ExpectedRowsReturned(
+        int expectedAffectedRows)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        HttpRequest request = CreateCsvUploadRequest(authToken, string.Empty);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(EntraIdFakes.CreateEntraId());
+        _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(expectedAffectedRows);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        okResult.Value.ShouldBe(expectedAffectedRows);
+    }
+
+    #region TestHelpers
+
+    /// <summary>
+    /// Creates an HTTP request configured for CSV upload with 'authorization' header.
+    /// </summary>
+    /// <param name="authToken">The authorisation token to include in the header</param>
+    /// <param name="csv">The CSV content for the request body</param>
+    /// <returns>Configured HttpRequest for CSV upload</returns>
+    private static HttpRequest CreateCsvUploadRequest(string authToken, string csv) =>
+        HttpRequestHelper.CreateHttpRequestWithHeader("Authorization",
+                                                      authToken,
+                                                      "POST",
+                                                      csv,
+                                                      "text/csv");
+
+    #endregion
 }
