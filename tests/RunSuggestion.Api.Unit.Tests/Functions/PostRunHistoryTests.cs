@@ -6,6 +6,7 @@ using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
+using RunSuggestion.Core.Unit.Tests.TestHelpers.Creators;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
@@ -158,10 +159,11 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
+        string token = Guid.NewGuid().ToString();
         IEnumerable<TrainingPeaksActivity> activities = TrainingPeaksActivityFakes.CreateRandomRuns(csvRows);
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(activities);
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request =
+            HttpRequestHelper.CreateHttpRequestWithHeader("Authorization", $"Bearer {token}", "POST", csv, "text/csv");
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
 
@@ -169,6 +171,6 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockHistoryAdder.Verify(x => x.AddRunHistory(It.IsAny<string>(), csv));
+        _mockHistoryAdder.Verify(x => x.AddRunHistory(It.IsAny<string>(), csv), Times.Once);
     }
 }
