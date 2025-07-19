@@ -45,7 +45,10 @@ public class PostRunHistory
                                LogMessageAuthenticationSuccess,
                                GetLastFiveChars(entraId));
 
-        await _runHistoryAdder.AddRunHistory(entraId, request.Body.ToString());
+        using StreamReader reader = new(request.Body);
+        string csv = await reader.ReadToEndAsync();
+
+        await _runHistoryAdder.AddRunHistory(entraId, csv);
         return new OkObjectResult("Welcome to Azure Functions!");
     }
 
