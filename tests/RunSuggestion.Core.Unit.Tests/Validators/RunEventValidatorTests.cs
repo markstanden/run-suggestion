@@ -1,5 +1,5 @@
 using RunSuggestion.Core.Models.Runs;
-using RunSuggestion.Core.Unit.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 using RunSuggestion.Core.Validators;
 
 namespace RunSuggestion.Core.Unit.Tests.Validators;
@@ -18,10 +18,11 @@ public class RunEventValidatorTests
     public void Validate_WithNullEvents_ThrowsArgumentException()
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = null!; ;
+        IEnumerable<RunEvent> runEvents = null!;
+        ;
 
         // Act
-        var withNullEvents = () => _sut.Validate(runEvents);
+        Func<IEnumerable<string>> withNullEvents = () => _sut.Validate(runEvents);
 
         // Assert
         Exception ex = withNullEvents.ShouldThrow<ArgumentException>();
@@ -33,8 +34,11 @@ public class RunEventValidatorTests
     {
         // Arrange
         DateTime tomorrow = _currentDate.AddDays(1);
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
-            dateTime: tomorrow)];
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunEventFakes.CreateRunEvent(
+                dateTime: tomorrow)
+        ];
 
         // Act
         IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
@@ -52,9 +56,12 @@ public class RunEventValidatorTests
     public void Validate_WithInvalidDistance_ReturnsDistanceError(int invalidDistance)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
-            dateTime: _currentDate,
-            distanceMetres: invalidDistance)];
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunEventFakes.CreateRunEvent(
+                dateTime: _currentDate,
+                distanceMetres: invalidDistance)
+        ];
 
         // Act
         IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
@@ -71,9 +78,12 @@ public class RunEventValidatorTests
     public void Validate_WithInvalidEffort_ReturnsEffortError(byte invalidEffort)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
-            dateTime: _currentDate,
-            effort: invalidEffort)];
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunEventFakes.CreateRunEvent(
+                dateTime: _currentDate,
+                effort: invalidEffort)
+        ];
 
         // Act
         IEnumerable<string> errors = _sut.Validate(runEvents).ToList();
@@ -92,9 +102,12 @@ public class RunEventValidatorTests
     {
         // Arrange
         TimeSpan invalidDurationTimeSpan = TimeSpan.FromSeconds(invalidDuration);
-        IEnumerable<RunEvent> runEvents = [Fakes.CreateRunEvent(
-            dateTime: _currentDate,
-            duration: invalidDurationTimeSpan)];
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunEventFakes.CreateRunEvent(
+                dateTime: _currentDate,
+                duration: invalidDurationTimeSpan)
+        ];
 
         // Act
         IEnumerable<string> errors = _sut.Validate(runEvents).ToList();

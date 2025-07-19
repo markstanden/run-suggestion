@@ -29,7 +29,7 @@ public class CsvToRunHistoryTransformerTests
         IEnumerable<RunEvent> result = _sut.Transform(csv);
 
         // Assert
-        RunEvent runEvent = result.ShouldHaveSingleItem();
+        result.ShouldHaveSingleItem();
     }
 
     [Theory]
@@ -148,5 +148,4 @@ public class CsvToRunHistoryTransformerTests
         // Assert
         results.ShouldBeEmpty();
     }
-
 }
