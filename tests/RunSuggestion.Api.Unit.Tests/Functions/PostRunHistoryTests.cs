@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
@@ -31,14 +32,7 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Run history upload started")),
-                It.IsAny<Exception?>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
+        _mockLogger.ShouldHaveLogged(LogLevel.Information, "Run history upload started");
     }
 
 
@@ -129,13 +123,6 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Warning,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to authenticate user.")),
-                It.IsAny<Exception?>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
+        _mockLogger.ShouldHaveLogged(LogLevel.Warning, "Failed to authenticate user.");
     }
 }
