@@ -4,6 +4,7 @@ using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Unit.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 
 namespace RunSuggestion.Core.Unit.Tests.Transformers;
 

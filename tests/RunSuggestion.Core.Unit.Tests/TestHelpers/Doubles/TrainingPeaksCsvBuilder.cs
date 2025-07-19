@@ -1,7 +1,7 @@
 using System.Globalization;
 using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 
-namespace RunSuggestion.Core.Unit.Tests.TestHelpers;
+namespace RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 
 public class TrainingPeaksCsvBuilder
 {
@@ -107,26 +107,25 @@ public class TrainingPeaksCsvBuilder
         int heartRateMax = DefaultHeartRateMax,
         int rpe = DefaultRpe,
         int feeling = DefaultFeeling
-    )
-    {
-        return AddRow(
-            title: RunningTitle,
-            workoutType: RunningWorkoutType,
-            workoutDay: workoutDay,
-            distanceInMeters: distanceInMeters,
-            totalTimeInHours: totalTimeInHours,
-            heartRateAverage: heartRateAverage,
-            heartRateMax: heartRateMax,
-            rpe: rpe,
-            feeling: feeling
+    ) =>
+        AddRow(
+            RunningTitle,
+            RunningWorkoutType,
+            workoutDay,
+            distanceInMeters,
+            totalTimeInHours,
+            heartRateAverage,
+            heartRateMax,
+            rpe,
+            feeling
         );
-    }
 
     /// <summary>
     /// Private convenience method to create the required TrainingPeaks CSV headers
     /// </summary>
     /// <returns>a string containing the headers only</returns>
-    private static string CreateHeaders() => $"\"{nameof(TrainingPeaksActivity.Title)}\",\"{nameof(TrainingPeaksActivity.WorkoutType)}\",\"{nameof(TrainingPeaksActivity.WorkoutDay)}\",\"{nameof(TrainingPeaksActivity.DistanceInMeters)}\",\"{nameof(TrainingPeaksActivity.TimeTotalInHours)}\",\"{nameof(TrainingPeaksActivity.HeartRateAverage)}\",\"{nameof(TrainingPeaksActivity.HeartRateMax)}\",\"{nameof(TrainingPeaksActivity.Rpe)}\",\"{nameof(TrainingPeaksActivity.Feeling)}\"";
+    private static string CreateHeaders() =>
+        $"\"{nameof(TrainingPeaksActivity.Title)}\",\"{nameof(TrainingPeaksActivity.WorkoutType)}\",\"{nameof(TrainingPeaksActivity.WorkoutDay)}\",\"{nameof(TrainingPeaksActivity.DistanceInMeters)}\",\"{nameof(TrainingPeaksActivity.TimeTotalInHours)}\",\"{nameof(TrainingPeaksActivity.HeartRateAverage)}\",\"{nameof(TrainingPeaksActivity.HeartRateMax)}\",\"{nameof(TrainingPeaksActivity.Rpe)}\",\"{nameof(TrainingPeaksActivity.Feeling)}\"";
 
 
     /// <summary>
@@ -145,11 +144,10 @@ public class TrainingPeaksCsvBuilder
     /// <param name="workoutDay">The date string to parse, default format is TrainingPeaks default (yyyy-MM-dd)</param>
     /// <param name="format">the format of the date string - defaults to use TrainingPeaks default (yyyy-MM-dd)</param>
     /// <returns>DateTime representation of the passed string</returns>
-    public static DateTime ParseWorkoutDay(string workoutDay, string format = TrainingPeaksActivity.WORKOUT_DAY_DATETIME_FORMAT)
-    {
-        return DateTime.ParseExact(
+    public static DateTime ParseWorkoutDay(string workoutDay,
+        string format = TrainingPeaksActivity.WORKOUT_DAY_DATETIME_FORMAT) =>
+        DateTime.ParseExact(
             workoutDay,
             format,
             CultureInfo.InvariantCulture);
-    }
 }
