@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
@@ -182,7 +183,7 @@ public class PostRunHistoryTests
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
         _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync(0);
+            .ReturnsAsync(1);
 
         // Act
         IActionResult result = await _sut.Run(request);
@@ -190,6 +191,27 @@ public class PostRunHistoryTests
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
         okResult.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
+    public async Task
+        PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccessMessageInUploadResponse()
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        HttpRequest request = CreateCsvUploadRequest(authToken, string.Empty);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(EntraIdFakes.CreateEntraId());
+        _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(1);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
+        response.Message.ShouldContain("Success");
     }
 
     [Theory]
@@ -213,7 +235,8 @@ public class PostRunHistoryTests
 
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
-        okResult.Value.ShouldBe(expectedAffectedRows);
+        UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
+        response.RowsAdded.ShouldBe(expectedAffectedRows);
     }
 
     #region TestHelpers

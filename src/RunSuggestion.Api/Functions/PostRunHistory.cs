@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
 
 namespace RunSuggestion.Api.Functions;
@@ -49,7 +50,12 @@ public class PostRunHistory
         string csv = await reader.ReadToEndAsync();
 
         int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
-        return new OkObjectResult(affectedRows);
+        UploadResponse response = new()
+        {
+            Message = "Upload Successful",
+            RowsAdded = affectedRows
+        };
+        return new OkObjectResult(response);
     }
 
     /// <summary>
