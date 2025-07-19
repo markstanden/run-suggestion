@@ -8,7 +8,11 @@ namespace RunSuggestion.Api.Functions;
 
 public class PostRunHistory
 {
-    private const string LogMessageUploadStarted = "Run history upload started";
+    private const string LogMessageUploadStarted = "Run history upload started.";
+    private const string LogMessageAuthenticationFailure = "Failed to authenticate user.";
+
+    private const string AuthorizationHeader = "Authorization";
+
 
     private readonly ILogger<PostRunHistory> _logger;
     private readonly IAuthenticator _authenticator;
@@ -27,11 +31,12 @@ public class PostRunHistory
     {
         _logger.LogInformation(LogMessageUploadStarted);
 
-        string authHeader = request.Headers["Authorization"].ToString();
+        string authHeader = request.Headers[AuthorizationHeader].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)
         {
+            _logger.LogWarning(LogMessageAuthenticationFailure);
             return new UnauthorizedResult();
         }
 
