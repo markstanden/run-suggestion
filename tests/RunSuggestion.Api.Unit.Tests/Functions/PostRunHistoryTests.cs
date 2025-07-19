@@ -114,4 +114,28 @@ public class PostRunHistoryTests
         // Assert
         _mockHistoryAdder.Verify(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
+
+    [Fact]
+    public async Task PostRunHistory_WhenAuthenticationFails_LogsFailedRequestAsWarning()
+    {
+        // Arrange
+        string? nullEntraId = null;
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(nullEntraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to authenticate user.")),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
 }
