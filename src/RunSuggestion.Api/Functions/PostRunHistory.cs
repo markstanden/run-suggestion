@@ -12,6 +12,8 @@ public class PostRunHistory
     private const string LogMessageUploadStarted = "Run history upload started.";
     private const string LogMessageAuthenticationFailure = "Failed to authenticate user.";
     private const string LogMessageAuthenticationSuccess = "Successfully Authenticated user";
+    private const string ResponseSuccess = "Successfully processed CSV";
+
 
     private const string AuthorizationHeader = "Authorization";
 
@@ -52,7 +54,7 @@ public class PostRunHistory
         int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
         UploadResponse response = new()
         {
-            Message = "Upload Successful",
+            Message = ResponseSuccess,
             RowsAdded = affectedRows
         };
         return new OkObjectResult(response);
