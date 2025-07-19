@@ -14,7 +14,8 @@ public class PostRunHistory
     private readonly IAuthenticator _authenticator;
     private readonly IRunHistoryAdder _runHistoryAdder;
 
-    public PostRunHistory(ILogger<PostRunHistory> logger, IAuthenticator authenticator, IRunHistoryAdder runHistoryAdder)
+    public PostRunHistory(ILogger<PostRunHistory> logger, IAuthenticator authenticator,
+        IRunHistoryAdder runHistoryAdder)
     {
         _logger = logger;
         _authenticator = authenticator;
@@ -27,10 +28,14 @@ public class PostRunHistory
         _logger.LogInformation(LogMessageUploadStarted);
 
         string authHeader = request.Headers["Authorization"].ToString();
-        string? entraId = _authenticator.Authenticate(authHeader) ?? string.Empty;
+        string? entraId = _authenticator.Authenticate(authHeader);
 
-        await _runHistoryAdder.AddRunHistory(entraId, string.Empty);        
+        if (entraId is null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        await _runHistoryAdder.AddRunHistory(entraId, string.Empty);
         return new OkObjectResult("Welcome to Azure Functions!");
     }
-
 }
