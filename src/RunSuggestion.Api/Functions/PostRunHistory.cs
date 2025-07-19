@@ -48,8 +48,8 @@ public class PostRunHistory
         using StreamReader reader = new(request.Body);
         string csv = await reader.ReadToEndAsync();
 
-        await _runHistoryAdder.AddRunHistory(entraId, csv);
-        return new OkObjectResult("Welcome to Azure Functions!");
+        int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
+        return new OkObjectResult(affectedRows);
     }
 
     /// <summary>
