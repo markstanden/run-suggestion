@@ -45,7 +45,7 @@ public class PostRunHistory
                                LogMessageAuthenticationSuccess,
                                GetLastFiveChars(entraId));
 
-        await _runHistoryAdder.AddRunHistory(entraId, string.Empty);
+        await _runHistoryAdder.AddRunHistory(entraId, request.Body.ToString());
         return new OkObjectResult("Welcome to Azure Functions!");
     }
 
