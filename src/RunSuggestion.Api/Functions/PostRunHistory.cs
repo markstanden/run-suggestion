@@ -63,7 +63,7 @@ public class PostRunHistory
             };
             return new OkObjectResult(response);
         }
-        catch (Exception ex)
+        catch (ArgumentException ex)
         {
             _logger.LogWarning("{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
                                MessageFailure,
@@ -75,6 +75,13 @@ public class PostRunHistory
                 RowsAdded = 0
             };
             return new BadRequestObjectResult(errorResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("{FailureMessage}: {ExceptionMessage}",
+                             MessageFailure,
+                             ex.Message);
+            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }
 
