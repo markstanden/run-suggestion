@@ -61,12 +61,7 @@ public class PostRunHistoryIntegrationTests
         string entraId = SetupAuthenticatorMock(authToken);
 
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
-        HttpRequest request = HttpRequestHelper.CreateHttpRequestWithHeader(
-            "Authorization",
-            authToken,
-            "POST",
-            csv,
-            "text/csv");
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
 
         // Act
         IActionResult result = await _sut.Run(request);
