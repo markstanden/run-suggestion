@@ -9,10 +9,12 @@ namespace RunSuggestion.Api.Functions;
 
 public class PostRunHistory
 {
-    private const string LogMessageUploadStarted = "Run history upload started.";
-    private const string LogMessageAuthenticationFailure = "Failed to authenticate user.";
-    private const string LogMessageAuthenticationSuccess = "Successfully Authenticated user";
-    private const string ResponseSuccess = "Successfully processed CSV";
+    private const string MessageUploadStarted = "Run history upload started.";
+    private const string MessageAuthenticationFailure = "Failed to authenticate user.";
+    private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
+    private const string MessageInvalidCsvContent = "Invalid CSV content";
+    private const string MessageSuccess = "Successfully processed CSV";
+    private const string MessageFailure = "CSV Import Failed";
 
 
     private const string AuthorizationHeader = "Authorization";
@@ -33,31 +35,47 @@ public class PostRunHistory
     [Function("PostRunHistory")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
-        _logger.LogInformation(LogMessageUploadStarted);
+        _logger.LogInformation(MessageUploadStarted);
 
         string authHeader = request.Headers[AuthorizationHeader].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)
         {
-            _logger.LogWarning(LogMessageAuthenticationFailure);
+            _logger.LogWarning(MessageAuthenticationFailure);
             return new UnauthorizedResult();
         }
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
-                               LogMessageAuthenticationSuccess,
+                               MessageAuthenticationSuccess,
                                GetLastFiveChars(entraId));
 
         using StreamReader reader = new(request.Body);
         string csv = await reader.ReadToEndAsync();
 
-        int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
-        UploadResponse response = new()
+        try
         {
-            Message = ResponseSuccess,
-            RowsAdded = affectedRows
-        };
-        return new OkObjectResult(response);
+            int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
+            UploadResponse response = new()
+            {
+                Message = MessageSuccess,
+                RowsAdded = affectedRows
+            };
+            return new OkObjectResult(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning("{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
+                               MessageFailure,
+                               MessageInvalidCsvContent,
+                               ex.Message);
+            UploadResponse errorResponse = new()
+            {
+                Message = $"{MessageFailure}: {MessageInvalidCsvContent}",
+                RowsAdded = 0
+            };
+            return new BadRequestObjectResult(errorResponse);
+        }
     }
 
     /// <summary>
