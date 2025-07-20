@@ -319,6 +319,45 @@ public class PostRunHistoryTests
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "CSV Import Failed", exceptionMessage);
     }
 
+    [Fact]
+    public async Task PostRunHistory_WhenHistoryAdderThrowsGeneralException_ReturnsGeneric500InternalServerError()
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string exceptionMessage = "Database connection failed";
+        HttpRequest request = CreateCsvUploadRequest(authToken, string.Empty);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(EntraIdFakes.CreateEntraId());
+        _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
+            .Throws(new Exception(exceptionMessage));
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        StatusCodeResult statusResult = result.ShouldBeOfType<StatusCodeResult>();
+        statusResult.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+    }
+
+    [Fact]
+    public async Task PostRunHistory_WhenHistoryAdderThrowsGeneralException_LogsErrorWithException()
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string exceptionMessage = "Database connection failed";
+        HttpRequest request = CreateCsvUploadRequest(authToken, string.Empty);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(EntraIdFakes.CreateEntraId());
+        _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
+            .Throws(new Exception(exceptionMessage));
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Error, "CSV Import Failed", exceptionMessage);
+    }
+
     #region TestHelpers
 
     /// <summary>
