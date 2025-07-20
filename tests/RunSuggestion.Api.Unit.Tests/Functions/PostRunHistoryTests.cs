@@ -239,8 +239,12 @@ public class PostRunHistoryTests
         response.RowsAdded.ShouldBe(expectedAffectedRows);
     }
 
-    [Fact]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequest()
+    [Theory]
+    [InlineData("Invalid Duration")]
+    [InlineData("Invalid Distance")]
+    [InlineData("Invalid Date")]
+    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
+        string exceptionMessage)
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -248,7 +252,7 @@ public class PostRunHistoryTests
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
         _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
-            .Throws(new ArgumentException());
+            .Throws(new ArgumentException(exceptionMessage));
 
         // Act
         IActionResult result = await _sut.Run(request);
@@ -258,6 +262,7 @@ public class PostRunHistoryTests
         badRequestResult.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         UploadResponse response = badRequestResult.Value.ShouldBeOfType<UploadResponse>();
         response.Message.ShouldContain("Invalid CSV");
+        response.Message.ShouldContain(exceptionMessage);
         response.RowsAdded.ShouldBe(0);
     }
 
@@ -276,7 +281,29 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "CSV Import Failed", "Invalid CSV content");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "CSV Import Failed");
+    }
+
+    [Theory]
+    [InlineData("Invalid Duration")]
+    [InlineData("Invalid Distance")]
+    [InlineData("Invalid Date")]
+    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
+        string exceptionMessage)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        HttpRequest request = CreateCsvUploadRequest(authToken, string.Empty);
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(EntraIdFakes.CreateEntraId());
+        _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
+            .Throws(new ArgumentException(exceptionMessage));
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "CSV Import Failed", exceptionMessage);
     }
 
     #region TestHelpers
