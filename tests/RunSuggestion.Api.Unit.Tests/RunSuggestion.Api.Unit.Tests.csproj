@@ -27,7 +27,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\RunSuggestion.Api\RunSuggestion.Api.csproj"/>
-        <ProjectReference Include="..\RunSuggestion.Core.Unit.Tests\RunSuggestion.Core.Unit.Tests.csproj"/>
+        <ProjectReference Include="..\RunSuggestion.TestHelpers\RunSuggestion.TestHelpers.csproj"/>
     </ItemGroup>
 
 </Project>

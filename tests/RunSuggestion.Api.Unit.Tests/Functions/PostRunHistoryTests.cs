@@ -7,8 +7,7 @@ using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Creators;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
+using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 

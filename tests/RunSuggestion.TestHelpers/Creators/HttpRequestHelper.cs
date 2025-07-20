@@ -1,8 +1,8 @@
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using System.Text;
 
-namespace RunSuggestion.Core.Unit.Tests.TestHelpers.Creators;
+namespace RunSuggestion.TestHelpers.Creators;
 
 /// <summary>
 /// Helper class for creating test HTTP requests.
@@ -64,14 +64,12 @@ public static class HttpRequestHelper
         string headerValue,
         string method = "GET",
         string? body = null,
-        string contentType = "application/json")
-    {
-        return CreateHttpRequest(
+        string contentType = "application/json") =>
+        CreateHttpRequest(
             headers: new Dictionary<string, StringValues> { [headerName] = headerValue },
             method: method,
             body: body,
             contentType: contentType);
-    }
 
     /// <summary>
     /// Creates the necessary body content components for an HTTP request from a string.

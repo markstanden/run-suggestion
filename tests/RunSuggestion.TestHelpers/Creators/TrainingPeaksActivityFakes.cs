@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 
-namespace RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
+namespace RunSuggestion.TestHelpers.Creators;
 
 public static class TrainingPeaksActivityFakes
 {

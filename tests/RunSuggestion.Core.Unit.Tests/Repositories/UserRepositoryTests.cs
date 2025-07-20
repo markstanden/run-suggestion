@@ -1,7 +1,7 @@
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
+using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Repositories;
 
