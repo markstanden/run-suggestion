@@ -39,12 +39,25 @@ public class PostRunHistoryTests
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, "Run history upload started");
     }
 
+    [Fact]
+    public async Task PostRunHistory_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
+    {
+        // Arrange
+        DefaultHttpContext context = new();
+        HttpRequest request = new DefaultHttpRequest(context);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockAuthenticator.Verify(x => x.Authenticate(string.Empty), Times.Once);
+    }
 
     [Theory]
     [InlineData("Bearer fake-token-12345")]
     [InlineData("Bearer fake-token-with-different-format")]
     [InlineData("Bearer 00fake00token00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenCalled_CallsAuthenticatorWithAuthorizationHeader(string authToken)
+    public async Task PostRunHistory_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
         DefaultHttpContext context = new();
