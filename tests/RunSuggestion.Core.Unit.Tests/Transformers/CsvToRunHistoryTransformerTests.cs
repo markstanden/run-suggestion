@@ -1,9 +1,10 @@
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Models.Runs;
-using RunSuggestion.Core.Models.Runs.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Unit.Tests.TestHelpers;
+using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 
 namespace RunSuggestion.Core.Unit.Tests.Transformers;
 
@@ -29,7 +30,7 @@ public class CsvToRunHistoryTransformerTests
         IEnumerable<RunEvent> result = _sut.Transform(csv);
 
         // Assert
-        RunEvent runEvent = result.ShouldHaveSingleItem();
+        result.ShouldHaveSingleItem();
     }
 
     [Theory]
@@ -40,7 +41,7 @@ public class CsvToRunHistoryTransformerTests
     {
         // Arrange
         DateTime expectedDate = new(year, month, day);
-        string dateString = expectedDate.ToString(TrainingPeaksActivity.WORKOUT_DAY_DATETIME_FORMAT);
+        string dateString = expectedDate.ToString(TrainingPeaksActivity.WorkoutDayDatetimeFormat);
         string csv = new TrainingPeaksCsvBuilder()
             .AddRunningRow(dateString)
             .Build();
@@ -148,5 +149,4 @@ public class CsvToRunHistoryTransformerTests
         // Assert
         results.ShouldBeEmpty();
     }
-
 }
