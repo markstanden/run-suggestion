@@ -1,4 +1,6 @@
-namespace RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
+using RunSuggestion.Core.Models.Runs;
+
+namespace RunSuggestion.TestHelpers.Creators;
 
 public static class RunEventFakes
 {
@@ -13,7 +15,7 @@ public static class RunEventFakes
     /// <param name="effort">The effort score for the run (1-10), defaults to 5</param>
     /// <param name="duration">The duration of the event as a TimeSpan.  Defaults to 30mins</param>
     /// <returns>RunEvent</returns>
-    public static Models.Runs.RunEvent CreateRunEvent(
+    public static RunEvent CreateRunEvent(
         int? userId = null,
         DateTime? dateTime = null,
         int? distanceMetres = null,
@@ -32,7 +34,7 @@ public static class RunEventFakes
     /// </summary>
     /// <param name="count">The number of RunEvents to return, defaults to 1</param>
     /// <returns>Collection of RunEvents with 'count' items</returns>
-    public static IEnumerable<Models.Runs.RunEvent> CreateRunEvents(int count = 1)
+    public static IEnumerable<RunEvent> CreateRunEvents(int count = 1)
     {
         return Enumerable.Range(0, count)
             .Select(_ => CreateRunEvent());

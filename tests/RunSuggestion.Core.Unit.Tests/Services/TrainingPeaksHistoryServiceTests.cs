@@ -2,8 +2,7 @@ using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Services;
-using RunSuggestion.Core.Unit.Tests.TestHelpers;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
+using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;
 
@@ -211,7 +210,7 @@ public class TrainingPeaksHistoryServiceTests
             .Returns([error]);
 
         // Act
-        Func<Task<int>> withInvalidRunEvents = async () => await _sut.AddRunHistory(validEntraId, validCsv!);
+        Func<Task<int>> withInvalidRunEvents = async () => await _sut.AddRunHistory(validEntraId, validCsv);
 
         // Assert
         Exception ex = await withInvalidRunEvents.ShouldThrowAsync<ArgumentException>();

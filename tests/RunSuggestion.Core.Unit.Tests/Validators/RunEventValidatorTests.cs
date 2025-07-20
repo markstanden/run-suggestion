@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Models.Runs;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
 using RunSuggestion.Core.Validators;
+using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Validators;
 

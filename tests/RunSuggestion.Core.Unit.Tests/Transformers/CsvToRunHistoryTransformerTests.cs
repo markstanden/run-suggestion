@@ -3,8 +3,7 @@ using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
-using RunSuggestion.Core.Unit.Tests.TestHelpers;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Doubles;
+using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Transformers;
 
