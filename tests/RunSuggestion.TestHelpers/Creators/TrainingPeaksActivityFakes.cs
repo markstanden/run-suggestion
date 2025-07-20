@@ -34,9 +34,10 @@ public static class TrainingPeaksActivityFakes
     /// Creates a collection of fake TrainingPeaksActivities
     /// </summary>
     /// <param name="count">Number of activities to create</param>
+    /// <param name="dateOffset">The offset for all dates in the collection - negative offset will produce dates in the future.</param>
     /// <returns>Collection of fake TrainingPeaksActivities</returns>
-    public static IEnumerable<TrainingPeaksActivity> CreateRandomRuns(int count)
+    public static IEnumerable<TrainingPeaksActivity> CreateRandomRuns(int count, int dateOffset = 0)
     {
-        return Enumerable.Range(0, count).Select(index => CreateRandomRun(index));
+        return Enumerable.Range(0, count).Select(index => CreateRandomRun(index + dateOffset));
     }
 }

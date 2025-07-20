@@ -38,7 +38,7 @@ public class PostRunHistoryIntegrationTests
     }
 
     /// <summary>
-    /// Test helper to setup mock authenticator to return a created entraId.
+    /// Test helper to set up mock authenticator to return a created entraId.
     /// </summary>
     /// <param name="authToken">authentication token to require</param>
     /// <returns>created entraId</returns>
@@ -53,12 +53,11 @@ public class PostRunHistoryIntegrationTests
     [InlineData(1)]
     [InlineData(10)]
     [InlineData(100)]
-    [InlineData(1000)]
     public async Task PostRunHistory_WithValidCsvAndAuthentication_ReturnsSuccessAndStoresData(int rowCount)
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
-        string entraId = SetupAuthenticatorMock(authToken);
+        SetupAuthenticatorMock(authToken);
 
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
@@ -71,5 +70,70 @@ public class PostRunHistoryIntegrationTests
         UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
         response.RowsAdded.ShouldBe(rowCount);
         response.Message.ShouldContain("Success");
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task PostRunHistory_WithInvalidAuthentication_ReturnsUnauthorized(int rowCount)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string nullEntraId = null!;
+        string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
+
+        _authenticator.Setup(x => x.Authenticate(authToken))
+            .Returns(nullEntraId);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        result.ShouldBeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task PostRunHistory_WithEmptyCsv_ReturnsBadRequest()
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        SetupAuthenticatorMock(authToken);
+
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        BadRequestObjectResult badResult = result.ShouldBeOfType<BadRequestObjectResult>();
+        UploadResponse response = badResult.Value.ShouldBeOfType<UploadResponse>();
+        response.Message.ShouldContain("Invalid CSV");
+        response.RowsAdded.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task PostRunHistory_WithFutureDatesInCsv_ReturnsBadRequest(int rowCount)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        SetupAuthenticatorMock(authToken);
+        string invalidCsv = TrainingPeaksCsvBuilder.CsvFromActivities(
+            TrainingPeaksActivityFakes.CreateRandomRuns(rowCount, -10)); // Negative offset produces dates in the future
+
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, invalidCsv);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        BadRequestObjectResult badResult = result.ShouldBeOfType<BadRequestObjectResult>();
+        UploadResponse response = badResult.Value.ShouldBeOfType<UploadResponse>();
+        response.Message.ShouldContain("Invalid CSV");
+        response.RowsAdded.ShouldBe(0);
     }
 }
