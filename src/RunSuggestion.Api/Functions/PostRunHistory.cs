@@ -71,7 +71,7 @@ public class PostRunHistory
                                ex.Message);
             UploadResponse errorResponse = new()
             {
-                Message = $"{MessageFailure}: {MessageInvalidCsvContent}",
+                Message = $"{MessageFailure}: {MessageInvalidCsvContent} - {ex.Message}",
                 RowsAdded = 0
             };
             return new BadRequestObjectResult(errorResponse);
