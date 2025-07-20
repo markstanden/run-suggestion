@@ -335,8 +335,11 @@ public class PostRunHistoryTests
         IActionResult result = await _sut.Run(request);
 
         // Assert
-        StatusCodeResult statusResult = result.ShouldBeOfType<StatusCodeResult>();
-        statusResult.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+        ObjectResult objectResult = result.ShouldBeOfType<ObjectResult>();
+        objectResult.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+        UploadResponse response = objectResult.Value.ShouldBeOfType<UploadResponse>();
+        response.Message.ShouldBe("An unexpected error occurred");
+        response.RowsAdded.ShouldBe(0);
     }
 
     [Fact]

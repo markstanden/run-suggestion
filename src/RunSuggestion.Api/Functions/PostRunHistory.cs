@@ -13,6 +13,7 @@ public class PostRunHistory
     private const string MessageAuthenticationFailure = "Failed to authenticate user.";
     private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
     private const string MessageInvalidCsvContent = "Invalid CSV content";
+    private const string MessageUnexpectedError = "An unexpected error occurred";
     private const string MessageSuccess = "Successfully processed CSV";
     private const string MessageFailure = "CSV Import Failed";
 
@@ -81,7 +82,15 @@ public class PostRunHistory
             _logger.LogError("{FailureMessage}: {ExceptionMessage}",
                              MessageFailure,
                              ex.Message);
-            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            UploadResponse errorResponse = new()
+            {
+                Message = MessageUnexpectedError,
+                RowsAdded = 0
+            };
+            return new ObjectResult(errorResponse)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
         }
     }
 
