@@ -72,7 +72,7 @@ public static class HttpRequestHelper
             body: body,
             contentType: contentType);
     }
-    
+
     /// <summary>
     /// Creates the necessary body content components for an HTTP request from a string.
     /// </summary>
