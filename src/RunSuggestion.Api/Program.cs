@@ -1,6 +1,7 @@
 ﻿using RunSuggestion.Core.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using RunSuggestion.Core.Constants;
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
@@ -11,6 +12,8 @@ IHost host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices((context, services) =>
     {
+        string connectionString = context.Configuration[DatabaseConstants.SqliteConnection.Key] ??
+                                  DatabaseConstants.SqliteConnection.Default;
         services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
         services.AddScoped<IAuthenticator, AuthenticationService>();
         services.AddScoped<ICsvParser, CsvParser>();
