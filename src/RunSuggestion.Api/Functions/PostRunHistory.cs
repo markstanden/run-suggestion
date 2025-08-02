@@ -17,9 +17,7 @@ public class PostRunHistory
     private const string MessageSuccess = "Successfully processed CSV";
     private const string MessageFailure = "CSV Import Failed";
 
-
     private const string AuthorizationHeader = "Authorization";
-
 
     private readonly ILogger<PostRunHistory> _logger;
     private readonly IAuthenticator _authenticator;
@@ -28,9 +26,9 @@ public class PostRunHistory
     public PostRunHistory(ILogger<PostRunHistory> logger, IAuthenticator authenticator,
         IRunHistoryAdder runHistoryAdder)
     {
-        _logger = logger;
-        _authenticator = authenticator;
-        _runHistoryAdder = runHistoryAdder;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
+        _runHistoryAdder = runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
     }
 
     [Function("PostRunHistory")]

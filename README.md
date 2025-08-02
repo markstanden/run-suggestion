@@ -47,7 +47,7 @@ design.
 #### DevContainer
 
 Docker-based development environment to provide reliable, repeatable compilation and testing of the project independent
-of users machines.
+of users` machines.
 
 - [Docker](https://docs.docker.com/desktop/)
 - [VSCode](https://code.visualstudio.com/download)

@@ -5,7 +5,8 @@ using RunSuggestion.Core.Models.Users;
 namespace RunSuggestion.Core.Services;
 
 /// <summary>
-/// Orchestrator of the data ingestion, the history service handles 
+/// Orchestrator of the data ingestion, the history service handles creation of new users if required,
+/// and transforms and adds run history.
 /// </summary>
 public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
@@ -13,11 +14,13 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
     private readonly IUserRepository _userRepository;
     private readonly IValidator<RunEvent> _validator;
 
-    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer, IValidator<RunEvent> validator)
+    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer,
+        IValidator<RunEvent> validator)
     {
-        _runHistoryTransformer = runHistoryTransformer;
-        _userRepository = userRepository;
-        _validator = validator;
+        _runHistoryTransformer =
+            runHistoryTransformer ?? throw new ArgumentNullException(nameof(runHistoryTransformer));
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
 
     /// <inheritdoc />
@@ -28,13 +31,13 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
             throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
         }
 
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
+
         if (string.IsNullOrWhiteSpace(historyCsv))
         {
             throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(historyCsv));
         }
-
-        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
-        int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
 
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
 

@@ -26,7 +26,8 @@ public class UserRepository : IUserRepository
     /// <param name="connectionString">Dependency injected connection string allows for different databases to be used in testing</param>
     public UserRepository(string connectionString)
     {
-        _connection = new SqliteConnection(connectionString);
+        _connection =
+            new SqliteConnection(connectionString ?? throw new ArgumentNullException(nameof(connectionString)));
         InitializeDatabase();
     }
 
@@ -122,14 +123,14 @@ public class UserRepository : IUserRepository
         var insertParameters = runEvents
             .Where(runEvent => runEvent is not null)
             .Select(runEvent =>
-            new
-            {
-                UserId = userId,
-                Date = runEvent?.Date,
-                Distance = runEvent?.Distance,
-                Effort = runEvent?.Effort,
-                Duration = runEvent?.Duration.Ticks
-            });
+                        new
+                        {
+                            UserId = userId,
+                            Date = runEvent?.Date,
+                            Distance = runEvent?.Distance,
+                            Effort = runEvent?.Effort,
+                            Duration = runEvent?.Duration.Ticks
+                        });
 
         try
         {
@@ -150,7 +151,7 @@ public class UserRepository : IUserRepository
         ValidateUserId(userId);
 
         // Dapper's QueryAsync method returns a collection of the database model
-        var queryResult = await _connection.QueryAsync(
+        IEnumerable<dynamic> queryResult = await _connection.QueryAsync(
             SqlQueries.SelectRunEventsSql,
             new { UserId = userId });
 
@@ -177,7 +178,9 @@ public class UserRepository : IUserRepository
     {
         if (userId <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, "Invalid UserId - must be a positive integer");
+            throw new ArgumentOutOfRangeException(nameof(userId),
+                                                  userId,
+                                                  "Invalid UserId - must be a positive integer");
         }
     }
 

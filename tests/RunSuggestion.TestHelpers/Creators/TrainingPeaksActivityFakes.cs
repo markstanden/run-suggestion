@@ -4,7 +4,7 @@ namespace RunSuggestion.TestHelpers.Creators;
 
 public static class TrainingPeaksActivityFakes
 {
-    private const int DefaultDateSpread = 2;
+    public const int DefaultDateSpread = 2;
 
     /// <summary>
     /// Creates a fake TrainingPeaksActivity with sensible defaults and some randomization
