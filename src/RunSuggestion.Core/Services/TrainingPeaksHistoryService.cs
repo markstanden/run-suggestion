@@ -17,9 +17,10 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
     public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer,
         IValidator<RunEvent> validator)
     {
-        _runHistoryTransformer = runHistoryTransformer;
-        _userRepository = userRepository;
-        _validator = validator;
+        _runHistoryTransformer =
+            runHistoryTransformer ?? throw new ArgumentNullException(nameof(runHistoryTransformer));
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
 
     /// <inheritdoc />

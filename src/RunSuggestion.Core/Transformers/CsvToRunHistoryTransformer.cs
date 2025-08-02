@@ -20,7 +20,7 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
     /// <param name="csvParser">Instance of ICsvParser dependency injected into the constructor on initialisation.</param>
     public CsvToRunHistoryTransformer(ICsvParser csvParser)
     {
-        _csvParser = csvParser;
+        _csvParser = csvParser ?? throw new ArgumentNullException(nameof(csvParser));
     }
 
     /// <summary>
