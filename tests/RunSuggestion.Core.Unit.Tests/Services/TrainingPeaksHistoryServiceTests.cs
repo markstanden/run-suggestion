@@ -54,6 +54,40 @@ public class TrainingPeaksHistoryServiceTests
         ex.Message.ShouldContain("csv");
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public async Task AddRunHistory_WithInvalidCsv_CreatesUser(string? invalidCsv)
+    {
+        // Arrange
+        string validEntraId = EntraIdFakes.CreateEntraId();
+
+        // Act
+        Func<Task<int>> withInvalidCsv = async () => await _sut.AddRunHistory(validEntraId, invalidCsv!);
+        await withInvalidCsv.ShouldThrowAsync<ArgumentException>();
+
+        // Assert
+        _mockRepository.Verify(x => x.CreateUserAsync(validEntraId), Times.Once);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public async Task AddRunHistory_WithInvalidCsv_DoesNotCallTransformerWithInvalidCsv(string? invalidCsv)
+    {
+        // Arrange
+        string validEntraId = EntraIdFakes.CreateEntraId();
+
+        // Act
+        Func<Task<int>> withInvalidCsv = async () => await _sut.AddRunHistory(validEntraId, invalidCsv!);
+        await withInvalidCsv.ShouldThrowAsync<ArgumentException>();
+
+        // Assert
+        _mockTransformer.Verify(x => x.Transform(invalidCsv!), Times.Never);
+    }
+
     [Fact]
     public async Task AddRunHistory_WhenPassedValidCsv_CallsTransformerOnceWithPassedCsv()
     {
@@ -223,21 +257,14 @@ public class TrainingPeaksHistoryServiceTests
     {
         // Arrange
         string validEntraId = EntraIdFakes.CreateEntraId();
-        string validCsv = new TrainingPeaksCsvBuilder().Build();
+        string invalidCsv = new TrainingPeaksCsvBuilder().Build();
 
         _mockValidator.Setup(x => x.Validate(It.IsAny<IEnumerable<RunEvent>>()))
             .Returns(["Any validation error"]);
 
         // Act
-        try
-        {
-            await _sut.AddRunHistory(validEntraId, validCsv);
-        }
-        catch (ArgumentException)
-        {
-            // This should throw, but I don't want to assert that as part of this test,
-            // as I need to check that the actual assertion below fails.
-        }
+        Func<Task<int>> withInvalidCsv = async () => await _sut.AddRunHistory(validEntraId, invalidCsv);
+        await withInvalidCsv.ShouldThrowAsync<ArgumentException>();
 
         // Assert
         _mockRepository.Verify(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()),

@@ -1,6 +1,7 @@
 # Run Suggestion Engine
 
-A running recommendation engine built on Azure Functions, built using TDD in sprint like iterations.
+A running recommendation engine built on Azure Functions, built using TDD practices, to an initial pre-designed UML
+design.
 
 ## Project Structure
 
@@ -40,45 +41,63 @@ A running recommendation engine built on Azure Functions, built using TDD in spr
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [Azure Functions Core](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local)
 - [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
 #### DevContainer
 
-Docker-based development environment to provide reliable, repeatable compilation and testing of the project independent of users machines.
+Docker-based development environment to provide reliable, repeatable compilation and testing of the project independent
+of users` machines.
 
 - [Docker](https://docs.docker.com/desktop/)
 - [VSCode](https://code.visualstudio.com/download)
 
 ### Infrastructure Management
 
-This project uses [terraform-tools](https://github.com/markstanden/terraform-tools) for managing Terraform commands.  Although not required, it simplifies the creation of infrastructure by sourcing environment variables when working locally.
+This project uses [terraform-tools](https://github.com/markstanden/terraform-tools) for managing Terraform commands.
+Although not required, it simplifies the creation of infrastructure by sourcing environment variables when working
+locally.
 
-This is a personal workaround for the following [terraform issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/27423)
+This is a personal workaround for the
+following [terraform issue](https://github.com/hashicorp/terraform-provider-azurerm/issues/27423)
 
 ## Getting Started
 
 1. Clone the repository
-2. Initialize the infrastructure:
-   ```bash
-   tf init
-   ```
+2. Copy the local settings template:
+
+    ```bash
+    cp src/RunSuggestion.Api/local.settings.template.json src/RunSuggestion.Api/local.settings.json
+    ```
+
 3. Build the solution:
+
    ```bash
    dotnet build
    ```
+
 4. Run tests:
+
    ```bash
    dotnet test
    ```
 
+5. Run the project
+
+    ```bash
+   func host start 
+   ```
+
 ## CI/CD Pipeline
 
-This project uses GitHub Actions to automate basic quality checks, with the pipeline running on pushes or PRs to 
+This project uses GitHub Actions to automate basic quality checks, with the pipeline running on pushes or PRs to
+
 - `main`
 - `dev`
 - `prod`
 
-The pipeline jobs are held in my [coding-standards repo](https://github.com/markstanden/coding-standards), allowing for usage across multiple projects.
+The pipeline jobs are held in my [coding-standards repo](https://github.com/markstanden/coding-standards), allowing for
+usage across multiple projects.
 
 - **Format Check**: Enforces code formatting standards using `.editorconfig` and dotnet's built in code formatter:
    ```bash
@@ -90,7 +109,7 @@ The pipeline jobs are held in my [coding-standards repo](https://github.com/mark
    dotnet build
    ```
 
-- **Unit Tests**: Runs all tests marked with `[Trait("Category", "Unit")]`
+- **Unit Tests**: Runs all tests in all test projects without the suffix `Integration.Tests`
    ```bash
-   dotnet test --filter "Category=Unit"
+   dotnet test --filter "Category!=Integration&FullyQualifiedName!~Integration.Tests"
    ```
