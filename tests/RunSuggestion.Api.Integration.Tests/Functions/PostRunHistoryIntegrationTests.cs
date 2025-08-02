@@ -11,14 +11,15 @@ using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
-using RunSuggestion.TestHelpers.Constants;
 using RunSuggestion.TestHelpers.Creators;
+using static RunSuggestion.TestHelpers.Constants.NonFunctionalRequirements;
 
 namespace RunSuggestion.Api.Integration.Tests.Functions;
 
 public class PostRunHistoryIntegrationTests
 {
-    private const int MaxFunctionRunTimeMs = NonFunctionalRequirements.ApiResponse.MaxUploadFunctionRunTimeMs;
+    private readonly TimeSpan _maxTestThresholdTime = TimeSpan.FromMilliseconds(
+        GetTestThreshold(ApiResponse.MaxUploadFunctionRunTimeMs));
 
     private readonly Mock<ILogger<PostRunHistory>> _mockLogger = new();
     private readonly Mock<IAuthenticator> _authenticator = new();
@@ -101,7 +102,7 @@ public class PostRunHistoryIntegrationTests
         response.RowsAdded.ShouldBe(rowCount);
         // Test that the ingestion takes less than the time permitted by the non-functional requirements
         response.Message.ShouldContain("Success");
-        stopwatch.ElapsedMilliseconds.ShouldBeLessThanOrEqualTo(MaxFunctionRunTimeMs);
+        stopwatch.Elapsed.ShouldBeLessThanOrEqualTo(_maxTestThresholdTime);
     }
 
     [Theory]

@@ -7,11 +7,20 @@ namespace RunSuggestion.TestHelpers.Constants;
 public static class NonFunctionalRequirements
 {
     /// <summary>
-    /// 
+    /// Test threshold percentage, reduces allowable thresholds to
+    /// this fraction to ensure requirements are comfortably met. 
     /// </summary>
-    private const double ConfidenceBufferRatio = 0.33;
+    private const double TestThresholdPercent = 0.50;
 
     /// <summary>
+    /// Converts the nfr value using the test threshold constant to ensure NFRs are met with a
+    /// high degree of certainty
+    /// </summary>
+    /// <param name="nfr">The non-functional requirement value to reduce to the TestThreshold value</param>
+    /// <returns>The adjusted test threshold value of the nfr for test purposes</returns>
+    public static double GetTestThreshold(int nfr) => nfr * TestThresholdPercent;
+
+    /// <summary> 
     /// Performance requirements for API response times
     /// </summary>
     public static class ApiResponse
