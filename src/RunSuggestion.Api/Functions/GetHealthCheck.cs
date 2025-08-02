@@ -18,7 +18,7 @@ public class GetHealthCheck
     }
 
     [Function("HealthCheck")]
-    public IActionResult HealthCheck([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+    public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
         _logger.LogInformation(RequestReceivedLog);
         return new OkObjectResult(HealthCheckResponse);
