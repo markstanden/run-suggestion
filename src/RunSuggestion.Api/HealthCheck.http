@@ -1,0 +1,4 @@
+### Health Check Test
+GET http://localhost:7071/api/HealthCheck
+
+###
