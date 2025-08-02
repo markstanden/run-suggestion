@@ -11,12 +11,15 @@ using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
+using RunSuggestion.TestHelpers.Constants;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Integration.Tests.Functions;
 
 public class PostRunHistoryIntegrationTests
 {
+    private const int MaxFunctionRunTimeMs = NonFunctionalRequirements.ApiResponse.MaxUploadFunctionRunTimeMs;
+
     private readonly Mock<ILogger<PostRunHistory>> _mockLogger = new();
     private readonly Mock<IAuthenticator> _authenticator = new();
 
@@ -74,10 +77,10 @@ public class PostRunHistoryIntegrationTests
     }
 
     [Theory]
-    [InlineData(1000, 10000)] // 1,000 run events would be nearly 3 years of daily runs
-    [InlineData(10000, 10000)] // 10,000 run events would be nearly 30 years of daily runs!
+    [InlineData(1000)] // 1,000 run events would be nearly 3 years of daily runs
+    [InlineData(10000)] // 10,000 run events would be nearly 30 years of daily runs!
     public async Task PostRunHistory_WithValidLargeCsvAndAuthentication_ReturnsSuccessAndStoresDataWithinPermittedTime(
-        int rowCount, int nfrMaxPermittedRequestDurationMs = 10000)
+        int rowCount)
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -92,11 +95,13 @@ public class PostRunHistoryIntegrationTests
 
         // Assert
         stopwatch.Stop();
+        // Test that the ingestion succeeds, as a failed import may return early giving a false positive
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
         UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
         response.RowsAdded.ShouldBe(rowCount);
+        // Test that the ingestion takes less than the time permitted by the non-functional requirements
         response.Message.ShouldContain("Success");
-        stopwatch.ElapsedMilliseconds.ShouldBeLessThanOrEqualTo(nfrMaxPermittedRequestDurationMs);
+        stopwatch.ElapsedMilliseconds.ShouldBeLessThanOrEqualTo(MaxFunctionRunTimeMs);
     }
 
     [Theory]
