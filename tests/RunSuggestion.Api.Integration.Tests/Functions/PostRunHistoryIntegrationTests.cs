@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -70,6 +71,32 @@ public class PostRunHistoryIntegrationTests
         UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
         response.RowsAdded.ShouldBe(rowCount);
         response.Message.ShouldContain("Success");
+    }
+
+    [Theory]
+    [InlineData(1000, 10000)] // 1,000 run events would be nearly 3 years of daily runs
+    [InlineData(10000, 10000)] // 10,000 run events would be nearly 30 years of daily runs!
+    public async Task PostRunHistory_WithValidLargeCsvAndAuthentication_ReturnsSuccessAndStoresDataWithinPermittedTime(
+        int rowCount, int nfrMaxPermittedRequestDurationMs = 10000)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        SetupAuthenticatorMock(authToken);
+
+        string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        stopwatch.Stop();
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
+        response.RowsAdded.ShouldBe(rowCount);
+        response.Message.ShouldContain("Success");
+        stopwatch.ElapsedMilliseconds.ShouldBeLessThanOrEqualTo(nfrMaxPermittedRequestDurationMs);
     }
 
     [Theory]
