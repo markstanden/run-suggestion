@@ -145,6 +145,36 @@ public class PostRunHistoryIntegrationTests
         userData.ShouldBeNull();
     }
 
+    [Theory]
+    [InlineData(1, 1, 1)]
+    [InlineData(10, 10, 10)]
+    [InlineData(100, 100, 100)]
+    public async Task PostRunHistory_ExistingUserWithValidCsvAndAuthentication_WritesNewRunEventsToDB(int rowCount1,
+        int rowCount2, int rowCount3)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string entraId = SetupAuthenticatorMock(authToken);
+
+        string csv1 = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount1));
+        string csv2 = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount2));
+        string csv3 = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount3));
+        HttpRequest request1 = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv1);
+        HttpRequest request2 = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv2);
+        HttpRequest request3 = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv3);
+
+
+        // Act
+        await _sut.Run(request1);
+        await _sut.Run(request2);
+        await _sut.Run(request3);
+
+        // Assert
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        userData.ShouldNotBeNull();
+        userData.RunHistory.ShouldNotBeNull();
+        userData.RunHistory.Count().ShouldBe(rowCount1 + rowCount2 + rowCount3);
+    }
 
     [Theory]
     [InlineData(1000)] // 1,000 run events would be nearly 3 years of daily runs
