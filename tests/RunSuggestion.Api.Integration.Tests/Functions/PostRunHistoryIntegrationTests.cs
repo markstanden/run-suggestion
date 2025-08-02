@@ -7,6 +7,7 @@ using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
@@ -24,17 +25,19 @@ public class PostRunHistoryIntegrationTests
     private readonly Mock<ILogger<PostRunHistory>> _mockLogger = new();
     private readonly Mock<IAuthenticator> _authenticator = new();
 
+    // Setting the UserRepository as an instance variable allows us to verify writes within tests.
+    private readonly IUserRepository _userRepository;
     private readonly PostRunHistory _sut;
 
 
     public PostRunHistoryIntegrationTests()
     {
-        string connectionString = "Data Source=:memory:";
-        IUserRepository userRepository = new UserRepository(connectionString);
+        const string connectionString = "Data Source=:memory:";
+        _userRepository = new UserRepository(connectionString);
         ICsvParser csvParser = new CsvParser();
         IRunHistoryTransformer transformer = new CsvToRunHistoryTransformer(csvParser);
         IValidator<RunEvent> validator = new RunEventValidator(DateTime.Now);
-        IRunHistoryAdder historyService = new TrainingPeaksHistoryService(userRepository, transformer, validator);
+        IRunHistoryAdder historyService = new TrainingPeaksHistoryService(_userRepository, transformer, validator);
 
         _sut = new PostRunHistory(
             _mockLogger.Object,
@@ -58,7 +61,7 @@ public class PostRunHistoryIntegrationTests
     [InlineData(1)]
     [InlineData(10)]
     [InlineData(100)]
-    public async Task PostRunHistory_WithValidCsvAndAuthentication_ReturnsSuccessAndStoresData(int rowCount)
+    public async Task PostRunHistory_NewUserWithValidCsvAndAuthentication_ReturnsSuccessAndUpdatedRows(int rowCount)
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -78,9 +81,75 @@ public class PostRunHistoryIntegrationTests
     }
 
     [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task PostRunHistory_NewUserWithValidCsvAndAuthentication_WritesRunEventsToDB(int rowCount)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string entraId = SetupAuthenticatorMock(authToken);
+
+        string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        userData.ShouldNotBeNull();
+        userData.RunHistory.ShouldNotBeNull();
+        userData.RunHistory.Count().ShouldBe(rowCount);
+    }
+
+    [Fact]
+    public async Task PostRunHistory_NewUserWithValidEmptyCsvAndValidAuthentication_WritesNoRunEventsToDB()
+    {
+        // Arrange
+        int zeroRowCount = 0;
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string entraId = SetupAuthenticatorMock(authToken);
+
+        string csv =
+            TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(zeroRowCount));
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        userData.ShouldNotBeNull();
+        userData.RunHistory.ShouldNotBeNull();
+        userData.RunHistory.Count().ShouldBe(zeroRowCount);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("    ")]
+    public async Task PostRunHistory_NewUserWithInvalidCsvAndValidAuthentication_DoesNotCreateUser(
+        string csv)
+    {
+        // Arrange
+        string authToken = $"Bearer {Guid.NewGuid()}";
+        string entraId = SetupAuthenticatorMock(authToken);
+        HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        userData.ShouldBeNull();
+    }
+
+
+    [Theory]
     [InlineData(1000)] // 1,000 run events would be nearly 3 years of daily runs
     [InlineData(10000)] // 10,000 run events would be nearly 30 years of daily runs!
-    public async Task PostRunHistory_WithValidLargeCsvAndAuthentication_ReturnsSuccessAndStoresDataWithinPermittedTime(
+    public async Task PostRunHistory_WithValidLargeCsvAndAuthentication_ReturnsSuccessWithinPermittedTime(
         int rowCount)
     {
         // Arrange
