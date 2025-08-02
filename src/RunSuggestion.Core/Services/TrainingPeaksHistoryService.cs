@@ -5,7 +5,8 @@ using RunSuggestion.Core.Models.Users;
 namespace RunSuggestion.Core.Services;
 
 /// <summary>
-/// Orchestrator of the data ingestion, the history service handles 
+/// Orchestrator of the data ingestion, the history service handles creation of new users if required,
+/// and transforms and adds run history.
 /// </summary>
 public class TrainingPeaksHistoryService : IRunHistoryAdder
 {
