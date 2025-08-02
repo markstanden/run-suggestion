@@ -13,7 +13,8 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
     private readonly IUserRepository _userRepository;
     private readonly IValidator<RunEvent> _validator;
 
-    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer, IValidator<RunEvent> validator)
+    public TrainingPeaksHistoryService(IUserRepository userRepository, IRunHistoryTransformer runHistoryTransformer,
+        IValidator<RunEvent> validator)
     {
         _runHistoryTransformer = runHistoryTransformer;
         _userRepository = userRepository;
@@ -28,13 +29,13 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
             throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
         }
 
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
+        int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
+
         if (string.IsNullOrWhiteSpace(historyCsv))
         {
             throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(historyCsv));
         }
-
-        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
-        int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
 
         IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
 
