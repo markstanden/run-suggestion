@@ -7,20 +7,25 @@ using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Builder;
 
-IHost host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults()
-    .ConfigureServices((context, services) =>
-    {
-        string connectionString = context.Configuration[DatabaseConstants.SqliteConnection.Key] ??
-                                  DatabaseConstants.SqliteConnection.Default;
-        services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
-        services.AddScoped<IAuthenticator, AuthenticationService>();
-        services.AddScoped<ICsvParser, CsvParser>();
-        services.AddScoped<IRunHistoryTransformer, CsvToRunHistoryTransformer>();
-        services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>();
-        services.AddScoped<IValidator<RunEvent>>(_ => new RunEventValidator(DateTime.Now));
-    })
-    .Build();
+FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
 
-host.Run();
+builder.ConfigureFunctionsWebApplication();
+
+builder.Services
+    .AddApplicationInsightsTelemetryWorkerService()
+    .ConfigureFunctionsApplicationInsights();
+
+string connectionString = builder.Configuration[DatabaseConstants.SqliteConnection.Key] ??
+                          DatabaseConstants.SqliteConnection.Default;
+
+builder.Services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
+builder.Services.AddScoped<IAuthenticator, AuthenticationService>();
+builder.Services.AddScoped<ICsvParser, CsvParser>();
+builder.Services.AddScoped<IRunHistoryTransformer, CsvToRunHistoryTransformer>();
+builder.Services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>();
+builder.Services.AddScoped<IValidator<RunEvent>>(_ => new RunEventValidator(DateTime.Now));
+
+builder.Build().Run();

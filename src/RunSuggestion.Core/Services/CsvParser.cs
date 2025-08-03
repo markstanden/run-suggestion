@@ -1,11 +1,18 @@
 using System.Globalization;
 using CsvHelper;
+using CsvHelper.Configuration;
 using RunSuggestion.Core.Interfaces;
 
 namespace RunSuggestion.Core.Services;
 
 public class CsvParser : ICsvParser
 {
+    private readonly CsvConfiguration _config = new(CultureInfo.InvariantCulture)
+    {
+        HeaderValidated = null,
+        MissingFieldFound = null
+    };
+
     /// <summary>
     /// Generic method to parse the provided CSV into an IEnumerable of T.
     /// </summary>
@@ -15,7 +22,16 @@ public class CsvParser : ICsvParser
     public IEnumerable<T> Parse<T>(string csv)
     {
         using StringReader reader = new(csv);
-        using CsvReader csvReader = new(reader, CultureInfo.InvariantCulture);
+        using CsvReader csvReader = new(reader, _config);
+
+        csvReader.Context.TypeConverterOptionsCache
+            .GetOptions<double?>()
+            .NullValues.Add("");
+
+        csvReader.Context.TypeConverterOptionsCache
+            .GetOptions<int?>()
+            .NullValues.Add("");
+
         return csvReader.GetRecords<T>()
             .ToList();
     }
