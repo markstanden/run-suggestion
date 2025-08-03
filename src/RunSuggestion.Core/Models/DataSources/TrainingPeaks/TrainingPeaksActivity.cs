@@ -32,20 +32,20 @@ public class TrainingPeaksActivity
     /// TrainingPeaks provides the data in the following format: "yyyy-MM-dd"
     /// and it is parsed automatically into a DateTime.
     /// </summary>
-    public DateTime WorkoutDay { get; init; }
+    public DateTime? WorkoutDay { get; init; }
 
     /// <summary>
     /// Total distance covered in metres.
     /// Unlike our internal model TrainingPeaks uses a double precision float to represent the distance,
     /// so this will be rounded to the nearest metre when used internally.
     /// </summary>
-    public double DistanceInMeters { get; init; }
+    public double? DistanceInMeters { get; init; } = 0;
 
     /// <summary>
     /// Total duration of the activity in fractional hours.
     /// (e.g. 1.5 hours = 1 hour 30 mins)
     /// </summary>
-    public double TimeTotalInHours { get; init; }
+    public double? TimeTotalInHours { get; init; }
 
     /// <summary>
     /// Average heart rate recorded during the activity as a integer.

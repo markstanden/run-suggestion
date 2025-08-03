@@ -48,9 +48,9 @@ public class CsvToRunHistoryTransformer : IRunHistoryTransformer
         new()
         {
             RunEventId = 0,
-            Date = activity.WorkoutDay,
-            Distance = (int)Math.Round(activity.DistanceInMeters),
+            Date = activity.WorkoutDay ?? DateTime.MinValue,
+            Distance = (int)Math.Round(activity.DistanceInMeters ?? 0),
             Effort = (byte)(activity.Rpe ?? 0),
-            Duration = TimeSpan.FromHours(activity.TimeTotalInHours)
+            Duration = TimeSpan.FromHours(activity.TimeTotalInHours ?? 0)
         };
 }

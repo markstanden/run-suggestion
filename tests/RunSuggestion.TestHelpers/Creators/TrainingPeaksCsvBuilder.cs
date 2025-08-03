@@ -160,8 +160,12 @@ public class TrainingPeaksCsvBuilder
     /// </summary>
     /// <param name="row">The TrainingPeaksActivity to convert into a CSV</param>
     /// <returns>the converted row as a csv</returns>
-    private static string CreateRow(TrainingPeaksActivity row) =>
-        $"\"{row.Title}\",\"{row.WorkoutType}\",\"{row.WorkoutDay.ToString(TrainingPeaksActivity.WorkoutDayDatetimeFormat)}\",\"{row.DistanceInMeters}\",\"{row.TimeTotalInHours}\",\"{row.HeartRateAverage}\",\"{row.HeartRateMax}\",\"{row.Rpe}\",\"{row.Feeling}\"";
+    private static string CreateRow(TrainingPeaksActivity row)
+    {
+        string workoutDay = row.WorkoutDay?.ToString(TrainingPeaksActivity.WorkoutDayDatetimeFormat) ?? string.Empty;
+        return
+            $"\"{row.Title}\",\"{row.WorkoutType}\",\"{workoutDay}\",\"{row.DistanceInMeters}\",\"{row.TimeTotalInHours}\",\"{row.HeartRateAverage}\",\"{row.HeartRateMax}\",\"{row.Rpe}\",\"{row.Feeling}\"";
+    }
 
 
     /// <summary>

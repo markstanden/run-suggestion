@@ -23,6 +23,15 @@ public class CsvParser : ICsvParser
     {
         using StringReader reader = new(csv);
         using CsvReader csvReader = new(reader, _config);
+
+        csvReader.Context.TypeConverterOptionsCache
+            .GetOptions<double?>()
+            .NullValues.Add("");
+
+        csvReader.Context.TypeConverterOptionsCache
+            .GetOptions<int?>()
+            .NullValues.Add("");
+
         return csvReader.GetRecords<T>()
             .ToList();
     }
