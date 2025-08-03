@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Dto;
@@ -28,8 +27,7 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
 
         // Act
         await _sut.Run(request);
@@ -42,8 +40,7 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
     {
         // Arrange
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
 
         // Act
         await _sut.Run(request);
@@ -59,8 +56,7 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         request.Headers["Authorization"] = authToken;
 
         // Act
@@ -77,8 +73,7 @@ public class PostRunHistoryTests
     public async Task PostRunHistory_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
     {
         // Arrange
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(entraId);
 
@@ -97,8 +92,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedLastFive = entraId.Substring(entraId.Length - 5);
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(entraId);
 
@@ -117,8 +111,7 @@ public class PostRunHistoryTests
         // Arrange
         int expectedStatusCode = StatusCodes.Status401Unauthorized;
         string? nullEntraId = null;
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(nullEntraId);
 
@@ -135,8 +128,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string? nullEntraId = null;
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(nullEntraId);
 
@@ -152,8 +144,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string? nullEntraId = null;
-        DefaultHttpContext context = new();
-        HttpRequest request = new DefaultHttpRequest(context);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(nullEntraId);
 
