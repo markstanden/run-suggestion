@@ -4,6 +4,15 @@ namespace RunSuggestion.TestHelpers.Creators;
 
 public static class RunEventFakes
 {
+    public static class Defaults
+    {
+        public const int UserId = 0;
+        public const int DistanceMetres = 5000;
+        public const byte Effort = 5;
+        public static readonly TimeSpan Duration = TimeSpan.FromMinutes(30);
+        public static DateTime DateTime => DateTime.Now;
+    }
+
     /// <summary>
     /// Test helper to create a fake run event.
     /// The pattern of providing default null values for parameters and then assigning a default value within the helper
@@ -21,13 +30,13 @@ public static class RunEventFakes
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-        {
-            RunEventId = userId ?? 0,
-            Date = dateTime ?? DateTime.Now,
-            Distance = distanceMetres ?? 5000,
-            Effort = effort ?? 5,
-            Duration = duration ?? TimeSpan.FromMinutes(30)
-        };
+    {
+        RunEventId = userId ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
 
     /// <summary>
     /// Convenience method to create multiple default run events in a single call
