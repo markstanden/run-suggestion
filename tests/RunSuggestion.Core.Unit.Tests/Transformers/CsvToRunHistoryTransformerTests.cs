@@ -40,7 +40,7 @@ public class CsvToRunHistoryTransformerTests
     public void ConvertToRunHistory_WhenPassedCorrectDateFormat_ParsesDateCorrectly(int year, int month, int day)
     {
         // Arrange
-        DateTime expectedDate = new(year, month, day);
+        DateTime expectedDate = new(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         string dateString = expectedDate.ToString(TrainingPeaksConstants.WorkoutDayDatetimeFormat);
         string csv = new TrainingPeaksCsvBuilder()
             .AddRunningRow(dateString)
