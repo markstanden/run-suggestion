@@ -1,6 +1,6 @@
 namespace RunSuggestion.Core.Constants;
 
-public class DatabaseConstants
+public static class DatabaseConstants
 {
     public static class SqliteConnection
     {
