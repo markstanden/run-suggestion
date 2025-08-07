@@ -413,7 +413,7 @@ public class UserRepositoryTests
         }
 
         // Act
-        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userIds.First());
+        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userIds[0]);
 
         // Assert
         result.Count().ShouldBe(eventsPerUser);
