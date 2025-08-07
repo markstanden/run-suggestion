@@ -22,7 +22,7 @@ public class RunEventValidator : IValidator<RunEvent>
     /// <exception cref="ArgumentNullException">Throws an argument null exception if the provided collection is null</exception>
     public IEnumerable<string> Validate(IEnumerable<RunEvent> runEvents)
     {
-        ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
+        ArgumentNullException.ThrowIfNull(runEvents);
 
         return runEvents.SelectMany((runEvent, index) =>
         {
