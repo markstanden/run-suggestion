@@ -1,4 +1,5 @@
 using System.Globalization;
+using RunSuggestion.Core.Constants;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 
 namespace RunSuggestion.TestHelpers.Creators;
@@ -162,7 +163,7 @@ public class TrainingPeaksCsvBuilder
     /// <returns>the converted row as a csv</returns>
     private static string CreateRow(TrainingPeaksActivity row)
     {
-        string workoutDay = row.WorkoutDay?.ToString(TrainingPeaksActivity.WorkoutDayDatetimeFormat) ?? string.Empty;
+        string workoutDay = row.WorkoutDay?.ToString(TrainingPeaksConstants.WorkoutDayDatetimeFormat) ?? string.Empty;
         return
             $"\"{row.Title}\",\"{row.WorkoutType}\",\"{workoutDay}\",\"{row.DistanceInMeters}\",\"{row.TimeTotalInHours}\",\"{row.HeartRateAverage}\",\"{row.HeartRateMax}\",\"{row.Rpe}\",\"{row.Feeling}\"";
     }
@@ -175,7 +176,7 @@ public class TrainingPeaksCsvBuilder
     /// <param name="format">the format of the date string - defaults to use TrainingPeaks default (yyyy-MM-dd)</param>
     /// <returns>DateTime representation of the passed string</returns>
     public static DateTime ParseWorkoutDay(string workoutDay,
-        string format = TrainingPeaksActivity.WorkoutDayDatetimeFormat) =>
+        string format = TrainingPeaksConstants.WorkoutDayDatetimeFormat) =>
         DateTime.ParseExact(
             workoutDay,
             format,

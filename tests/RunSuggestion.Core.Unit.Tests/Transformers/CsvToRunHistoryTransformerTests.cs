@@ -1,3 +1,4 @@
+using RunSuggestion.Core.Constants;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Models.Runs;
@@ -40,7 +41,7 @@ public class CsvToRunHistoryTransformerTests
     {
         // Arrange
         DateTime expectedDate = new(year, month, day);
-        string dateString = expectedDate.ToString(TrainingPeaksActivity.WorkoutDayDatetimeFormat);
+        string dateString = expectedDate.ToString(TrainingPeaksConstants.WorkoutDayDatetimeFormat);
         string csv = new TrainingPeaksCsvBuilder()
             .AddRunningRow(dateString)
             .Build();
