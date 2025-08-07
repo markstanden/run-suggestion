@@ -7,7 +7,7 @@ namespace RunSuggestion.Core.Unit.Tests.Validators;
 public class RunEventValidatorTests
 {
     private RunEventValidator _sut;
-    private DateTime _currentDate = new(2025, 7, 1);
+    private DateTime _currentDate = new(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc);
 
     public RunEventValidatorTests()
     {
