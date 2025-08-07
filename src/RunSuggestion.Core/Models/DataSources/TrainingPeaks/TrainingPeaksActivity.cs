@@ -1,6 +1,6 @@
 namespace RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 
-public class TrainingPeaksActivity
+public record TrainingPeaksActivity
 {
     /// <summary>
     /// The date format used within the TrainingPeaks data to be used by C# DateTime parser
