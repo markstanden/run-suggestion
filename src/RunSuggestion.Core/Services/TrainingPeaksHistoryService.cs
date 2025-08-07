@@ -24,7 +24,7 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
     }
 
     /// <inheritdoc />
-    public async Task<int> AddRunHistory(string entraId, string historyCsv)
+    public async Task<int> AddRunHistory(string entraId, string history)
     {
         if (string.IsNullOrWhiteSpace(entraId))
         {
@@ -34,12 +34,12 @@ public class TrainingPeaksHistoryService : IRunHistoryAdder
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
         int userId = userData?.UserId ?? await _userRepository.CreateUserAsync(entraId);
 
-        if (string.IsNullOrWhiteSpace(historyCsv))
+        if (string.IsNullOrWhiteSpace(history))
         {
-            throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(historyCsv));
+            throw new ArgumentException("Invalid historyCsv - cannot be null or whitespace", nameof(history));
         }
 
-        IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(historyCsv).ToList();
+        IEnumerable<RunEvent> runHistory = _runHistoryTransformer.Transform(history).ToList();
 
         IEnumerable<string> errors = _validator.Validate(runHistory).ToList();
         if (errors.Any())
