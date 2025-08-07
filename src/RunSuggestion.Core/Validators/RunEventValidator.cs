@@ -5,7 +5,7 @@ namespace RunSuggestion.Core.Validators;
 
 public class RunEventValidator : IValidator<RunEvent>
 {
-    private DateTime _currentDate;
+    private readonly DateTime _currentDate;
 
     public RunEventValidator(DateTime? currentDate)
     {
