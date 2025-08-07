@@ -64,7 +64,8 @@ public class PostRunHistory
         }
         catch (ArgumentException ex)
         {
-            _logger.LogWarning("{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
+            _logger.LogWarning(ex,
+                               "{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
                                MessageFailure,
                                MessageInvalidCsvContent,
                                ex.Message);
@@ -77,7 +78,8 @@ public class PostRunHistory
         }
         catch (Exception ex)
         {
-            _logger.LogError("{FailureMessage}: {ExceptionMessage}",
+            _logger.LogError(ex,
+                             "{FailureMessage}: {ExceptionMessage}",
                              MessageFailure,
                              ex.Message);
             UploadResponse errorResponse = new()
