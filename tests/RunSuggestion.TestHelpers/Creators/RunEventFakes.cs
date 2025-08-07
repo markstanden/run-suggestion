@@ -30,13 +30,13 @@ public static class RunEventFakes
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-    {
-        RunEventId = userId ?? Defaults.UserId,
-        Date = dateTime ?? Defaults.DateTime,
-        Distance = distanceMetres ?? Defaults.DistanceMetres,
-        Effort = effort ?? Defaults.Effort,
-        Duration = duration ?? Defaults.Duration
-    };
+        {
+            RunEventId = userId ?? Defaults.UserId,
+            Date = dateTime ?? Defaults.DateTime,
+            Distance = distanceMetres ?? Defaults.DistanceMetres,
+            Effort = effort ?? Defaults.Effort,
+            Duration = duration ?? Defaults.Duration
+        };
 
     /// <summary>
     /// Convenience method to create multiple default run events in a single call
