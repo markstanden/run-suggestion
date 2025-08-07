@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace RunSuggestion.TestHelpers.Creators;
 
-public class HttpCsvRequestHelpers
+public static class HttpCsvRequestHelpers
 {
     /// <summary>
     /// Creates an HTTP request configured for CSV upload with 'authorization' header.
