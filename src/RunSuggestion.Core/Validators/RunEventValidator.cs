@@ -5,7 +5,7 @@ namespace RunSuggestion.Core.Validators;
 
 public class RunEventValidator : IValidator<RunEvent>
 {
-    private DateTime _currentDate;
+    private readonly DateTime _currentDate;
 
     public RunEventValidator(DateTime? currentDate)
     {
@@ -22,7 +22,7 @@ public class RunEventValidator : IValidator<RunEvent>
     /// <exception cref="ArgumentNullException">Throws an argument null exception if the provided collection is null</exception>
     public IEnumerable<string> Validate(IEnumerable<RunEvent> runEvents)
     {
-        ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
+        ArgumentNullException.ThrowIfNull(runEvents);
 
         return runEvents.SelectMany((runEvent, index) =>
         {
@@ -64,19 +64,19 @@ public class RunEventValidator : IValidator<RunEvent>
     /// </summary>
     /// <param name="distance">The distance to validate</param>
     /// <returns>true if valid</returns>
-    private bool IsValidDistance(int distance) => distance > 0;
+    private static bool IsValidDistance(int distance) => distance > 0;
 
     /// <summary>
     /// A valid RunEvent effort is 0 or greater, but with a max value of 10.
     /// </summary>
     /// <param name="effort">The effort score to validate</param>
     /// <returns>true if valid</returns>
-    private bool IsValidEffort(byte effort) => effort <= 10;
+    private static bool IsValidEffort(byte effort) => effort <= 10;
 
     /// <summary>
     /// A valid RunEvent duration is greater than 0, with currently no minimum or maximum length.
     /// </summary>
     /// <param name="duration">The duration to validate</param>
     /// <returns>true if valid</returns>
-    private bool IsValidDuration(TimeSpan duration) => duration > TimeSpan.Zero;
+    private static bool IsValidDuration(TimeSpan duration) => duration > TimeSpan.Zero;
 }

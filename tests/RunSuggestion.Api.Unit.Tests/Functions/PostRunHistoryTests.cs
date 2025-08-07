@@ -278,7 +278,7 @@ public class PostRunHistoryTests
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
         _mockHistoryAdder.Setup(x => x.AddRunHistory(It.IsAny<string>(), It.IsAny<string>()))
-            .Throws(new ArgumentException());
+            .Throws(new ArgumentException("Any validation error"));
 
         // Act
         await _sut.Run(request);

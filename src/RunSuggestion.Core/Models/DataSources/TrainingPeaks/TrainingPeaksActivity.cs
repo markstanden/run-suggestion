@@ -1,17 +1,9 @@
+using RunSuggestion.Core.Constants;
+
 namespace RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 
-public class TrainingPeaksActivity
+public record TrainingPeaksActivity
 {
-    /// <summary>
-    /// The date format used within the TrainingPeaks data to be used by C# DateTime parser
-    /// </summary>
-    public const string WorkoutDayDatetimeFormat = "yyyy-MM-dd";
-
-    /// <summary>
-    /// The activity title provided by TrainingPeaks for all running activities.
-    /// </summary>
-    public const string RunningActivityTitle = "Running";
-
     /// <summary>
     /// In my sample data this is the activity type as reported by Garmin
     /// <example>"Running"</example>
@@ -79,5 +71,5 @@ public class TrainingPeaksActivity
     /// <param name="activity">Parsed line from TrainingPeaks CSV</param>
     /// <returns>True if the activity is a Run</returns>
     public static bool IsRunActivity(TrainingPeaksActivity activity) =>
-        activity.Title == RunningActivityTitle;
+        activity.Title == TrainingPeaksConstants.RunningActivityTitle;
 }

@@ -28,4 +28,6 @@ builder.Services.AddScoped<IRunHistoryTransformer, CsvToRunHistoryTransformer>()
 builder.Services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>();
 builder.Services.AddScoped<IValidator<RunEvent>>(_ => new RunEventValidator(DateTime.Now));
 
-builder.Build().Run();
+await builder
+    .Build()
+    .RunAsync();

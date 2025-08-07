@@ -118,7 +118,7 @@ public class UserRepository : IUserRepository
     {
         ValidateUserId(userId);
 
-        ArgumentNullException.ThrowIfNull(runEvents, nameof(runEvents));
+        ArgumentNullException.ThrowIfNull(runEvents);
 
         var insertParameters = runEvents
             .Where(runEvent => runEvent is not null)

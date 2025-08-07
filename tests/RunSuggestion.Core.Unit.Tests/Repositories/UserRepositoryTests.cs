@@ -1,6 +1,7 @@
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
+using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Repositories;
@@ -152,7 +153,7 @@ public class UserRepositoryTests
         // Assert
         userData.ShouldNotBeNull();
         userData.RunHistory.Count().ShouldBe(runEventQty);
-        userData.RunHistory.ShouldBe(runEvents, true);
+        userData.RunHistory.ShouldMatchRunEvents(runEvents);
     }
 
     [Theory]
@@ -250,7 +251,7 @@ public class UserRepositoryTests
         userData.ShouldNotBeNull();
         userData.EntraId.ShouldBe(entraId);
         userData.RunHistory.Count().ShouldBe(runEventQty);
-        userData.RunHistory.ShouldBe(runEvents, true);
+        userData.RunHistory.ShouldMatchRunEvents(runEvents);
     }
 
     [Theory]
@@ -412,7 +413,7 @@ public class UserRepositoryTests
         }
 
         // Act
-        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userIds.First());
+        IEnumerable<RunEvent> result = await _sut.GetRunEventsByUserIdAsync(userIds[0]);
 
         // Assert
         result.Count().ShouldBe(eventsPerUser);

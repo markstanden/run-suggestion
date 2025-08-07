@@ -6,8 +6,8 @@ namespace RunSuggestion.Core.Unit.Tests.Validators;
 
 public class RunEventValidatorTests
 {
-    private RunEventValidator _sut;
-    private DateTime _currentDate = new(2025, 7, 1);
+    private readonly RunEventValidator _sut;
+    private readonly DateTime _currentDate = new(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc);
 
     public RunEventValidatorTests()
     {
@@ -19,7 +19,6 @@ public class RunEventValidatorTests
     {
         // Arrange
         IEnumerable<RunEvent> runEvents = null!;
-        ;
 
         // Act
         Func<IEnumerable<string>> withNullEvents = () => _sut.Validate(runEvents);
