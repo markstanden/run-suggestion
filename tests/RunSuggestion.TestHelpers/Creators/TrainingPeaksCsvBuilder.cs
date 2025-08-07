@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using RunSuggestion.Core.Constants;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
@@ -60,6 +61,8 @@ public class TrainingPeaksCsvBuilder
     /// <param name="rpe">Rate of perceived exertion (RPE) (expected values 1-10 where ten is maximum effort)</param>
     /// <param name="feeling">How the user felt (1-5 garmin emoji scale)</param>
     /// <returns>The current builder instance for method chaining</returns>
+    [SuppressMessage("SonarQube",
+                     "S107:Methods should not have too many parameters")]
     public TrainingPeaksCsvBuilder AddRow(
         string title = DefaultTitle,
         string workoutType = DefaultWorkoutType,
