@@ -6,11 +6,6 @@ namespace RunSuggestion.Core.Models.Runs;
 public record RunBase
 {
     /// <summary>
-    /// The serial for the ID within the database
-    /// </summary>
-    public int RunEventId { get; init; }
-
-    /// <summary>
     /// The date that the run took place
     /// </summary>
     public DateTime Date { get; init; }
