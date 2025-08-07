@@ -19,7 +19,6 @@ public class RunEventValidatorTests
     {
         // Arrange
         IEnumerable<RunEvent> runEvents = null!;
-        ;
 
         // Act
         Func<IEnumerable<string>> withNullEvents = () => _sut.Validate(runEvents);
