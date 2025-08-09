@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Helpers;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -46,7 +47,7 @@ public class PostRunHistory
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
                                MessageAuthenticationSuccess,
-                               GetLastFiveChars(entraId));
+                               AuthHelpers.GetLastFiveChars(entraId));
 
         using StreamReader reader = new(request.Body);
         string csv = await reader.ReadToEndAsync();
@@ -92,11 +93,4 @@ public class PostRunHistory
             };
         }
     }
-
-    /// <summary>
-    /// Returns the last 5 characters of the passed string
-    /// </summary>
-    /// <param name="fullString"></param>
-    /// <returns>the last 5 characters of the passed string</returns>
-    private static string GetLastFiveChars(string fullString) => fullString[^5..];
 }
