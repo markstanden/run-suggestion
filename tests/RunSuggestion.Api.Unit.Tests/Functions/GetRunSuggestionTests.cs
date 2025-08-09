@@ -32,4 +32,18 @@ public class GetRunSuggestionTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLogMessages);
     }
+
+    [Fact]
+    public async Task Run_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
+    {
+        // Arrange
+        string expectedAuthHeader = string.Empty;
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockAuthenticator.Verify(x => x.Authenticate(expectedAuthHeader), Times.Once);
+    }
 }
