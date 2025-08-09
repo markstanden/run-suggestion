@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RunSuggestion.Api.Constants;
 using RunSuggestion.Core.Interfaces;
 
 namespace RunSuggestion.Api.Functions;
@@ -19,9 +20,13 @@ public class GetRunSuggestion
     }
 
     [Function("GetRunSuggestion")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
         _logger.LogInformation(LogRequestReceived);
+
+        string authHeader = request.Headers[Headers.Authorization].ToString();
+        string? _ = _authenticator.Authenticate(authHeader);
+
         return new OkObjectResult(string.Empty);
     }
 }
