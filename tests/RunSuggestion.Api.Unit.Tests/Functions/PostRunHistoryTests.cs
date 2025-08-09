@@ -10,6 +10,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
+[JetBrains.Annotations.TestSubject(typeof(PostRunHistory))]
 public class PostRunHistoryTests
 {
     private readonly Mock<ILogger<PostRunHistory>> _mockLogger = new();

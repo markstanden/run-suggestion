@@ -17,6 +17,7 @@ using static RunSuggestion.TestHelpers.Constants.NonFunctionalRequirements;
 
 namespace RunSuggestion.Api.Integration.Tests.Functions;
 
+[JetBrains.Annotations.TestSubject(typeof(PostRunHistory))]
 public class PostRunHistoryIntegrationTests
 {
     private readonly TimeSpan _maxTestThresholdTime = TimeSpan.FromMilliseconds(

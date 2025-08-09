@@ -7,6 +7,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
+[JetBrains.Annotations.TestSubject(typeof(GetRunSuggestion))]
 public class GetRunSuggestionTests
 {
     private readonly Mock<ILogger<GetRunSuggestion>> _mockLogger = new();

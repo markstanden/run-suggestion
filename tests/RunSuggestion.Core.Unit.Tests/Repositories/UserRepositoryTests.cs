@@ -6,6 +6,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Repositories;
 
+[JetBrains.Annotations.TestSubject(typeof(UserRepository))]
 public class UserRepositoryTests
 {
     #region Common Test Setup
