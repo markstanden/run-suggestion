@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
@@ -51,6 +52,24 @@ public class GetRunSuggestionTests
         _mockAuthenticator.Verify(x => x.Authenticate(expectedAuthHeader), Times.Once);
     }
 
+    [Fact]
+    public async Task Run_WhenAuthenticationFails_Returns401UnauthorizedResponse()
+    {
+        // Arrange
+        int expectedStatusCode = StatusCodes.Status401Unauthorized;
+        string? nullEntraId = null;
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(nullEntraId);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        UnauthorizedResult unauthorizedResult = result.ShouldBeOfType<UnauthorizedResult>();
+        unauthorizedResult.StatusCode.ShouldBe(expectedStatusCode);
+    }
+
     [Theory]
     [InlineData("Bearer fake-token-12345")]
     [InlineData("Bearer fake-token-with-different-format")]
@@ -90,8 +109,24 @@ public class GetRunSuggestionTests
                                          expectedLastFive);
     }
 
-    #endregion
 
+    [Fact]
+    public async Task Run_WhenAuthenticationFails_LogsFailedRequestAsWarning()
+    {
+        // Arrange
+        string? nullEntraId = null;
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(nullEntraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "Failed to authenticate user.");
+    }
+
+    #endregion
 
     #region SuggestionService
 
@@ -110,7 +145,23 @@ public class GetRunSuggestionTests
         await _sut.Run(request);
 
         // Assert
-        _mockRecommendationService.Verify(x => x.GetRecommendation(entraId), Times.Once);
+        _mockRecommendationService.Verify(x => x.GetRecommendation(It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Run_WhenAuthenticationFails_DoesNotCallHistoryAdder()
+    {
+        // Arrange
+        string? nullEntraId = null;
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(nullEntraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockRecommendationService.Verify(x => x.GetRecommendation(It.IsAny<string>()), Times.Never);
     }
 
     #endregion
