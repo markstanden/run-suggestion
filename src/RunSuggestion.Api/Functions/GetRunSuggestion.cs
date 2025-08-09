@@ -14,6 +14,7 @@ public class GetRunSuggestion
     private const string RunSuggestionFunctionName = "GetRunSuggestion";
     private const string LogRequestReceived = "Run suggestion request received.";
     private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
+    private const string MessageAuthenticationFailure = "Failed to authenticate user.";
     private readonly ILogger<GetRunSuggestion> _logger;
     private readonly IAuthenticator _authenticator;
     private readonly IRecommendationService _recommendationService;
@@ -33,6 +34,12 @@ public class GetRunSuggestion
 
         string authHeader = request.Headers[Headers.Authorization].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
+
+        if (entraId is null)
+        {
+            _logger.LogWarning(MessageAuthenticationFailure);
+            return new UnauthorizedResult();
+        }
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
                                MessageAuthenticationSuccess,
