@@ -2,22 +2,26 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RunSuggestion.Core.Interfaces;
 
 namespace RunSuggestion.Api.Functions;
 
 public class GetRunSuggestion
 {
+    private const string LogRequestReceived = "Run suggestion request received.";
     private readonly ILogger<GetRunSuggestion> _logger;
+    private readonly IAuthenticator _authenticator;
 
-    public GetRunSuggestion(ILogger<GetRunSuggestion> logger)
+    public GetRunSuggestion(ILogger<GetRunSuggestion> logger, IAuthenticator authenticator)
     {
         _logger = logger;
+        _authenticator = authenticator;
     }
 
     [Function("GetRunSuggestion")]
-    public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
     {
-        _logger.LogInformation(string.Empty);
+        _logger.LogInformation(LogRequestReceived);
         return new OkObjectResult(string.Empty);
     }
 }
