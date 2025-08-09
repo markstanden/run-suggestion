@@ -2,14 +2,13 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RunSuggestion.Api.Constants;
 
 namespace RunSuggestion.Api.Functions;
 
 public class GetHealthCheck
 {
     private const string HealthCheckFunctionName = "HealthCheck";
-    public const string RequestReceivedLog = "HealthCheck Endpoint recieved request";
-    public const string HealthCheckResponse = "System Healthy";
 
     private readonly ILogger<GetHealthCheck> _logger;
 
@@ -21,7 +20,7 @@ public class GetHealthCheck
     [Function(HealthCheckFunctionName)]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
-        _logger.LogInformation(RequestReceivedLog);
-        return new OkObjectResult(HealthCheckResponse);
+        _logger.LogInformation(LogMessages.RequestReceivedLog);
+        return new OkObjectResult(LogMessages.HealthCheckResponse);
     }
 }

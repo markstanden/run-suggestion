@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
@@ -29,7 +30,7 @@ public class GetHealthCheckTests
         _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, GetHealthCheck.RequestReceivedLog);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, LogMessages.RequestReceivedLog);
     }
 
     [Fact]
@@ -57,6 +58,6 @@ public class GetHealthCheckTests
 
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
-        okResult.Value.ShouldBe(GetHealthCheck.HealthCheckResponse);
+        okResult.Value.ShouldBe(LogMessages.HealthCheckResponse);
     }
 }
