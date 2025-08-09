@@ -30,7 +30,7 @@ public class GetHealthCheckTests
         _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, LogMessages.RequestReceivedLog);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, Messages.RequestReceivedLog);
     }
 
     [Fact]
@@ -58,6 +58,6 @@ public class GetHealthCheckTests
 
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
-        okResult.Value.ShouldBe(LogMessages.HealthCheckResponse);
+        okResult.Value.ShouldBe(Messages.HealthCheckResponse);
     }
 }

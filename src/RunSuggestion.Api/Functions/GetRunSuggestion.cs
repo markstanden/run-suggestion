@@ -29,19 +29,19 @@ public class GetRunSuggestion
     [Function(RunSuggestionFunctionName)]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
-        _logger.LogInformation(LogMessages.RequestReceived);
+        _logger.LogInformation(Messages.RequestReceived);
 
         string authHeader = request.Headers[Headers.Authorization].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)
         {
-            _logger.LogWarning(LogMessages.Authentication.Failure);
+            _logger.LogWarning(Messages.Authentication.Failure);
             return new UnauthorizedResult();
         }
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
-                               LogMessages.Authentication.Success,
+                               Messages.Authentication.Success,
                                AuthHelpers.GetLastFiveChars(entraId));
 
         RunRecommendation _ = await _recommendationService.GetRecommendation(entraId);

@@ -28,19 +28,19 @@ public class PostRunHistory
     [Function(PostRunHistoryFunctionName)]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
-        _logger.LogInformation(LogMessages.UploadStarted);
+        _logger.LogInformation(Messages.Csv.UploadStarted);
 
         string authHeader = request.Headers[Headers.Authorization].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)
         {
-            _logger.LogWarning(LogMessages.Authentication.Failure);
+            _logger.LogWarning(Messages.Authentication.Failure);
             return new UnauthorizedResult();
         }
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
-                               LogMessages.Authentication.Success,
+                               Messages.Authentication.Success,
                                AuthHelpers.GetLastFiveChars(entraId));
 
         using StreamReader reader = new(request.Body);
@@ -51,7 +51,7 @@ public class PostRunHistory
             int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
             UploadResponse response = new()
             {
-                Message = LogMessages.MessageSuccess,
+                Message = Messages.Csv.Success,
                 RowsAdded = affectedRows
             };
             return new OkObjectResult(response);
@@ -60,12 +60,12 @@ public class PostRunHistory
         {
             _logger.LogWarning(ex,
                                "{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
-                               LogMessages.MessageFailure,
-                               LogMessages.InvalidCsvContent,
+                               Messages.Csv.Failure,
+                               Messages.Csv.Invalid,
                                ex.Message);
             UploadResponse errorResponse = new()
             {
-                Message = $"{LogMessages.MessageFailure}: {LogMessages.InvalidCsvContent} - {ex.Message}",
+                Message = $"{Messages.Csv.Failure}: {Messages.Csv.Invalid} - {ex.Message}",
                 RowsAdded = 0
             };
             return new BadRequestObjectResult(errorResponse);
@@ -74,11 +74,11 @@ public class PostRunHistory
         {
             _logger.LogError(ex,
                              "{FailureMessage}: {ExceptionMessage}",
-                             LogMessages.MessageFailure,
+                             Messages.Csv.Failure,
                              ex.Message);
             UploadResponse errorResponse = new()
             {
-                Message = LogMessages.UnexpectedError,
+                Message = Messages.UnexpectedError,
                 RowsAdded = 0
             };
             return new ObjectResult(errorResponse)

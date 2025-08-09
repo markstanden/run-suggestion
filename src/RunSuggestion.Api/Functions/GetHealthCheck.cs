@@ -20,7 +20,7 @@ public class GetHealthCheck
     [Function(HealthCheckFunctionName)]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
-        _logger.LogInformation(LogMessages.RequestReceivedLog);
-        return new OkObjectResult(LogMessages.HealthCheckResponse);
+        _logger.LogInformation(Messages.RequestReceivedLog);
+        return new OkObjectResult(Messages.HealthCheckResponse);
     }
 }
