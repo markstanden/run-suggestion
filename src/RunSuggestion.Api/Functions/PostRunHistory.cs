@@ -28,7 +28,7 @@ public class PostRunHistory
     [Function(PostRunHistoryFunctionName)]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
-        _logger.LogInformation(Messages.Csv.UploadStarted);
+        _logger.LogInformation(Messages.CsvUpload.RequestReceived);
 
         string authHeader = request.Headers[Headers.Authorization].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
@@ -51,7 +51,7 @@ public class PostRunHistory
             int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
             UploadResponse response = new()
             {
-                Message = Messages.Csv.Success,
+                Message = Messages.CsvUpload.Success,
                 RowsAdded = affectedRows
             };
             return new OkObjectResult(response);
@@ -60,12 +60,12 @@ public class PostRunHistory
         {
             _logger.LogWarning(ex,
                                "{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
-                               Messages.Csv.Failure,
-                               Messages.Csv.Invalid,
+                               Messages.CsvUpload.Failure,
+                               Messages.CsvUpload.Invalid,
                                ex.Message);
             UploadResponse errorResponse = new()
             {
-                Message = $"{Messages.Csv.Failure}: {Messages.Csv.Invalid} - {ex.Message}",
+                Message = $"{Messages.CsvUpload.Failure}: {Messages.CsvUpload.Invalid} - {ex.Message}",
                 RowsAdded = 0
             };
             return new BadRequestObjectResult(errorResponse);
@@ -74,7 +74,7 @@ public class PostRunHistory
         {
             _logger.LogError(ex,
                              "{FailureMessage}: {ExceptionMessage}",
-                             Messages.Csv.Failure,
+                             Messages.CsvUpload.Failure,
                              ex.Message);
             UploadResponse errorResponse = new()
             {

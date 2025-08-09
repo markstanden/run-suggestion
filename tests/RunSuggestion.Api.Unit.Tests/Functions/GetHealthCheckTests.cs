@@ -25,12 +25,13 @@ public class GetHealthCheckTests
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        string expectedMessage = Messages.HealthCheck.RequestReceived;
 
         // Act
         _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, Messages.RequestReceivedLog);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
 
     [Fact]
@@ -52,12 +53,13 @@ public class GetHealthCheckTests
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        string expectedMessage = Messages.HealthCheck.Success;
 
         // Act
         IActionResult result = _sut.Run(request);
 
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
-        okResult.Value.ShouldBe(Messages.HealthCheckResponse);
+        okResult.Value.ShouldBe(expectedMessage);
     }
 }

@@ -8,16 +8,24 @@ public static class Messages
         public const string Failure = "Failed to authenticate user.";
     }
 
-    public static class Csv
+    public static class CsvUpload
     {
-        public const string UploadStarted = "Run history upload started.";
+        public const string RequestReceived = "Run history upload started.";
         public const string Invalid = "Invalid CSV content";
         public const string Success = "Successfully processed CSV";
         public const string Failure = "CSV Import Failed";
     }
 
-    public const string RequestReceived = "Run suggestion request received.";
+    public static class Recommendation
+    {
+        public const string RequestReceived = "Run suggestion request received.";
+    }
+
+    public static class HealthCheck
+    {
+        public const string RequestReceived = "HealthCheck Endpoint recieved request";
+        public const string Success = "System Healthy";
+    }
+
     public const string UnexpectedError = "An unexpected error occurred";
-    public const string RequestReceivedLog = "HealthCheck Endpoint recieved request";
-    public const string HealthCheckResponse = "System Healthy";
 }

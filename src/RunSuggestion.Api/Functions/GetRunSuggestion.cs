@@ -13,7 +13,6 @@ public class GetRunSuggestion
 {
     private const string RunSuggestionFunctionName = "GetRunSuggestion";
 
-
     private readonly ILogger<GetRunSuggestion> _logger;
     private readonly IAuthenticator _authenticator;
     private readonly IRecommendationService _recommendationService;
@@ -29,7 +28,7 @@ public class GetRunSuggestion
     [Function(RunSuggestionFunctionName)]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
-        _logger.LogInformation(Messages.RequestReceived);
+        _logger.LogInformation(Messages.Recommendation.RequestReceived);
 
         string authHeader = request.Headers[Headers.Authorization].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
