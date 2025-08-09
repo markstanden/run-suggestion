@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Helpers;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -14,11 +15,14 @@ public class GetRunSuggestion
     private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
     private readonly ILogger<GetRunSuggestion> _logger;
     private readonly IAuthenticator _authenticator;
+    private readonly IRecommendationService _recommendationService;
 
-    public GetRunSuggestion(ILogger<GetRunSuggestion> logger, IAuthenticator authenticator)
+    public GetRunSuggestion(ILogger<GetRunSuggestion> logger, IAuthenticator authenticator,
+        IRecommendationService recommendationService)
     {
         _logger = logger;
         _authenticator = authenticator;
+        _recommendationService = recommendationService;
     }
 
     [Function("GetRunSuggestion")]
@@ -32,6 +36,8 @@ public class GetRunSuggestion
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
                                MessageAuthenticationSuccess,
                                AuthHelpers.GetLastFiveChars(entraId));
+
+        RunRecommendation _ = await _recommendationService.GetRecommendation(entraId);
 
         return new OkObjectResult(string.Empty);
     }

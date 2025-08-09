@@ -11,12 +11,13 @@ public class GetRunSuggestionTests
 {
     private readonly Mock<ILogger<GetRunSuggestion>> _mockLogger = new();
     private readonly Mock<IAuthenticator> _mockAuthenticator = new();
+    private readonly Mock<IRecommendationService> _mockRecommendationService = new();
 
     private readonly GetRunSuggestion _sut;
 
     public GetRunSuggestionTests()
     {
-        _sut = new GetRunSuggestion(_mockLogger.Object, _mockAuthenticator.Object);
+        _sut = new GetRunSuggestion(_mockLogger.Object, _mockAuthenticator.Object, _mockRecommendationService.Object);
     }
 
     [Fact]
@@ -86,6 +87,29 @@ public class GetRunSuggestionTests
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
                                          "Successfully Authenticated user",
                                          expectedLastFive);
+    }
+
+    #endregion
+
+
+    #region SuggestionService
+
+    [Theory]
+    [InlineData("fake-entra-id-12345")]
+    [InlineData("fake-entra-id-with-different-format")]
+    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    public async Task Run_WhenAuthenticationSucceeds_CallsSuggestionServiceWithEntraId(string entraId)
+    {
+        // Arrange
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(entraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockRecommendationService.Verify(x => x.GetRecommendation(entraId), Times.Once);
     }
 
     #endregion
