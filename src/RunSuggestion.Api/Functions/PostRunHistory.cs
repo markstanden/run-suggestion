@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Api.Constants;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -16,8 +17,6 @@ public class PostRunHistory
     private const string MessageUnexpectedError = "An unexpected error occurred";
     private const string MessageSuccess = "Successfully processed CSV";
     private const string MessageFailure = "CSV Import Failed";
-
-    private const string AuthorizationHeader = "Authorization";
 
     private readonly ILogger<PostRunHistory> _logger;
     private readonly IAuthenticator _authenticator;
@@ -36,7 +35,7 @@ public class PostRunHistory
     {
         _logger.LogInformation(MessageUploadStarted);
 
-        string authHeader = request.Headers[AuthorizationHeader].ToString();
+        string authHeader = request.Headers[Headers.Authorization].ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)
