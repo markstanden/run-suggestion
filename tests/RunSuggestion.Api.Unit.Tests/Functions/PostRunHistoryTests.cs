@@ -7,6 +7,7 @@ using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
+using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
@@ -53,26 +54,27 @@ public class PostRunHistoryTests
     }
 
     [Theory]
-    [InlineData("Bearer fake-token-12345")]
-    [InlineData("Bearer fake-token-with-different-format")]
-    [InlineData("Bearer 00fake00token00abcdefghijklmnopqrstuvwxyz0123456789")]
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
     public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
+        string authHeader = $"Bearer {authToken}";
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
-        request.Headers.Authorization = authToken;
+        request.Headers.Authorization = authHeader;
 
         // Act
         await _sut.Run(request);
 
         // Assert
-        _mockAuthenticator.Verify(x => x.Authenticate(authToken), Times.Once);
+        _mockAuthenticator.Verify(x => x.Authenticate(authHeader), Times.Once);
     }
 
     [Theory]
-    [InlineData("fake-entra-id-12345")]
-    [InlineData("fake-entra-id-with-different-format")]
-    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
     public async Task Run_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
     {
         // Arrange
@@ -88,9 +90,9 @@ public class PostRunHistoryTests
     }
 
     [Theory]
-    [InlineData("fake-entra-id-12345")]
-    [InlineData("fake-entra-id-with-different-format")]
-    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
     public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
     {
         // Arrange

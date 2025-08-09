@@ -1,10 +1,13 @@
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
+using RunSuggestion.TestHelpers;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
@@ -26,14 +29,14 @@ public class GetRunSuggestionTests
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
-        string[] expectedLogMessages = ["Run suggestion", "request received"];
+        string expectedMessage = Messages.Recommendation.RequestReceived;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
 
         // Act
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLogMessages);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
 
     #region Authentication
@@ -71,14 +74,14 @@ public class GetRunSuggestionTests
     }
 
     [Theory]
-    [InlineData("Bearer fake-token-12345")]
-    [InlineData("Bearer fake-token-with-different-format")]
-    [InlineData("Bearer 00fake00token00abcdefghijklmnopqrstuvwxyz0123456789")]
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
     public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
-        request.Headers["Authorization"] = authToken;
+        request.Headers.Authorization = authToken;
 
         // Act
         await _sut.Run(request);
@@ -89,9 +92,9 @@ public class GetRunSuggestionTests
 
 
     [Theory]
-    [InlineData("fake-entra-id-12345")]
-    [InlineData("fake-entra-id-with-different-format")]
-    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
     public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
     {
         // Arrange
@@ -131,9 +134,9 @@ public class GetRunSuggestionTests
     #region SuggestionService
 
     [Theory]
-    [InlineData("fake-entra-id-12345")]
-    [InlineData("fake-entra-id-with-different-format")]
-    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
     public async Task Run_WhenAuthenticationSucceeds_CallsSuggestionServiceWithEntraId(string entraId)
     {
         // Arrange
