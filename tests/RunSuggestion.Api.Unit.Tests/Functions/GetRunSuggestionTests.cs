@@ -33,6 +33,8 @@ public class GetRunSuggestionTests
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLogMessages);
     }
 
+    #region Authentication
+
     [Fact]
     public async Task Run_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
     {
@@ -63,4 +65,28 @@ public class GetRunSuggestionTests
         // Assert
         _mockAuthenticator.Verify(x => x.Authenticate(authToken), Times.Once);
     }
+
+
+    [Theory]
+    [InlineData("fake-entra-id-12345")]
+    [InlineData("fake-entra-id-with-different-format")]
+    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
+    public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
+    {
+        // Arrange
+        string expectedLastFive = entraId.Substring(entraId.Length - 5);
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(entraId);
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
+                                         "Successfully Authenticated user",
+                                         expectedLastFive);
+    }
+
+    #endregion
 }
