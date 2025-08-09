@@ -24,7 +24,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
+    public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
@@ -37,7 +37,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
+    public async Task Run_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
@@ -53,7 +53,7 @@ public class PostRunHistoryTests
     [InlineData("Bearer fake-token-12345")]
     [InlineData("Bearer fake-token-with-different-format")]
     [InlineData("Bearer 00fake00token00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
+    public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
@@ -70,7 +70,7 @@ public class PostRunHistoryTests
     [InlineData("fake-entra-id-12345")]
     [InlineData("fake-entra-id-with-different-format")]
     [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
+    public async Task Run_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
@@ -88,7 +88,7 @@ public class PostRunHistoryTests
     [InlineData("fake-entra-id-12345")]
     [InlineData("fake-entra-id-with-different-format")]
     [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
+    public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
     {
         // Arrange
         string expectedLastFive = entraId.Substring(entraId.Length - 5);
@@ -106,7 +106,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationFails_Returns401UnauthorizedResponse()
+    public async Task Run_WhenAuthenticationFails_Returns401UnauthorizedResponse()
     {
         // Arrange
         int expectedStatusCode = StatusCodes.Status401Unauthorized;
@@ -124,7 +124,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationFails_DoesNotCallHistoryAdder()
+    public async Task Run_WhenAuthenticationFails_DoesNotCallHistoryAdder()
     {
         // Arrange
         string? nullEntraId = null;
@@ -140,7 +140,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationFails_LogsFailedRequestAsWarning()
+    public async Task Run_WhenAuthenticationFails_LogsFailedRequestAsWarning()
     {
         // Arrange
         string? nullEntraId = null;
@@ -160,7 +160,7 @@ public class PostRunHistoryTests
     [InlineData(10)]
     [InlineData(100)]
     [InlineData(1000)]
-    public async Task PostRunHistory_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
+    public async Task Run_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -178,7 +178,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
+    public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -198,7 +198,7 @@ public class PostRunHistoryTests
 
     [Fact]
     public async Task
-        PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccessMessageInUploadResponse()
+        Run_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccessMessageInUploadResponse()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -222,7 +222,7 @@ public class PostRunHistoryTests
     [InlineData(10)]
     [InlineData(100)]
     [InlineData(1000)]
-    public async Task PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_ExpectedRowsReturned(
+    public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_ExpectedRowsReturned(
         int expectedAffectedRows)
     {
         // Arrange
@@ -246,7 +246,7 @@ public class PostRunHistoryTests
     [InlineData("Invalid Duration")]
     [InlineData("Invalid Distance")]
     [InlineData("Invalid Date")]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
+    public async Task Run_IfRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
         string exceptionMessage)
     {
         // Arrange
@@ -270,7 +270,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogCsvImportFailedAsWarning()
+    public async Task Run_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogCsvImportFailedAsWarning()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -291,7 +291,7 @@ public class PostRunHistoryTests
     [InlineData("Invalid Duration")]
     [InlineData("Invalid Distance")]
     [InlineData("Invalid Date")]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
+    public async Task Run_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
         string exceptionMessage)
     {
         // Arrange
@@ -310,7 +310,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenHistoryAdderThrowsGeneralException_ReturnsGeneric500InternalServerError()
+    public async Task Run_WhenHistoryAdderThrowsGeneralException_ReturnsGeneric500InternalServerError()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -333,7 +333,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenHistoryAdderThrowsGeneralException_LogsErrorWithException()
+    public async Task Run_WhenHistoryAdderThrowsGeneralException_LogsErrorWithException()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
