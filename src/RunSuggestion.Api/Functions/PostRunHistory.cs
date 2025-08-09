@@ -11,6 +11,7 @@ namespace RunSuggestion.Api.Functions;
 
 public class PostRunHistory
 {
+    private const string PostRunHistoryFunctionName = "PostRunHistory";
     private const string MessageUploadStarted = "Run history upload started.";
     private const string MessageAuthenticationFailure = "Failed to authenticate user.";
     private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
@@ -31,7 +32,7 @@ public class PostRunHistory
         _runHistoryAdder = runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
     }
 
-    [Function("PostRunHistory")]
+    [Function(PostRunHistoryFunctionName)]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
         _logger.LogInformation(MessageUploadStarted);

@@ -7,6 +7,7 @@ namespace RunSuggestion.Api.Functions;
 
 public class GetHealthCheck
 {
+    private const string HealthCheckFunctionName = "HealthCheck";
     public const string RequestReceivedLog = "HealthCheck Endpoint recieved request";
     public const string HealthCheckResponse = "System Healthy";
 
@@ -17,7 +18,7 @@ public class GetHealthCheck
         _logger = logger;
     }
 
-    [Function("HealthCheck")]
+    [Function(HealthCheckFunctionName)]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
         _logger.LogInformation(RequestReceivedLog);

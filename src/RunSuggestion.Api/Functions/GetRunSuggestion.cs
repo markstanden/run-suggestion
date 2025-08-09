@@ -11,6 +11,7 @@ namespace RunSuggestion.Api.Functions;
 
 public class GetRunSuggestion
 {
+    private const string RunSuggestionFunctionName = "GetRunSuggestion";
     private const string LogRequestReceived = "Run suggestion request received.";
     private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
     private readonly ILogger<GetRunSuggestion> _logger;
@@ -25,7 +26,7 @@ public class GetRunSuggestion
         _recommendationService = recommendationService;
     }
 
-    [Function("GetRunSuggestion")]
+    [Function(RunSuggestionFunctionName)]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
         _logger.LogInformation(LogRequestReceived);
