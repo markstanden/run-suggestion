@@ -46,4 +46,21 @@ public class GetRunSuggestionTests
         // Assert
         _mockAuthenticator.Verify(x => x.Authenticate(expectedAuthHeader), Times.Once);
     }
+
+    [Theory]
+    [InlineData("Bearer fake-token-12345")]
+    [InlineData("Bearer fake-token-with-different-format")]
+    [InlineData("Bearer 00fake00token00abcdefghijklmnopqrstuvwxyz0123456789")]
+    public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
+    {
+        // Arrange
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        request.Headers["Authorization"] = authToken;
+
+        // Act
+        await _sut.Run(request);
+
+        // Assert
+        _mockAuthenticator.Verify(x => x.Authenticate(authToken), Times.Once);
+    }
 }
