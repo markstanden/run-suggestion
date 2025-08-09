@@ -36,12 +36,12 @@ public class GetRunSuggestion
 
         if (entraId is null)
         {
-            _logger.LogWarning(LogMessages.AuthenticationFailure);
+            _logger.LogWarning(LogMessages.Authentication.Failure);
             return new UnauthorizedResult();
         }
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
-                               LogMessages.AuthenticationSuccess,
+                               LogMessages.Authentication.Success,
                                AuthHelpers.GetLastFiveChars(entraId));
 
         RunRecommendation _ = await _recommendationService.GetRecommendation(entraId);

@@ -2,9 +2,13 @@ namespace RunSuggestion.Api.Constants;
 
 public static class LogMessages
 {
+    public static class Authentication
+    {
+        public const string Success = "Successfully Authenticated user";
+        public const string Failure = "Failed to authenticate user.";
+    }
+
     public const string RequestReceived = "Run suggestion request received.";
-    public const string AuthenticationSuccess = "Successfully Authenticated user";
-    public const string AuthenticationFailure = "Failed to authenticate user.";
     public const string UploadStarted = "Run history upload started.";
     public const string InvalidCsvContent = "Invalid CSV content";
     public const string UnexpectedError = "An unexpected error occurred";
