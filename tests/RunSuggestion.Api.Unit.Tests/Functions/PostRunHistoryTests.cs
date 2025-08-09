@@ -197,8 +197,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task
-        Run_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccessMessageInUploadResponse()
+    public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccess()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -246,7 +245,7 @@ public class PostRunHistoryTests
     [InlineData("Invalid Duration")]
     [InlineData("Invalid Distance")]
     [InlineData("Invalid Date")]
-    public async Task Run_IfRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
+    public async Task Run_WhenRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
         string exceptionMessage)
     {
         // Arrange
@@ -270,7 +269,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task Run_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogCsvImportFailedAsWarning()
+    public async Task Run_WhenRunHistoryAdderThrowsInvalidArgument_ShouldLogCsvImportFailedAsWarning()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -291,7 +290,7 @@ public class PostRunHistoryTests
     [InlineData("Invalid Duration")]
     [InlineData("Invalid Distance")]
     [InlineData("Invalid Date")]
-    public async Task Run_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
+    public async Task Run_WhenRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
         string exceptionMessage)
     {
         // Arrange
