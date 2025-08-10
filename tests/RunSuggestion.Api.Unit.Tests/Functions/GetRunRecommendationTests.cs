@@ -26,6 +26,8 @@ public class GetRunRecommendationTests
                                         _mockRecommendationService.Object);
     }
 
+    #region Constructor Tests
+
     [Fact]
     public void Constructor_WithNullLogger_ThrowsArgumentNullException()
     {
@@ -80,6 +82,10 @@ public class GetRunRecommendationTests
         ex.ParamName.ShouldBe(expectedParamName);
     }
 
+    #endregion
+
+    #region Request Logging
+
     [Fact]
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
@@ -93,6 +99,8 @@ public class GetRunRecommendationTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
+
+    #endregion
 
     #region Authentication
 

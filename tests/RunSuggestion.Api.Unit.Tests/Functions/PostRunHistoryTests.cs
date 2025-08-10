@@ -84,6 +84,8 @@ public class PostRunHistoryTests
 
     #endregion
 
+    #region Request Logging
+
     [Fact]
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
@@ -97,6 +99,10 @@ public class PostRunHistoryTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
+
+    #endregion
+
+    #region Authentication
 
     [Fact]
     public async Task Run_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
@@ -219,6 +225,10 @@ public class PostRunHistoryTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage);
     }
+
+    #endregion
+
+    #region RunHistoryAdder
 
     [Theory]
     [InlineData(1)]
@@ -419,4 +429,6 @@ public class PostRunHistoryTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Error, expectedMessage, exceptionMessage);
     }
+
+    #endregion
 }
