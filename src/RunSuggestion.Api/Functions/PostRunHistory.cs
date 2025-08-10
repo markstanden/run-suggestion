@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Helpers;
 
 namespace RunSuggestion.Api.Functions;
@@ -30,7 +31,7 @@ public class PostRunHistory
     {
         _logger.LogInformation(Messages.CsvUpload.RequestReceived);
 
-        string? entraId = _authenticator.Authenticate(AuthHelpers.GetAuthHeaderFromRequest(request));
+        string? entraId = _authenticator.Authenticate(request.GetAuthHeader());
 
         if (entraId is null)
         {

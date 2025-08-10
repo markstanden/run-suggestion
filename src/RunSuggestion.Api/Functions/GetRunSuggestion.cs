@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Helpers;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
@@ -30,7 +31,7 @@ public class GetRunSuggestion
     {
         _logger.LogInformation(Messages.Recommendation.RequestReceived);
 
-        string? entraId = _authenticator.Authenticate(AuthHelpers.GetAuthHeaderFromRequest(request));
+        string? entraId = _authenticator.Authenticate(request.GetAuthHeader());
 
         if (entraId is null)
         {
