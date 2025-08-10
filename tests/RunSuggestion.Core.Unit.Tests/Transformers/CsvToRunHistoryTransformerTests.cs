@@ -22,7 +22,7 @@ public class CsvToRunHistoryTransformerTests
     #region Constructor Tests
 
     [Fact]
-    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    public void Constructor_WithNullCsvParser_ThrowsArgumentNullException()
     {
         // Arrange
         const string expectedParamName = "csvParser";

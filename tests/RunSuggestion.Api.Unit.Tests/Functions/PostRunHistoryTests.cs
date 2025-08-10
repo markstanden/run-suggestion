@@ -65,20 +65,20 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public void Constructor_WithNullRecommendationService_ThrowsArgumentNullException()
+    public void Constructor_WithNullRunHistoryAdder_ThrowsArgumentNullException()
     {
         // Arrange
         const string expectedParamName = "runHistoryAdder";
         IRunHistoryAdder nullRunHistoryAdder = null!;
 
         // Act
-        Func<PostRunHistory> withNullRecommendationServiceArgument = () => new PostRunHistory(
+        Func<PostRunHistory> withNullRunHistoryAdderArgument = () => new PostRunHistory(
             _mockLogger.Object,
             _mockAuthenticator.Object,
             nullRunHistoryAdder);
 
         // Assert
-        ArgumentNullException ex = withNullRecommendationServiceArgument.ShouldThrow<ArgumentNullException>();
+        ArgumentNullException ex = withNullRunHistoryAdderArgument.ShouldThrow<ArgumentNullException>();
         ex.ParamName.ShouldBe(expectedParamName);
     }
 
