@@ -275,6 +275,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccess()
     {
         // Arrange
+        const string expectedMessage = Messages.CsvUpload.Success;
         string authToken = $"Bearer {Guid.NewGuid()}";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -288,7 +289,7 @@ public class PostRunHistoryTests
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
         UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
-        response.Message.ShouldContain("Success");
+        response.Message.ShouldContain(expectedMessage);
     }
 
     [Theory]
@@ -324,6 +325,7 @@ public class PostRunHistoryTests
         string exceptionMessage)
     {
         // Arrange
+        const string expectedMessage = Messages.CsvUpload.Failure;
         string authToken = $"Bearer {Guid.NewGuid()}";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -338,7 +340,7 @@ public class PostRunHistoryTests
         BadRequestObjectResult badRequestResult = result.ShouldBeOfType<BadRequestObjectResult>();
         badRequestResult.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         UploadResponse response = badRequestResult.Value.ShouldBeOfType<UploadResponse>();
-        response.Message.ShouldContain("Invalid CSV");
+        response.Message.ShouldContain(expectedMessage);
         response.Message.ShouldContain(exceptionMessage);
         response.RowsAdded.ShouldBe(0);
     }
