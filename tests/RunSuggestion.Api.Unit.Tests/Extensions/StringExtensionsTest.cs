@@ -20,4 +20,23 @@ public class StringExtensionsTest
         actual.Length.ShouldBe(5);
         actual.ShouldBe(expected);
     }
+
+
+    [Theory]
+    [InlineData("AB 12")]
+    [InlineData("ABCDE")]
+    [InlineData("ABC")]
+    [InlineData("A")]
+    [InlineData("")]
+    public void LastFiveChars_WithAStringOfFiveCharsOrLess_ReturnsInitialString(string initial)
+    {
+        // Act
+        string actual = initial.LastFiveChars();
+
+        // Assert
+        initial.Length.ShouldBeLessThanOrEqualTo(5);
+        actual.Length.ShouldBeLessThanOrEqualTo(5);
+        actual.ShouldBe(initial);
+        actual.ShouldBeSameAs(initial);
+    }
 }
