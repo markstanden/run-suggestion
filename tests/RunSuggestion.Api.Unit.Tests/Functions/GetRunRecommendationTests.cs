@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,18 +10,20 @@ using RunSuggestion.TestHelpers;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
-[JetBrains.Annotations.TestSubject(typeof(GetRunSuggestion))]
-public class GetRunSuggestionTests
+[JetBrains.Annotations.TestSubject(typeof(GetRunRecommendation))]
+public class GetRunRecommendationTests
 {
-    private readonly Mock<ILogger<GetRunSuggestion>> _mockLogger = new();
+    private readonly Mock<ILogger<GetRunRecommendation>> _mockLogger = new();
     private readonly Mock<IAuthenticator> _mockAuthenticator = new();
     private readonly Mock<IRecommendationService> _mockRecommendationService = new();
 
-    private readonly GetRunSuggestion _sut;
+    private readonly GetRunRecommendation _sut;
 
-    public GetRunSuggestionTests()
+    public GetRunRecommendationTests()
     {
-        _sut = new GetRunSuggestion(_mockLogger.Object, _mockAuthenticator.Object, _mockRecommendationService.Object);
+        _sut = new GetRunRecommendation(_mockLogger.Object,
+                                        _mockAuthenticator.Object,
+                                        _mockRecommendationService.Object);
     }
 
     [Fact]

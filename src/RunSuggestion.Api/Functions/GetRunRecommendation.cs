@@ -10,7 +10,7 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Api.Functions;
 
-public class GetRunSuggestion
+public class GetRunRecommendation
 {
     private const string RunSuggestionFunctionName = "GetRunSuggestion";
 
@@ -18,7 +18,7 @@ public class GetRunSuggestion
     private readonly IAuthenticator _authenticator;
     private readonly IRecommendationService _recommendationService;
 
-    public GetRunSuggestion(ILogger<GetRunSuggestion> logger, IAuthenticator authenticator,
+    public GetRunRecommendation(ILogger<GetRunRecommendation> logger, IAuthenticator authenticator,
         IRecommendationService recommendationService)
     {
         _logger = logger;
