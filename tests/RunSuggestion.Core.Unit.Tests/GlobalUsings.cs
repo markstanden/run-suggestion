@@ -1,4 +1,4 @@
-global using Xunit;
-global using Shouldly;
+global using JetBrains.Annotations;
 global using Moq;
-global using RunSuggestion.Core;
+global using Shouldly;
+global using Xunit;

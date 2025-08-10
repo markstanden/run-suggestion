@@ -10,7 +10,7 @@ using RunSuggestion.TestHelpers;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
-[JetBrains.Annotations.TestSubject(typeof(GetRunRecommendation))]
+[TestSubject(typeof(GetRunRecommendation))]
 public class GetRunRecommendationTests
 {
     private readonly Mock<ILogger<GetRunRecommendation>> _mockLogger = new();

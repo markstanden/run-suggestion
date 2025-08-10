@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ using static RunSuggestion.TestHelpers.Constants.NonFunctionalRequirements;
 
 namespace RunSuggestion.Api.Integration.Tests.Functions;
 
-[JetBrains.Annotations.TestSubject(typeof(PostRunHistory))]
+[TestSubject(typeof(PostRunHistory))]
 public class PostRunHistoryIntegrationTests
 {
     private readonly TimeSpan _maxTestThresholdTime = TimeSpan.FromMilliseconds(
