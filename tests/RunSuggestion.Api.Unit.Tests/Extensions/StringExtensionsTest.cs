@@ -39,4 +39,17 @@ public class StringExtensionsTest
         actual.ShouldBe(initial);
         actual.ShouldBeSameAs(initial);
     }
+
+    [Fact]
+    public void LastFiveChars_WithNullString_ThrowsArgumentNullException()
+    {
+        // Arrange
+        string? nullString = null;
+
+        // Act
+        Func<string> withNullStringArgument = () => nullString!.LastFiveChars();
+
+        // Assert
+        withNullStringArgument.ShouldThrow<ArgumentNullException>();
+    }
 }
