@@ -6,4 +6,4 @@ public record RunRecommendation : RunBase
     /// The serial for the ID within the database
     /// </summary>
     public int RunRecommendationId { get; init; }
-};
+}
