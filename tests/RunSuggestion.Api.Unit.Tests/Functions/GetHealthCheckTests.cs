@@ -8,7 +8,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
-[JetBrains.Annotations.TestSubject(typeof(GetHealthCheck))]
+[TestSubject(typeof(GetHealthCheck))]
 public class GetHealthCheckTests
 {
     private readonly Mock<ILogger<GetHealthCheck>> _mockLogger = new();

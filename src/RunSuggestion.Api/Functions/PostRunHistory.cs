@@ -6,7 +6,6 @@ using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Extensions;
-using RunSuggestion.Api.Helpers;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -38,7 +37,7 @@ public class PostRunHistory(
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{EntraId}",
                                Messages.Authentication.Success,
-                               AuthHelpers.GetLastFiveChars(entraId));
+                               entraId.LastFiveChars());
 
         using StreamReader reader = new(request.Body);
         string csv = await reader.ReadToEndAsync();

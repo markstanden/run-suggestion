@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Extensions;
-using RunSuggestion.Api.Helpers;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
 
@@ -16,8 +15,12 @@ public class GetRunRecommendation(
     IRecommendationService recommendationService)
 {
     private readonly ILogger<GetRunRecommendation> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly IAuthenticator _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
-    private readonly IRecommendationService _recommendationService = recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
+
+    private readonly IAuthenticator _authenticator =
+        authenticator ?? throw new ArgumentNullException(nameof(authenticator));
+
+    private readonly IRecommendationService _recommendationService =
+        recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
 
     [Function(nameof(GetRunRecommendation))]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
@@ -34,7 +37,7 @@ public class GetRunRecommendation(
 
         _logger.LogInformation("{AuthSuccessMessage}: ...{EntraId}",
                                Messages.Authentication.Success,
-                               AuthHelpers.GetLastFiveChars(entraId));
+                               entraId.LastFiveChars());
 
         RunRecommendation _ = await _recommendationService.GetRecommendation(entraId);
 

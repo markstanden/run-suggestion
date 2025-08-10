@@ -6,7 +6,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;
 
-[JetBrains.Annotations.TestSubject(typeof(TrainingPeaksHistoryService))]
+[TestSubject(typeof(TrainingPeaksHistoryService))]
 public class TrainingPeaksHistoryServiceTests
 {
     private readonly Mock<IRunHistoryTransformer> _mockTransformer = new();

@@ -1,6 +1,5 @@
 using RunSuggestion.Core.Constants;
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
@@ -8,7 +7,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Transformers;
 
-[JetBrains.Annotations.TestSubject(typeof(CsvToRunHistoryTransformer))]
+[TestSubject(typeof(CsvToRunHistoryTransformer))]
 public class CsvToRunHistoryTransformerTests
 {
     private readonly ICsvParser _csvParser = new CsvParser();
