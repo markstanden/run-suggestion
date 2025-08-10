@@ -16,6 +16,24 @@ public class UserRepositoryTests
 
     #endregion
 
+    #region Common Test Helpers
+
+    /// <summary>
+    /// Preseeds the database with the specified number of users each with a specified number of events registered
+    /// </summary>
+    /// <param name="userCount">The number of users to register, defaults to 100</param>
+    /// <param name="eventsPerUser">The number of events to register per user, defaults to 10</param>
+    private async Task PreseedDatabase(int userCount = 100, int eventsPerUser = 10)
+    {
+        foreach (int _ in Enumerable.Range(0, userCount))
+        {
+            int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
+            await _sut.AddRunEventsAsync(userId, RunEventFakes.CreateRunEvents(eventsPerUser));
+        }
+    }
+
+    #endregion
+
     #region Constructor Tests
 
     [Fact]
@@ -31,24 +49,6 @@ public class UserRepositoryTests
         // Assert
         ArgumentNullException ex = withNullConnectionString.ShouldThrow<ArgumentNullException>();
         ex.ParamName.ShouldBe(expectedParamName);
-    }
-
-    #endregion
-
-    #region Common Test Helpers
-
-    /// <summary>
-    /// Preseeds the database with the specified number of users each with a specified number of events registered
-    /// </summary>
-    /// <param name="userCount">The number of users to register, defaults to 100</param>
-    /// <param name="eventsPerUser">The number of events to register per user, defaults to 10</param>
-    private async Task PreseedDatabase(int userCount = 100, int eventsPerUser = 10)
-    {
-        foreach (int _ in Enumerable.Range(0, userCount))
-        {
-            int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
-            await _sut.AddRunEventsAsync(userId, RunEventFakes.CreateRunEvents(eventsPerUser));
-        }
     }
 
     #endregion
