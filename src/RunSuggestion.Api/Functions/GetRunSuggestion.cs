@@ -30,7 +30,7 @@ public class GetRunSuggestion
     {
         _logger.LogInformation(Messages.Recommendation.RequestReceived);
 
-        string authHeader = request.Headers[Headers.Authorization].ToString();
+        string authHeader = request.Headers.Authorization.ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)

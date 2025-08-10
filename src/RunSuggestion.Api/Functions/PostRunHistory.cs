@@ -30,7 +30,7 @@ public class PostRunHistory
     {
         _logger.LogInformation(Messages.CsvUpload.RequestReceived);
 
-        string authHeader = request.Headers[Headers.Authorization].ToString();
+        string authHeader = request.Headers.Authorization.ToString();
         string? entraId = _authenticator.Authenticate(authHeader);
 
         if (entraId is null)
