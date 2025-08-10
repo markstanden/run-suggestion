@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
@@ -155,14 +156,16 @@ public class GetRunRecommendationTests
 
 
     [Theory]
-    [InlineData(Any.ShortAlphanumericString)]
-    [InlineData(Any.LongAlphanumericString)]
-    [InlineData(Any.LongAlphaWithSpecialCharsString)]
-    public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
+    [InlineData(Any.FourCharString, 4)]
+    [InlineData(Any.FiveCharString, 5)]
+    [InlineData(Any.SixCharString, 5)]
+    [InlineData(Any.LongAlphanumericString, 5)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString, 5)]
+    public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId, int expectedLength)
     {
         // Arrange
         const string expectedMessage = Messages.Authentication.Success;
-        string expectedLastFive = entraId.Substring(entraId.Length - 5);
+        string expectedLastFive = entraId.LastFiveChars();
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(entraId);
@@ -171,6 +174,7 @@ public class GetRunRecommendationTests
         await _sut.Run(request);
 
         // Assert
+        expectedLastFive.Length.ShouldBe(expectedLength);
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
                                          expectedMessage,
                                          expectedLastFive);
