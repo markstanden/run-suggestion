@@ -4,50 +4,41 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Extensions;
+using RunSuggestion.Api.Helpers;
 
 namespace RunSuggestion.Api.Functions;
 
-public class PostRunHistory
+public class PostRunHistory(
+    ILogger<PostRunHistory> logger,
+    IAuthenticator authenticator,
+    IRunHistoryAdder runHistoryAdder)
 {
-    private const string MessageUploadStarted = "Run history upload started.";
-    private const string MessageAuthenticationFailure = "Failed to authenticate user.";
-    private const string MessageAuthenticationSuccess = "Successfully Authenticated user";
-    private const string MessageInvalidCsvContent = "Invalid CSV content";
-    private const string MessageUnexpectedError = "An unexpected error occurred";
-    private const string MessageSuccess = "Successfully processed CSV";
-    private const string MessageFailure = "CSV Import Failed";
+    private readonly ILogger<PostRunHistory> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    private const string AuthorizationHeader = "Authorization";
+    private readonly IAuthenticator _authenticator =
+        authenticator ?? throw new ArgumentNullException(nameof(authenticator));
 
-    private readonly ILogger<PostRunHistory> _logger;
-    private readonly IAuthenticator _authenticator;
-    private readonly IRunHistoryAdder _runHistoryAdder;
+    private readonly IRunHistoryAdder _runHistoryAdder =
+        runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
 
-    public PostRunHistory(ILogger<PostRunHistory> logger, IAuthenticator authenticator,
-        IRunHistoryAdder runHistoryAdder)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
-        _runHistoryAdder = runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
-    }
-
-    [Function("PostRunHistory")]
+    [Function(nameof(PostRunHistory))]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
-        _logger.LogInformation(MessageUploadStarted);
+        _logger.LogInformation(Messages.CsvUpload.RequestReceived);
 
-        string authHeader = request.Headers[AuthorizationHeader].ToString();
-        string? entraId = _authenticator.Authenticate(authHeader);
+        string? entraId = _authenticator.Authenticate(request.GetAuthHeader());
 
         if (entraId is null)
         {
-            _logger.LogWarning(MessageAuthenticationFailure);
+            _logger.LogWarning(Messages.Authentication.Failure);
             return new UnauthorizedResult();
         }
 
-        _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
-                               MessageAuthenticationSuccess,
-                               GetLastFiveChars(entraId));
+        _logger.LogInformation("{AuthSuccessMessage}: ...{EntraId}",
+                               Messages.Authentication.Success,
+                               AuthHelpers.GetLastFiveChars(entraId));
 
         using StreamReader reader = new(request.Body);
         string csv = await reader.ReadToEndAsync();
@@ -57,7 +48,7 @@ public class PostRunHistory
             int affectedRows = await _runHistoryAdder.AddRunHistory(entraId, csv);
             UploadResponse response = new()
             {
-                Message = MessageSuccess,
+                Message = Messages.CsvUpload.Success,
                 RowsAdded = affectedRows
             };
             return new OkObjectResult(response);
@@ -66,12 +57,12 @@ public class PostRunHistory
         {
             _logger.LogWarning(ex,
                                "{FailureMessage}: {InvalidCsv} - {ExceptionMessage}",
-                               MessageFailure,
-                               MessageInvalidCsvContent,
+                               Messages.CsvUpload.Failure,
+                               Messages.CsvUpload.Invalid,
                                ex.Message);
             UploadResponse errorResponse = new()
             {
-                Message = $"{MessageFailure}: {MessageInvalidCsvContent} - {ex.Message}",
+                Message = $"{Messages.CsvUpload.Failure}: {Messages.CsvUpload.Invalid} - {ex.Message}",
                 RowsAdded = 0
             };
             return new BadRequestObjectResult(errorResponse);
@@ -80,11 +71,11 @@ public class PostRunHistory
         {
             _logger.LogError(ex,
                              "{FailureMessage}: {ExceptionMessage}",
-                             MessageFailure,
+                             Messages.CsvUpload.Failure,
                              ex.Message);
             UploadResponse errorResponse = new()
             {
-                Message = MessageUnexpectedError,
+                Message = Messages.UnexpectedError,
                 RowsAdded = 0
             };
             return new ObjectResult(errorResponse)
@@ -93,11 +84,4 @@ public class PostRunHistory
             };
         }
     }
-
-    /// <summary>
-    /// Returns the last 5 characters of the passed string
-    /// </summary>
-    /// <param name="fullString"></param>
-    /// <returns>the last 5 characters of the passed string</returns>
-    private static string GetLastFiveChars(string fullString) => fullString[^5..];
 }

@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
+[JetBrains.Annotations.TestSubject(typeof(GetHealthCheck))]
 public class GetHealthCheckTests
 {
     private readonly Mock<ILogger<GetHealthCheck>> _mockLogger = new();
@@ -19,16 +21,33 @@ public class GetHealthCheckTests
     }
 
     [Fact]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "logger";
+        ILogger<GetHealthCheck> nullLogger = null!;
+
+        // Act
+        Func<GetHealthCheck> withNullLoggerArgument = () => new GetHealthCheck(nullLogger);
+
+        // Assert
+        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+
+    [Fact]
     public void Run_WhenCalled_LogsRequestReceived()
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        string expectedMessage = Messages.HealthCheck.RequestReceived;
 
         // Act
         _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, GetHealthCheck.RequestReceivedLog);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
 
     [Fact]
@@ -50,12 +69,13 @@ public class GetHealthCheckTests
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        string expectedMessage = Messages.HealthCheck.Success;
 
         // Act
         IActionResult result = _sut.Run(request);
 
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
-        okResult.Value.ShouldBe(GetHealthCheck.HealthCheckResponse);
+        okResult.Value.ShouldBe(expectedMessage);
     }
 }

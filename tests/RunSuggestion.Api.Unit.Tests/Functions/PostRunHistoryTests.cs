@@ -1,15 +1,18 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
+using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
 
+[JetBrains.Annotations.TestSubject(typeof(PostRunHistory))]
 public class PostRunHistoryTests
 {
     private readonly Mock<ILogger<PostRunHistory>> _mockLogger = new();
@@ -24,20 +27,21 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
+    public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
+        string expectedMessage = Messages.CsvUpload.RequestReceived;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
 
         // Act
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, "Run history upload started");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
 
     [Fact]
-    public async Task PostRunHistory_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
+    public async Task Run_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
@@ -50,27 +54,28 @@ public class PostRunHistoryTests
     }
 
     [Theory]
-    [InlineData("Bearer fake-token-12345")]
-    [InlineData("Bearer fake-token-with-different-format")]
-    [InlineData("Bearer 00fake00token00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
+    public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
+        string authHeader = $"Bearer {authToken}";
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
-        request.Headers["Authorization"] = authToken;
+        request.Headers.Authorization = authHeader;
 
         // Act
         await _sut.Run(request);
 
         // Assert
-        _mockAuthenticator.Verify(x => x.Authenticate(authToken), Times.Once);
+        _mockAuthenticator.Verify(x => x.Authenticate(authHeader), Times.Once);
     }
 
     [Theory]
-    [InlineData("fake-entra-id-12345")]
-    [InlineData("fake-entra-id-with-different-format")]
-    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
+    public async Task Run_WhenAuthenticationSucceeds_CallsHistoryAdderWithEntraId(string entraId)
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
@@ -85,12 +90,13 @@ public class PostRunHistoryTests
     }
 
     [Theory]
-    [InlineData("fake-entra-id-12345")]
-    [InlineData("fake-entra-id-with-different-format")]
-    [InlineData("00fake00entra00id00abcdefghijklmnopqrstuvwxyz0123456789")]
-    public async Task PostRunHistory_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
+    [InlineData(Any.ShortAlphanumericString)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.LongAlphaWithSpecialCharsString)]
+    public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
     {
         // Arrange
+        string expectedMessage = Messages.Authentication.Success;
         string expectedLastFive = entraId.Substring(entraId.Length - 5);
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -101,12 +107,12 @@ public class PostRunHistoryTests
 
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
-                                         "Successfully Authenticated user",
+                                         expectedMessage,
                                          expectedLastFive);
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationFails_Returns401UnauthorizedResponse()
+    public async Task Run_WhenAuthenticationFails_Returns401UnauthorizedResponse()
     {
         // Arrange
         int expectedStatusCode = StatusCodes.Status401Unauthorized;
@@ -124,7 +130,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationFails_DoesNotCallHistoryAdder()
+    public async Task Run_WhenAuthenticationFails_DoesNotCallHistoryAdder()
     {
         // Arrange
         string? nullEntraId = null;
@@ -140,9 +146,10 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationFails_LogsFailedRequestAsWarning()
+    public async Task Run_WhenAuthenticationFails_LogsFailedRequestAsWarning()
     {
         // Arrange
+        string expectedMessage = Messages.Authentication.Failure;
         string? nullEntraId = null;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -152,7 +159,7 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "Failed to authenticate user.");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage);
     }
 
     [Theory]
@@ -160,7 +167,7 @@ public class PostRunHistoryTests
     [InlineData(10)]
     [InlineData(100)]
     [InlineData(1000)]
-    public async Task PostRunHistory_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
+    public async Task Run_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -178,7 +185,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
+    public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -197,8 +204,7 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task
-        PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccessMessageInUploadResponse()
+    public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccess()
     {
         // Arrange
         string authToken = $"Bearer {Guid.NewGuid()}";
@@ -222,7 +228,7 @@ public class PostRunHistoryTests
     [InlineData(10)]
     [InlineData(100)]
     [InlineData(1000)]
-    public async Task PostRunHistory_WhenAuthenticationSucceedsAndValidCsvPresent_ExpectedRowsReturned(
+    public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_ExpectedRowsReturned(
         int expectedAffectedRows)
     {
         // Arrange
@@ -246,7 +252,7 @@ public class PostRunHistoryTests
     [InlineData("Invalid Duration")]
     [InlineData("Invalid Distance")]
     [InlineData("Invalid Date")]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
+    public async Task Run_WhenRunHistoryAdderThrowsInvalidArgument_ShouldReturnBadRequestWithFailureReason(
         string exceptionMessage)
     {
         // Arrange
@@ -270,9 +276,10 @@ public class PostRunHistoryTests
     }
 
     [Fact]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogCsvImportFailedAsWarning()
+    public async Task Run_WhenRunHistoryAdderThrowsInvalidArgument_ShouldLogCsvImportFailedAsWarning()
     {
         // Arrange
+        string expectedMessage = Messages.CsvUpload.Failure;
         string authToken = $"Bearer {Guid.NewGuid()}";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -284,17 +291,18 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "CSV Import Failed");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage);
     }
 
     [Theory]
     [InlineData("Invalid Duration")]
     [InlineData("Invalid Distance")]
     [InlineData("Invalid Date")]
-    public async Task PostRunHistory_IfRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
+    public async Task Run_WhenRunHistoryAdderThrowsInvalidArgument_ShouldLogExceptionMessageAsWarning(
         string exceptionMessage)
     {
         // Arrange
+        string expectedMessage = Messages.CsvUpload.Failure;
         string authToken = $"Bearer {Guid.NewGuid()}";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -306,13 +314,14 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "CSV Import Failed", exceptionMessage);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage, exceptionMessage);
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenHistoryAdderThrowsGeneralException_ReturnsGeneric500InternalServerError()
+    public async Task Run_WhenHistoryAdderThrowsGeneralException_ReturnsGeneric500InternalServerError()
     {
         // Arrange
+        string expectedMessage = Messages.UnexpectedError;
         string authToken = $"Bearer {Guid.NewGuid()}";
         string exceptionMessage = "Database connection failed";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
@@ -328,14 +337,15 @@ public class PostRunHistoryTests
         ObjectResult objectResult = result.ShouldBeOfType<ObjectResult>();
         objectResult.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
         UploadResponse response = objectResult.Value.ShouldBeOfType<UploadResponse>();
-        response.Message.ShouldBe("An unexpected error occurred");
+        response.Message.ShouldBe(expectedMessage);
         response.RowsAdded.ShouldBe(0);
     }
 
     [Fact]
-    public async Task PostRunHistory_WhenHistoryAdderThrowsGeneralException_LogsErrorWithException()
+    public async Task Run_WhenHistoryAdderThrowsGeneralException_LogsErrorWithException()
     {
         // Arrange
+        string expectedMessage = Messages.CsvUpload.Failure;
         string authToken = $"Bearer {Guid.NewGuid()}";
         string exceptionMessage = "Database connection failed";
         HttpRequest request =
@@ -349,6 +359,6 @@ public class PostRunHistoryTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Error, "CSV Import Failed", exceptionMessage);
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Error, expectedMessage, exceptionMessage);
     }
 }

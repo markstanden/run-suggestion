@@ -4,6 +4,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Validators;
 
+[JetBrains.Annotations.TestSubject(typeof(RunEventValidator))]
 public class RunEventValidatorTests
 {
     private readonly RunEventValidator _sut;

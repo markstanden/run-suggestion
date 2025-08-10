@@ -8,6 +8,7 @@ using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Transformers;
 
+[JetBrains.Annotations.TestSubject(typeof(CsvToRunHistoryTransformer))]
 public class CsvToRunHistoryTransformerTests
 {
     private readonly ICsvParser _csvParser = new CsvParser();
