@@ -14,7 +14,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.0">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0"/>
