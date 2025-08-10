@@ -36,7 +36,7 @@ public class PostRunHistory(
             return new UnauthorizedResult();
         }
 
-        _logger.LogInformation("{AuthSuccessMessage}: ...{entraId}",
+        _logger.LogInformation("{AuthSuccessMessage}: ...{EntraId}",
                                Messages.Authentication.Success,
                                AuthHelpers.GetLastFiveChars(entraId));
 
