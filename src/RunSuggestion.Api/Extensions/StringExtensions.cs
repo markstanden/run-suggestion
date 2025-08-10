@@ -10,7 +10,7 @@ public static class StringExtensions
     /// <param name="fullString">the full string to extract from</param>
     /// <returns>the last 5 characters of the passed string</returns>
     public static string LastFiveChars(this string fullString) =>
-        fullString.Length < SubstringLength
+        fullString.Length <= SubstringLength
             ? fullString
             : fullString[^SubstringLength..];
 }
