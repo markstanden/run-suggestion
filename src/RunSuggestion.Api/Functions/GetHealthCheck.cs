@@ -6,14 +6,9 @@ using RunSuggestion.Api.Constants;
 
 namespace RunSuggestion.Api.Functions;
 
-public class GetHealthCheck
+public class GetHealthCheck(ILogger<GetHealthCheck> logger)
 {
-    private readonly ILogger<GetHealthCheck> _logger;
-
-    public GetHealthCheck(ILogger<GetHealthCheck> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<GetHealthCheck> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [Function(nameof(GetHealthCheck))]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)

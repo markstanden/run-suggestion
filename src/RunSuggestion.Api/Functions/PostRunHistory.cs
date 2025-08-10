@@ -10,19 +10,18 @@ using RunSuggestion.Api.Helpers;
 
 namespace RunSuggestion.Api.Functions;
 
-public class PostRunHistory
+public class PostRunHistory(
+    ILogger<PostRunHistory> logger,
+    IAuthenticator authenticator,
+    IRunHistoryAdder runHistoryAdder)
 {
-    private readonly ILogger<PostRunHistory> _logger;
-    private readonly IAuthenticator _authenticator;
-    private readonly IRunHistoryAdder _runHistoryAdder;
+    private readonly ILogger<PostRunHistory> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public PostRunHistory(ILogger<PostRunHistory> logger, IAuthenticator authenticator,
-        IRunHistoryAdder runHistoryAdder)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
-        _runHistoryAdder = runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
-    }
+    private readonly IAuthenticator _authenticator =
+        authenticator ?? throw new ArgumentNullException(nameof(authenticator));
+
+    private readonly IRunHistoryAdder _runHistoryAdder =
+        runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
 
     [Function(nameof(PostRunHistory))]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)

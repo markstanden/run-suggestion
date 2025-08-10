@@ -21,6 +21,22 @@ public class GetHealthCheckTests
     }
 
     [Fact]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "logger";
+        ILogger<GetHealthCheck> nullLogger = null!;
+
+        // Act
+        Func<GetHealthCheck> withNullLoggerArgument = () => new GetHealthCheck(nullLogger);
+
+        // Assert
+        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+
+    [Fact]
     public void Run_WhenCalled_LogsRequestReceived()
     {
         // Arrange
