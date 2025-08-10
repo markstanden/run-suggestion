@@ -7,5 +7,8 @@ public static class StringExtensions
     /// </summary>
     /// <param name="fullString">the full string to truncate</param>
     /// <returns>the last 5 characters of the passed string</returns>
-    public static string LastFiveChars(this string fullString) => fullString[^5..];
+    public static string LastFiveChars(this string fullString) =>
+        fullString.Length < 5
+            ? fullString
+            : fullString[^5..];
 }
