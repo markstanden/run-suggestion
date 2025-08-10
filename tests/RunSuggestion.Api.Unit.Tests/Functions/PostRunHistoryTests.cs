@@ -26,6 +26,64 @@ public class PostRunHistoryTests
         _sut = new PostRunHistory(_mockLogger.Object, _mockAuthenticator.Object, _mockHistoryAdder.Object);
     }
 
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "logger";
+        ILogger<PostRunHistory> nullLogger = null!;
+
+        // Act
+        Func<PostRunHistory> withNullLoggerArgument = () => new PostRunHistory(
+            nullLogger,
+            _mockAuthenticator.Object,
+            _mockHistoryAdder.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullAuthenticator_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "authenticator";
+        IAuthenticator nullAuthenticator = null!;
+
+        // Act
+        Func<PostRunHistory> withNullAuthenticatorArgument = () => new PostRunHistory(
+            _mockLogger.Object,
+            nullAuthenticator,
+            _mockHistoryAdder.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullAuthenticatorArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullRecommendationService_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "runHistoryAdder";
+        IRunHistoryAdder nullRunHistoryAdder = null!;
+
+        // Act
+        Func<PostRunHistory> withNullRecommendationServiceArgument = () => new PostRunHistory(
+            _mockLogger.Object,
+            _mockAuthenticator.Object,
+            nullRunHistoryAdder);
+
+        // Assert
+        ArgumentNullException ex = withNullRecommendationServiceArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    #endregion
+
     [Fact]
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
