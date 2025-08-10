@@ -26,6 +26,66 @@ public class PostRunHistoryTests
         _sut = new PostRunHistory(_mockLogger.Object, _mockAuthenticator.Object, _mockHistoryAdder.Object);
     }
 
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "logger";
+        ILogger<PostRunHistory> nullLogger = null!;
+
+        // Act
+        Func<PostRunHistory> withNullLoggerArgument = () => new PostRunHistory(
+            nullLogger,
+            _mockAuthenticator.Object,
+            _mockHistoryAdder.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullAuthenticator_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "authenticator";
+        IAuthenticator nullAuthenticator = null!;
+
+        // Act
+        Func<PostRunHistory> withNullAuthenticatorArgument = () => new PostRunHistory(
+            _mockLogger.Object,
+            nullAuthenticator,
+            _mockHistoryAdder.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullAuthenticatorArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullRunHistoryAdder_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "runHistoryAdder";
+        IRunHistoryAdder nullRunHistoryAdder = null!;
+
+        // Act
+        Func<PostRunHistory> withNullRunHistoryAdderArgument = () => new PostRunHistory(
+            _mockLogger.Object,
+            _mockAuthenticator.Object,
+            nullRunHistoryAdder);
+
+        // Assert
+        ArgumentNullException ex = withNullRunHistoryAdderArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    #endregion
+
+    #region Request Logging
+
     [Fact]
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
@@ -39,6 +99,10 @@ public class PostRunHistoryTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
+
+    #endregion
+
+    #region Authentication
 
     [Fact]
     public async Task Run_WithAuthHeaderNotSet_CallsAuthenticatorWithEmptyString()
@@ -162,6 +226,10 @@ public class PostRunHistoryTests
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage);
     }
 
+    #endregion
+
+    #region RunHistoryAdder
+
     [Theory]
     [InlineData(1)]
     [InlineData(10)]
@@ -207,6 +275,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_ReturnsSuccess()
     {
         // Arrange
+        const string expectedMessage = Messages.CsvUpload.Success;
         string authToken = $"Bearer {Guid.NewGuid()}";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -220,7 +289,7 @@ public class PostRunHistoryTests
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
         UploadResponse response = okResult.Value.ShouldBeOfType<UploadResponse>();
-        response.Message.ShouldContain("Success");
+        response.Message.ShouldContain(expectedMessage);
     }
 
     [Theory]
@@ -256,6 +325,7 @@ public class PostRunHistoryTests
         string exceptionMessage)
     {
         // Arrange
+        const string expectedMessage = Messages.CsvUpload.Failure;
         string authToken = $"Bearer {Guid.NewGuid()}";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -270,7 +340,7 @@ public class PostRunHistoryTests
         BadRequestObjectResult badRequestResult = result.ShouldBeOfType<BadRequestObjectResult>();
         badRequestResult.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         UploadResponse response = badRequestResult.Value.ShouldBeOfType<UploadResponse>();
-        response.Message.ShouldContain("Invalid CSV");
+        response.Message.ShouldContain(expectedMessage);
         response.Message.ShouldContain(exceptionMessage);
         response.RowsAdded.ShouldBe(0);
     }
@@ -361,4 +431,6 @@ public class PostRunHistoryTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Error, expectedMessage, exceptionMessage);
     }
+
+    #endregion
 }

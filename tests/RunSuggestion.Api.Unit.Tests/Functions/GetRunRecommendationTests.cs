@@ -26,11 +26,71 @@ public class GetRunRecommendationTests
                                         _mockRecommendationService.Object);
     }
 
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "logger";
+        ILogger<GetRunRecommendation> nullLogger = null!;
+
+        // Act
+        Func<GetRunRecommendation> withNullLoggerArgument = () => new GetRunRecommendation(
+            nullLogger,
+            _mockAuthenticator.Object,
+            _mockRecommendationService.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullAuthenticator_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "authenticator";
+        IAuthenticator nullAuthenticator = null!;
+
+        // Act
+        Func<GetRunRecommendation> withNullAuthenticatorArgument = () => new GetRunRecommendation(
+            _mockLogger.Object,
+            nullAuthenticator,
+            _mockRecommendationService.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullAuthenticatorArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullRecommendationService_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "recommendationService";
+        IRecommendationService nullRecommendationService = null!;
+
+        // Act
+        Func<GetRunRecommendation> withNullRecommendationServiceArgument = () => new GetRunRecommendation(
+            _mockLogger.Object,
+            _mockAuthenticator.Object,
+            nullRecommendationService);
+
+        // Assert
+        ArgumentNullException ex = withNullRecommendationServiceArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    #endregion
+
+    #region Request Logging
+
     [Fact]
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
-        string expectedMessage = Messages.Recommendation.RequestReceived;
+        const string expectedMessage = Messages.Recommendation.RequestReceived;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
 
         // Act
@@ -39,6 +99,8 @@ public class GetRunRecommendationTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
+
+    #endregion
 
     #region Authentication
 
@@ -99,6 +161,7 @@ public class GetRunRecommendationTests
     public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
     {
         // Arrange
+        const string expectedMessage = Messages.Authentication.Success;
         string expectedLastFive = entraId.Substring(entraId.Length - 5);
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -109,7 +172,7 @@ public class GetRunRecommendationTests
 
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
-                                         "Successfully Authenticated user",
+                                         expectedMessage,
                                          expectedLastFive);
     }
 
@@ -118,6 +181,7 @@ public class GetRunRecommendationTests
     public async Task Run_WhenAuthenticationFails_LogsFailedRequestAsWarning()
     {
         // Arrange
+        const string expectedMessage = Messages.Authentication.Failure;
         string? nullEntraId = null;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -127,7 +191,7 @@ public class GetRunRecommendationTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "Failed to authenticate user.");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage);
     }
 
     #endregion

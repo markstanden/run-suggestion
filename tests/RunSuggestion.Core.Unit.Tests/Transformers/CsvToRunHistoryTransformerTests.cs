@@ -19,6 +19,25 @@ public class CsvToRunHistoryTransformerTests
         _sut = new CsvToRunHistoryTransformer(_csvParser);
     }
 
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullCsvParser_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "csvParser";
+        ICsvParser nullCsvParser = null!;
+
+        // Act
+        Func<CsvToRunHistoryTransformer> withNullCsvParser = () => new CsvToRunHistoryTransformer(nullCsvParser);
+
+        // Assert
+        ArgumentNullException ex = withNullCsvParser.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    #endregion
+
     [Fact]
     public void ConvertToRunHistory_SingleValidRunRow_ReturnsOneRunEvent()
     {

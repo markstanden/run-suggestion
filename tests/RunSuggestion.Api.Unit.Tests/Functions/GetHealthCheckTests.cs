@@ -20,6 +20,8 @@ public class GetHealthCheckTests
         _sut = new GetHealthCheck(_mockLogger.Object);
     }
 
+    #region Constructor Tests
+
     [Fact]
     public void Constructor_WithNullLogger_ThrowsArgumentNullException()
     {
@@ -35,6 +37,9 @@ public class GetHealthCheckTests
         ex.ParamName.ShouldBe(expectedParamName);
     }
 
+    #endregion
+
+    #region Request Logging
 
     [Fact]
     public void Run_WhenCalled_LogsRequestReceived()
@@ -49,6 +54,10 @@ public class GetHealthCheckTests
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedMessage);
     }
+
+    #endregion
+
+    #region Response
 
     [Fact]
     public void Run_WhenCalled_Returns200OkResult()
@@ -78,4 +87,6 @@ public class GetHealthCheckTests
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
         okResult.Value.ShouldBe(expectedMessage);
     }
+
+    #endregion
 }

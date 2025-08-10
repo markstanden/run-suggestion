@@ -46,6 +46,8 @@ public class PostRunHistoryIntegrationTests
             historyService);
     }
 
+    #region Test Helpers
+
     /// <summary>
     /// Test helper to set up mock authenticator to return a created entraId.
     /// </summary>
@@ -57,6 +59,8 @@ public class PostRunHistoryIntegrationTests
         _authenticator.Setup(x => x.Authenticate(authToken ?? It.IsAny<string>())).Returns(entraId);
         return entraId;
     }
+
+    #endregion
 
     [Theory]
     [InlineData(1)]

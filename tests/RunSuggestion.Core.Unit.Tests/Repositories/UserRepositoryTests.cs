@@ -11,13 +11,8 @@ public class UserRepositoryTests
 {
     #region Common Test Setup
 
-    private readonly UserRepository _sut;
+    private readonly UserRepository _sut = new(TestConnectionString);
     private const string TestConnectionString = "Data Source=:memory:";
-
-    public UserRepositoryTests()
-    {
-        _sut = new UserRepository(TestConnectionString);
-    }
 
     #endregion
 
@@ -35,6 +30,25 @@ public class UserRepositoryTests
             int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
             await _sut.AddRunEventsAsync(userId, RunEventFakes.CreateRunEvents(eventsPerUser));
         }
+    }
+
+    #endregion
+
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullConnectionString_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "connectionString";
+        string nullConnectionString = null!;
+
+        // Act
+        Func<UserRepository> withNullConnectionString = () => new UserRepository(nullConnectionString);
+
+        // Assert
+        ArgumentNullException ex = withNullConnectionString.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
     }
 
     #endregion

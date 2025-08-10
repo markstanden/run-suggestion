@@ -19,6 +19,58 @@ public class TrainingPeaksHistoryServiceTests
         _sut = new TrainingPeaksHistoryService(_mockRepository.Object, _mockTransformer.Object, _mockValidator.Object);
     }
 
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullRepositoryArgument_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "userRepository";
+        IUserRepository nullRepositoryArgument = null!;
+
+        // Act
+        Func<TrainingPeaksHistoryService> withNullRepositoryArgument = () =>
+            new TrainingPeaksHistoryService(nullRepositoryArgument, _mockTransformer.Object, _mockValidator.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullRepositoryArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullTransformerArgument_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "runHistoryTransformer";
+        IRunHistoryTransformer nullTransformerArgument = null!;
+
+        // Act
+        Func<TrainingPeaksHistoryService> withNullTransformerArgument = () =>
+            new TrainingPeaksHistoryService(_mockRepository.Object, nullTransformerArgument, _mockValidator.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullTransformerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullValidatorArgument_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "validator";
+        IValidator<RunEvent> nullValidator = null!;
+
+        // Act
+        Func<TrainingPeaksHistoryService> withNullValidatorArgument = () =>
+            new TrainingPeaksHistoryService(_mockRepository.Object, _mockTransformer.Object, nullValidator);
+
+        // Assert
+        ArgumentNullException ex = withNullValidatorArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    #endregion
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
