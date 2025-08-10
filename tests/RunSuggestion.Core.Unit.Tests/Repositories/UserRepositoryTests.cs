@@ -11,13 +11,8 @@ public class UserRepositoryTests
 {
     #region Common Test Setup
 
-    private readonly UserRepository _sut;
+    private readonly UserRepository _sut = new(TestConnectionString);
     private const string TestConnectionString = "Data Source=:memory:";
-
-    public UserRepositoryTests()
-    {
-        _sut = new UserRepository(TestConnectionString);
-    }
 
     #endregion
 
