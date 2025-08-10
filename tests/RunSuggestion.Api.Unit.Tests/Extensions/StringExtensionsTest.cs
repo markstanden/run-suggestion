@@ -35,7 +35,6 @@ public class StringExtensionsTest
 
         // Assert
         initial.Length.ShouldBeLessThanOrEqualTo(5);
-        actual.Length.ShouldBeLessThanOrEqualTo(5);
         actual.ShouldBe(initial);
         actual.ShouldBeSameAs(initial);
     }
@@ -47,7 +46,7 @@ public class StringExtensionsTest
         string? nullString = null;
 
         // Act
-        Func<string> withNullStringArgument = () => nullString!.LastFiveChars();
+        Action withNullStringArgument = () => nullString!.LastFiveChars();
 
         // Assert
         withNullStringArgument.ShouldThrow<ArgumentNullException>();
