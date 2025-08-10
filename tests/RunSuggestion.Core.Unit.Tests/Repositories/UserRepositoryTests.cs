@@ -21,6 +21,25 @@ public class UserRepositoryTests
 
     #endregion
 
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_WithNullConnectionString_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "connectionString";
+        string nullConnectionString = null!;
+
+        // Act
+        Func<UserRepository> withNullConnectionString = () => new UserRepository(nullConnectionString);
+
+        // Assert
+        ArgumentNullException ex = withNullConnectionString.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    #endregion
+
     #region Common Test Helpers
 
     /// <summary>
