@@ -12,8 +12,6 @@ namespace RunSuggestion.Api.Functions;
 
 public class PostRunHistory
 {
-    private const string PostRunHistoryFunctionName = "PostRunHistory";
-
     private readonly ILogger<PostRunHistory> _logger;
     private readonly IAuthenticator _authenticator;
     private readonly IRunHistoryAdder _runHistoryAdder;
@@ -26,7 +24,7 @@ public class PostRunHistory
         _runHistoryAdder = runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
     }
 
-    [Function(PostRunHistoryFunctionName)]
+    [Function(nameof(PostRunHistory))]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
     {
         _logger.LogInformation(Messages.CsvUpload.RequestReceived);

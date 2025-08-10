@@ -8,8 +8,6 @@ namespace RunSuggestion.Api.Functions;
 
 public class GetHealthCheck
 {
-    private const string HealthCheckFunctionName = "HealthCheck";
-
     private readonly ILogger<GetHealthCheck> _logger;
 
     public GetHealthCheck(ILogger<GetHealthCheck> logger)
@@ -17,7 +15,7 @@ public class GetHealthCheck
         _logger = logger;
     }
 
-    [Function(HealthCheckFunctionName)]
+    [Function(nameof(GetHealthCheck))]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
         _logger.LogInformation(Messages.HealthCheck.RequestReceived);

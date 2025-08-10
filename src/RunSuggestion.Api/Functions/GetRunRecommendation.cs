@@ -12,9 +12,7 @@ namespace RunSuggestion.Api.Functions;
 
 public class GetRunRecommendation
 {
-    private const string RunSuggestionFunctionName = "GetRunSuggestion";
-
-    private readonly ILogger<GetRunSuggestion> _logger;
+    private readonly ILogger<GetRunRecommendation> _logger;
     private readonly IAuthenticator _authenticator;
     private readonly IRecommendationService _recommendationService;
 
@@ -26,7 +24,7 @@ public class GetRunRecommendation
         _recommendationService = recommendationService;
     }
 
-    [Function(RunSuggestionFunctionName)]
+    [Function(nameof(GetRunRecommendation))]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
         _logger.LogInformation(Messages.Recommendation.RequestReceived);
