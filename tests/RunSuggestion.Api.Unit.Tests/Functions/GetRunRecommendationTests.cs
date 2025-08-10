@@ -30,7 +30,7 @@ public class GetRunRecommendationTests
     public async Task Run_WhenCalled_LogsThatRunHistoryUploadProcessHasStarted()
     {
         // Arrange
-        string expectedMessage = Messages.Recommendation.RequestReceived;
+        const string expectedMessage = Messages.Recommendation.RequestReceived;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
 
         // Act
@@ -99,6 +99,7 @@ public class GetRunRecommendationTests
     public async Task Run_WhenAuthenticationSucceeds_LogsLastFiveOfEntraId(string entraId)
     {
         // Arrange
+        const string expectedMessage = Messages.Authentication.Success;
         string expectedLastFive = entraId.Substring(entraId.Length - 5);
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -109,7 +110,7 @@ public class GetRunRecommendationTests
 
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information,
-                                         "Successfully Authenticated user",
+                                         expectedMessage,
                                          expectedLastFive);
     }
 
@@ -118,6 +119,7 @@ public class GetRunRecommendationTests
     public async Task Run_WhenAuthenticationFails_LogsFailedRequestAsWarning()
     {
         // Arrange
+        const string expectedMessage = Messages.Authentication.Failure;
         string? nullEntraId = null;
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -127,7 +129,7 @@ public class GetRunRecommendationTests
         await _sut.Run(request);
 
         // Assert
-        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, "Failed to authenticate user.");
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Warning, expectedMessage);
     }
 
     #endregion
