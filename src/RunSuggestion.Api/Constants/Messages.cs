@@ -18,7 +18,7 @@ public static class Messages
 
     public static class Recommendation
     {
-        public const string RequestReceived = "Run suggestion request received.";
+        public const string RequestReceived = "Run recommendation request received.";
     }
 
     public static class HealthCheck
