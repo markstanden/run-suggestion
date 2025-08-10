@@ -19,9 +19,10 @@ public class GetRunRecommendation
     public GetRunRecommendation(ILogger<GetRunRecommendation> logger, IAuthenticator authenticator,
         IRecommendationService recommendationService)
     {
-        _logger = logger;
-        _authenticator = authenticator;
-        _recommendationService = recommendationService;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
+        _recommendationService =
+            recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
     }
 
     [Function(nameof(GetRunRecommendation))]
