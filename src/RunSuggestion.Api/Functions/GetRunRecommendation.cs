@@ -10,20 +10,14 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Api.Functions;
 
-public class GetRunRecommendation
+public class GetRunRecommendation(
+    ILogger<GetRunRecommendation> logger,
+    IAuthenticator authenticator,
+    IRecommendationService recommendationService)
 {
-    private readonly ILogger<GetRunRecommendation> _logger;
-    private readonly IAuthenticator _authenticator;
-    private readonly IRecommendationService _recommendationService;
-
-    public GetRunRecommendation(ILogger<GetRunRecommendation> logger, IAuthenticator authenticator,
-        IRecommendationService recommendationService)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
-        _recommendationService =
-            recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
-    }
+    private readonly ILogger<GetRunRecommendation> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IAuthenticator _authenticator = authenticator ?? throw new ArgumentNullException(nameof(authenticator));
+    private readonly IRecommendationService _recommendationService = recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
 
     [Function(nameof(GetRunRecommendation))]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
