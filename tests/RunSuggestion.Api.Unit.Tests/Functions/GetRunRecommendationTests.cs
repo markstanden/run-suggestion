@@ -244,15 +244,34 @@ public class GetRunRecommendationTests
     #region Response
 
     [Fact]
-    public async Task Run_WhenAuthenticationSucceeds_ReturnsRecommendation()
+    public async Task Run_WhenAuthenticationSucceeds_Returns200Ok()
     {
         // Arrange
-        const string entraId = Any.LongAlphanumericString;
-        RunRecommendation expectedRecommendation = RunBaseFakes.CreateRunRecommendation();
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
-            .Returns(entraId);
-        _mockRecommendationService.Setup(x => x.GetRecommendation(entraId)).ReturnsAsync(expectedRecommendation);
+            .Returns(Any.LongAlphanumericString);
+        _mockRecommendationService.Setup(x => x.GetRecommendation(It.IsAny<string>()))
+            .ReturnsAsync(RunBaseFakes.CreateRunRecommendation());
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        okResult.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
+    public async Task Run_WhenAuthenticationSucceeds_ReturnsRecommendationResponse()
+    {
+        // Arrange
+        RunRecommendation expectedRecommendation = RunBaseFakes.CreateRunRecommendation();
+        RecommendationResponse expectedResponse = new() { Recommendation = expectedRecommendation };
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(Any.LongAlphanumericString);
+        _mockRecommendationService.Setup(x => x.GetRecommendation(It.IsAny<string>()))
+            .ReturnsAsync(expectedRecommendation);
 
         // Act
         IActionResult result = await _sut.Run(request);
@@ -260,6 +279,8 @@ public class GetRunRecommendationTests
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
         RecommendationResponse response = okResult.Value.ShouldBeOfType<RecommendationResponse>();
+        response.ShouldNotBeNull();
+        response.ShouldBeEquivalentTo(expectedResponse);
         response.Recommendation.ShouldBeEquivalentTo(expectedRecommendation);
     }
 
