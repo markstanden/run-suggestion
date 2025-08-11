@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
@@ -258,8 +259,8 @@ public class GetRunRecommendationTests
 
         // Assert
         OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
-        RunRecommendation response = okResult.Value.ShouldBeOfType<RunRecommendation>();
-        response.ShouldBeEquivalentTo(expectedRecommendation);
+        RecommendationResponse response = okResult.Value.ShouldBeOfType<RecommendationResponse>();
+        response.Recommendation.ShouldBeEquivalentTo(expectedRecommendation);
     }
 
     #endregion
