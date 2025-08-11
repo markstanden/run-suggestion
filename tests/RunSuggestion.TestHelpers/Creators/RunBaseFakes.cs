@@ -2,7 +2,7 @@ using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.TestHelpers.Creators;
 
-public static class RunEventFakes
+public static class RunBaseFakes
 {
     public static class Defaults
     {
@@ -18,25 +18,48 @@ public static class RunEventFakes
     /// The pattern of providing default null values for parameters and then assigning a default value within the helper
     /// Allows default values to be provided by functions, which are not allowed in method signature. 
     /// </summary>
-    /// <param name="userId">The UserId to assign the RunEvent to, defaults to 0</param>
+    /// <param name="id">The UserId to assign the RunEvent to, defaults to 0</param>
     /// <param name="dateTime">The date the event took place, defaults to Now</param>
     /// <param name="distanceMetres">the distance of the run in metres - defaults to 5km</param>
     /// <param name="effort">The effort score for the run (1-10), defaults to 5</param>
     /// <param name="duration">The duration of the event as a TimeSpan.  Defaults to 30mins</param>
     /// <returns>RunEvent</returns>
     public static RunEvent CreateRunEvent(
-        int? userId = null,
+        int? id = null,
         DateTime? dateTime = null,
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-        {
-            RunEventId = userId ?? Defaults.UserId,
-            Date = dateTime ?? Defaults.DateTime,
-            Distance = distanceMetres ?? Defaults.DistanceMetres,
-            Effort = effort ?? Defaults.Effort,
-            Duration = duration ?? Defaults.Duration
-        };
+    {
+        RunEventId = id ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
+
+    /// <summary>
+    /// Test helper to create a fake run recommendation.
+    /// </summary>
+    /// <param name="id">the unique identifier of the recommendation</param>
+    /// <param name="dateTime">The date the recommendation is for, defaults to Now</param>
+    /// <param name="distanceMetres">the distance of the run in metres - defaults to 5km</param>
+    /// <param name="effort">The effort score for the run (1-10), defaults to 5</param>
+    /// <param name="duration">The duration of the event as a TimeSpan.  Defaults to 30mins</param>
+    /// <returns>RunRecommendation</returns>
+    public static RunRecommendation CreateRunRecommendation(
+        int? id = null,
+        DateTime? dateTime = null,
+        int? distanceMetres = null,
+        byte? effort = null,
+        TimeSpan? duration = null) => new()
+    {
+        RunRecommendationId = id ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
 
     /// <summary>
     /// Convenience method to create multiple default run events in a single call

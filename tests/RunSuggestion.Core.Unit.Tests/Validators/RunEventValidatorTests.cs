@@ -36,7 +36,7 @@ public class RunEventValidatorTests
         DateTime tomorrow = _currentDate.AddDays(1);
         IEnumerable<RunEvent> runEvents =
         [
-            RunEventFakes.CreateRunEvent(
+            RunBaseFakes.CreateRunEvent(
                 dateTime: tomorrow)
         ];
 
@@ -58,7 +58,7 @@ public class RunEventValidatorTests
         // Arrange
         IEnumerable<RunEvent> runEvents =
         [
-            RunEventFakes.CreateRunEvent(
+            RunBaseFakes.CreateRunEvent(
                 dateTime: _currentDate,
                 distanceMetres: invalidDistance)
         ];
@@ -80,7 +80,7 @@ public class RunEventValidatorTests
         // Arrange
         IEnumerable<RunEvent> runEvents =
         [
-            RunEventFakes.CreateRunEvent(
+            RunBaseFakes.CreateRunEvent(
                 dateTime: _currentDate,
                 effort: invalidEffort)
         ];
@@ -104,7 +104,7 @@ public class RunEventValidatorTests
         TimeSpan invalidDurationTimeSpan = TimeSpan.FromSeconds(invalidDuration);
         IEnumerable<RunEvent> runEvents =
         [
-            RunEventFakes.CreateRunEvent(
+            RunBaseFakes.CreateRunEvent(
                 dateTime: _currentDate,
                 duration: invalidDurationTimeSpan)
         ];
