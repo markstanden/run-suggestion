@@ -221,7 +221,7 @@ public class GetRunRecommendationTests
     }
 
     [Fact]
-    public async Task Run_WhenAuthenticationFails_DoesNotCallHistoryAdder()
+    public async Task Run_WhenAuthenticationFails_DoesNotCallSuggestionService()
     {
         // Arrange
         string? nullEntraId = null;
