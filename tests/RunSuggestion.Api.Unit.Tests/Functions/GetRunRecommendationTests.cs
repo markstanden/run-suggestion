@@ -238,4 +238,29 @@ public class GetRunRecommendationTests
     }
 
     #endregion
+
+
+    #region Response
+
+    [Fact]
+    public async Task Run_WhenAuthenticationSucceeds_ReturnsRecommendation()
+    {
+        // Arrange
+        const string entraId = Any.LongAlphanumericString;
+        RunRecommendation expectedRecommendation = RunBaseFakes.CreateRunRecommendation();
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(entraId);
+        _mockRecommendationService.Setup(x => x.GetRecommendation(entraId)).ReturnsAsync(expectedRecommendation);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        RunRecommendation response = okResult.Value.ShouldBeOfType<RunRecommendation>();
+        response.ShouldBeEquivalentTo(expectedRecommendation);
+    }
+
+    #endregion
 }
