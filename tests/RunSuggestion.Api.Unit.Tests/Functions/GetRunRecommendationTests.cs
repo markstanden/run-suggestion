@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
 using RunSuggestion.TestHelpers;
@@ -221,7 +223,7 @@ public class GetRunRecommendationTests
     }
 
     [Fact]
-    public async Task Run_WhenAuthenticationFails_DoesNotCallHistoryAdder()
+    public async Task Run_WhenAuthenticationFails_DoesNotCallSuggestionService()
     {
         // Arrange
         string? nullEntraId = null;
@@ -234,6 +236,52 @@ public class GetRunRecommendationTests
 
         // Assert
         _mockRecommendationService.Verify(x => x.GetRecommendation(It.IsAny<string>()), Times.Never);
+    }
+
+    #endregion
+
+
+    #region Response
+
+    [Fact]
+    public async Task Run_WhenAuthenticationSucceeds_Returns200Ok()
+    {
+        // Arrange
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(Any.LongAlphanumericString);
+        _mockRecommendationService.Setup(x => x.GetRecommendation(It.IsAny<string>()))
+            .ReturnsAsync(RunBaseFakes.CreateRunRecommendation());
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        okResult.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
+    public async Task Run_WhenAuthenticationSucceeds_ReturnsRecommendationResponse()
+    {
+        // Arrange
+        RunRecommendation expectedRecommendation = RunBaseFakes.CreateRunRecommendation();
+        RecommendationResponse expectedResponse = new() { Recommendation = expectedRecommendation };
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest();
+        _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
+            .Returns(Any.LongAlphanumericString);
+        _mockRecommendationService.Setup(x => x.GetRecommendation(It.IsAny<string>()))
+            .ReturnsAsync(expectedRecommendation);
+
+        // Act
+        IActionResult result = await _sut.Run(request);
+
+        // Assert
+        OkObjectResult okResult = result.ShouldBeOfType<OkObjectResult>();
+        RecommendationResponse response = okResult.Value.ShouldBeOfType<RecommendationResponse>();
+        response.ShouldNotBeNull();
+        response.ShouldBeEquivalentTo(expectedResponse);
+        response.Recommendation.ShouldBeEquivalentTo(expectedRecommendation);
     }
 
     #endregion

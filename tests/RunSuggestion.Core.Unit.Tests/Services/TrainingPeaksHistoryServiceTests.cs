@@ -211,7 +211,7 @@ public class TrainingPeaksHistoryServiceTests
         // Arrange
         string validEntraId = EntraIdFakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        IEnumerable<RunEvent> expectedRunEvents = RunEventFakes.CreateRunEvents(expectedEventCount).ToList();
+        IEnumerable<RunEvent> expectedRunEvents = RunBaseFakes.CreateRunEvents(expectedEventCount).ToList();
         _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
         _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()))
@@ -241,7 +241,7 @@ public class TrainingPeaksHistoryServiceTests
         // Arrange
         string validEntraId = EntraIdFakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        IEnumerable<RunEvent> expectedRunEvents = RunEventFakes.CreateRunEvents(expectedEventCount);
+        IEnumerable<RunEvent> expectedRunEvents = RunBaseFakes.CreateRunEvents(expectedEventCount);
         _mockTransformer.Setup(x => x.Transform(It.IsAny<string>()))
             .Returns(expectedRunEvents);
         _mockRepository.Setup(x => x.AddRunEventsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RunEvent>>()))
@@ -264,7 +264,7 @@ public class TrainingPeaksHistoryServiceTests
         // Arrange
         string validEntraId = EntraIdFakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        IEnumerable<RunEvent> expectedRunEvents = RunEventFakes.CreateRunEvents(eventCount).ToList();
+        IEnumerable<RunEvent> expectedRunEvents = RunBaseFakes.CreateRunEvents(eventCount).ToList();
 
         _mockTransformer.Setup(x => x.Transform(validCsv))
             .Returns(expectedRunEvents);
@@ -289,7 +289,7 @@ public class TrainingPeaksHistoryServiceTests
         // Arrange
         string validEntraId = EntraIdFakes.CreateEntraId();
         string validCsv = new TrainingPeaksCsvBuilder().Build();
-        IEnumerable<RunEvent> expectedRunEvents = RunEventFakes.CreateRunEvents().ToList();
+        IEnumerable<RunEvent> expectedRunEvents = RunBaseFakes.CreateRunEvents().ToList();
 
         _mockTransformer.Setup(x => x.Transform(validCsv))
             .Returns(expectedRunEvents);

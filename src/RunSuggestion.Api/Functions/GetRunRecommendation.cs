@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Constants;
+using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Extensions;
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Runs;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -39,8 +39,11 @@ public class GetRunRecommendation(
                                Messages.Authentication.Success,
                                entraId.LastFiveChars());
 
-        RunRecommendation _ = await _recommendationService.GetRecommendation(entraId);
+        RecommendationResponse response = new()
+        {
+            Recommendation = await _recommendationService.GetRecommendation(entraId)
+        };
 
-        return new OkObjectResult(string.Empty);
+        return new OkObjectResult(response);
     }
 }

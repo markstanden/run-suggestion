@@ -28,7 +28,7 @@ public class UserRepositoryTests
         foreach (int _ in Enumerable.Range(0, userCount))
         {
             int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
-            await _sut.AddRunEventsAsync(userId, RunEventFakes.CreateRunEvents(eventsPerUser));
+            await _sut.AddRunEventsAsync(userId, RunBaseFakes.CreateRunEvents(eventsPerUser));
         }
     }
 
@@ -138,7 +138,7 @@ public class UserRepositoryTests
     public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsExpectedRunHistoryCount(int eventQty)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = RunEventFakes.CreateRunEvents(eventQty);
+        IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateRunEvents(eventQty);
         int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
@@ -158,7 +158,7 @@ public class UserRepositoryTests
     public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectRunHistory(int runEventQty)
     {
         // Arrange
-        List<RunEvent> runEvents = RunEventFakes.CreateRunEvents(runEventQty).ToList();
+        List<RunEvent> runEvents = RunBaseFakes.CreateRunEvents(runEventQty).ToList();
         int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
@@ -179,7 +179,7 @@ public class UserRepositoryTests
     public async Task GetUserDataByUserIdAsync_WithMultipleRunEvents_ReturnsCorrectUserId(int runEventQty)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = RunEventFakes.CreateRunEvents(runEventQty);
+        IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateRunEvents(runEventQty);
         int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
         await _sut.AddRunEventsAsync(userId, runEvents);
 
@@ -234,7 +234,7 @@ public class UserRepositoryTests
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(entraId);
-        List<RunEvent> runEvents = RunEventFakes.CreateRunEvents(3).ToList();
+        List<RunEvent> runEvents = RunBaseFakes.CreateRunEvents(3).ToList();
         await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Act
@@ -256,7 +256,7 @@ public class UserRepositoryTests
         // Arrange
         string entraId = EntraIdFakes.CreateEntraId();
         int userId = await _sut.CreateUserAsync(entraId);
-        List<RunEvent> runEvents = RunEventFakes.CreateRunEvents(runEventQty).ToList();
+        List<RunEvent> runEvents = RunBaseFakes.CreateRunEvents(runEventQty).ToList();
         await _sut.AddRunEventsAsync(userId, runEvents);
 
         // Act
@@ -315,7 +315,7 @@ public class UserRepositoryTests
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
-        IEnumerable<RunEvent> runEvents = RunEventFakes.CreateRunEvents(eventQty);
+        IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateRunEvents(eventQty);
 
         // Act
         int result = await _sut.AddRunEventsAsync(userId, runEvents);
@@ -331,7 +331,7 @@ public class UserRepositoryTests
     public async Task AddRunEventAsync_WithInvalidUserId_ThrowsArgumentException(int? invalidId)
     {
         // Arrange
-        IEnumerable<RunEvent> runEvents = RunEventFakes.CreateRunEvents();
+        IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateRunEvents();
 
         // Act
         Func<Task<int>> addsWithInvalidId = async () => await _sut.AddRunEventsAsync(invalidId!.Value, runEvents);
@@ -370,7 +370,7 @@ public class UserRepositoryTests
     {
         // Arrange
         RunEvent CreateNullEvent(int _) => null!;
-        IEnumerable<RunEvent> validEvents = RunEventFakes.CreateRunEvents(validEventQty);
+        IEnumerable<RunEvent> validEvents = RunBaseFakes.CreateRunEvents(validEventQty);
         IEnumerable<RunEvent> fakeEvents = Enumerable.Range(0, nullEventQty).Select(CreateNullEvent);
         IEnumerable<RunEvent> shuffledEvents = validEvents
             .Concat(fakeEvents)
@@ -398,7 +398,7 @@ public class UserRepositoryTests
     {
         // Arrange
         int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
-        IEnumerable<RunEvent> events = RunEventFakes.CreateRunEvents(eventQty);
+        IEnumerable<RunEvent> events = RunBaseFakes.CreateRunEvents(eventQty);
         await _sut.AddRunEventsAsync(userId, events);
 
         // Act
@@ -423,7 +423,7 @@ public class UserRepositoryTests
             int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
             userIds.Add(userId);
 
-            IEnumerable<RunEvent> events = RunEventFakes.CreateRunEvents(eventsPerUser);
+            IEnumerable<RunEvent> events = RunBaseFakes.CreateRunEvents(eventsPerUser);
             await _sut.AddRunEventsAsync(userId, events);
         }
 
@@ -446,7 +446,7 @@ public class UserRepositoryTests
         int userId = await _sut.CreateUserAsync(EntraIdFakes.CreateEntraId());
         foreach (int _ in Enumerable.Range(0, totalInsertions))
         {
-            IEnumerable<RunEvent> events = RunEventFakes.CreateRunEvents(eventsPerInsertion);
+            IEnumerable<RunEvent> events = RunBaseFakes.CreateRunEvents(eventsPerInsertion);
             await _sut.AddRunEventsAsync(userId, events);
         }
 
