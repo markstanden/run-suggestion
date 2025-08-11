@@ -39,8 +39,8 @@ public class GetRunRecommendation(
                                Messages.Authentication.Success,
                                entraId.LastFiveChars());
 
-        RunRecommendation _ = await _recommendationService.GetRecommendation(entraId);
+        RunRecommendation runRecommendation = await _recommendationService.GetRecommendation(entraId);
 
-        return new OkObjectResult(string.Empty);
+        return new OkObjectResult(runRecommendation);
     }
 }
