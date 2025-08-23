@@ -67,7 +67,7 @@ public class StaticWebAppsAuthStateProvider(HttpClient httpClient, ILogger<Stati
             ClaimsIdentity identity = new(claims, AuthTypeSwa);
             ClaimsPrincipal user = new(identity);
 
-            logger.LogInformation("Authentication request succeeded");
+            logger.LogInformation("Authentication request successful");
             return new AuthenticationState(user);
         }
         catch (Exception ex)
