@@ -19,10 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.Api.Integrati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.TestHelpers", "tests\RunSuggestion.TestHelpers\RunSuggestion.TestHelpers.csproj", "{72FE84DC-54FF-4B15-80B7-C3506980CB57}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{0F68EF3A-32AC-4D9D-B9CC-4B9194C77F08}"
-	ProjectSection(SolutionItems) = preProject
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", ".github\workflows", "{EF538FAC-DE93-4172-A20A-011B2ADC67F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunSuggestion.Web", "src\RunSuggestion.Web\RunSuggestion.Web.csproj", "{4B9E02F5-0E34-4BA8-A786-317502FE94A8}"
