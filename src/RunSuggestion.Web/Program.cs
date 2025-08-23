@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using RunSuggestion.Web;
+using RunSuggestion.Web.Authentication;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -19,13 +21,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services
     .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-///////////////////////////
-// Register Authentication
-///////////////////////////
-builder.Services.AddMsalAuthentication(options =>
-{
-    builder.Configuration.Bind("AzureAdB2C",
-                               options.ProviderOptions.Authentication);
-});
+// Register Azure StaticWebApp specific authentication
+builder.Services.AddScoped<AuthenticationStateProvider, StaticWebAppsAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
 
 await builder.Build().RunAsync();
