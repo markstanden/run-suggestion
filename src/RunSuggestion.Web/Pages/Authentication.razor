@@ -1,7 +1,37 @@
 ﻿@page "/authentication/{action}"
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action"/>
+@using RunSuggestion.Web.Authentication
+@inject NavigationManager Navigation
 
-@code{
+@code {
     [Parameter] public string? Action { get; set; }
+
+    public static class AuthAction
+    {
+        private const string Login = "login";
+        private const string Logout = "logout";
+
+        public static bool IsLogin(string? action) => string.Equals(action, Login, StringComparison.OrdinalIgnoreCase);
+        public static bool IsLogout(string? action) => string.Equals(action, Logout, StringComparison.OrdinalIgnoreCase);
+    }
+
+    protected override void OnInitialized()
+    {
+        string redirect = Navigation.Uri;
+
+
+        if (AuthAction.IsLogin(Action))
+        {
+            Navigation.NavigateTo(StaticWebApp.LoginPath(redirect), true);
+            return;
+        }
+
+        if (AuthAction.IsLogout(Action))
+        {
+            Navigation.NavigateTo(StaticWebApp.LogoutPath(redirect), true);
+            return;
+        }
+
+        Navigation.NavigateTo("/", true);
+    }
+
 }
