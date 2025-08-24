@@ -23,6 +23,26 @@ public class StaticWebAppTests
         path.ShouldBe(expectedPath);
     }
 
+    [Theory]
+    [InlineData($"    {Any.ShortAlphanumericString}", Any.ShortAlphanumericString)]
+    [InlineData($"{Any.ShortAlphanumericString}    ", Any.ShortAlphanumericString)]
+    [InlineData($"  {Any.ShortAlphanumericString}  ", Any.ShortAlphanumericString)]
+    [InlineData($"    {Any.LongAlphanumericString}", Any.LongAlphanumericString)]
+    [InlineData($"{Any.LongAlphanumericString}    ", Any.LongAlphanumericString)]
+    [InlineData($"  {Any.LongAlphanumericString}  ", Any.LongAlphanumericString)]
+    public void LoginPath_WithValidRedirectWithExtraWhitespace_ReturnsPathWithRedirectQuery(string redirect,
+        string expected)
+    {
+        // Arrange
+        string expectedPath = $"{StaticWebApp.LoginBasePath}?{StaticWebApp.LoginRedirectQuery}={expected}";
+
+        //Act
+        string path = StaticWebApp.LoginPath(redirect);
+
+        //Assert
+        path.ShouldBe(expectedPath);
+    }
+
     [Fact]
     public void LoginPath_WithEmptyStringRedirect_ReturnsPathWithoutRedirectQuery()
     {
@@ -86,6 +106,26 @@ public class StaticWebAppTests
         path.ShouldBe(expectedPath);
     }
 
+    [Theory]
+    [InlineData($"    {Any.ShortAlphanumericString}", Any.ShortAlphanumericString)]
+    [InlineData($"{Any.ShortAlphanumericString}    ", Any.ShortAlphanumericString)]
+    [InlineData($"  {Any.ShortAlphanumericString}  ", Any.ShortAlphanumericString)]
+    [InlineData($"    {Any.LongAlphanumericString}", Any.LongAlphanumericString)]
+    [InlineData($"{Any.LongAlphanumericString}    ", Any.LongAlphanumericString)]
+    [InlineData($"  {Any.LongAlphanumericString}  ", Any.LongAlphanumericString)]
+    public void LogoutPath_WithValidRedirectWithExtraWhitespace_ReturnsPathWithRedirectQuery(string redirect,
+        string expected)
+    {
+        // Arrange
+        string expectedPath = $"{StaticWebApp.LogoutBasePath}?{StaticWebApp.LogoutRedirectQuery}={expected}";
+
+        //Act
+        string path = StaticWebApp.LogoutPath(redirect);
+
+        //Assert
+        path.ShouldBe(expectedPath);
+    }
+
     [Fact]
     public void LogoutPath_WithNullRedirect_ReturnsPathWithoutRedirectQuery()
     {
@@ -113,6 +153,7 @@ public class StaticWebAppTests
         //Assert
         path.ShouldBe(expectedPath);
     }
+
 
     [Theory]
     [InlineData(Any.ShortAlphaWithSpecialCharsString)]
