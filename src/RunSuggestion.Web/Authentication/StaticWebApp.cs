@@ -8,7 +8,7 @@ public static class StaticWebApp
     public const string LoginBasePath = $"{SwaRootAuthPath}/login/{DefaultProvider}";
     public const string LoginRedirectQuery = "post_login_redirect_url";
 
-    public const string LogoutBasePath = $"{SwaRootAuthPath}/logout/";
+    public const string LogoutBasePath = $"{SwaRootAuthPath}/logout";
     public const string LogoutRedirectQuery = "post_logout_redirect_url";
 
 
@@ -19,7 +19,7 @@ public static class StaticWebApp
     /// <param name="redirect">The URL to be redirected to following a successful login.</param>
     /// <returns>Returns the full login path including the redirect query parameter if provided.</returns>
     public static string LoginPath(string? redirect) =>
-        PathWithRedirectQuery(LoginBasePath, LoginRedirectQuery, redirect);
+        PathWithQuery(LoginBasePath, LoginRedirectQuery, redirect);
 
     /// <summary>
     /// Builds the StaticWebApp logout path including the redirect query using the specified redirect URL.
@@ -28,10 +28,17 @@ public static class StaticWebApp
     /// <param name="redirect">The URL to be redirected to following a successful logout.</param>
     /// <returns>Returns the full logout path including the redirect query parameter if provided.</returns>
     public static string LogoutPath(string? redirect) =>
-        PathWithRedirectQuery(LogoutBasePath, LogoutRedirectQuery, redirect);
+        PathWithQuery(LogoutBasePath, LogoutRedirectQuery, redirect);
 
-    private static string PathWithRedirectQuery(string basePath, string query, string? redirect)
-        => string.IsNullOrWhiteSpace(redirect)
+    /// <summary>
+    /// Builds the StaticWebApp authentication path with the redirect query parameter if provided.
+    /// </summary>
+    /// <param name="basePath">The base path of the auth action</param>
+    /// <param name="query">The query parameter to be added to the path</param>
+    /// <param name="value">The value of the provided query</param>
+    /// <returns>Returns the full path including the query parameter if provided.</returns>
+    private static string PathWithQuery(string basePath, string query, string? value)
+        => string.IsNullOrWhiteSpace(value)
             ? basePath
-            : $"{basePath}/{query}={Uri.EscapeDataString(redirect)}";
+            : $"{basePath}?{query}={Uri.EscapeDataString(value)}";
 }
