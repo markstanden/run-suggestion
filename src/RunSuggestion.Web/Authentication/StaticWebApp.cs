@@ -40,5 +40,5 @@ public static class StaticWebApp
     private static string PathWithQuery(string basePath, string query, string? value)
         => string.IsNullOrWhiteSpace(value)
             ? basePath
-            : $"{basePath}?{query}={Uri.EscapeDataString(value)}";
+            : $"{basePath}?{query}={Uri.EscapeDataString(value.Trim())}";
 }
