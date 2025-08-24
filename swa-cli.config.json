@@ -12,7 +12,8 @@
       "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5281",
       "appName": "swa-runsugg-dev",
-      "resourceGroup": "rg-runsugg-dev-uks"
+      "resourceGroup": "rg-runsugg-dev-uks",
+      "open": true
     }
   }
 }
