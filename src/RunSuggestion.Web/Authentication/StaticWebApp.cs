@@ -12,6 +12,17 @@ public static class StaticWebApp
     private const string LogoutRedirectQuery = "post_logout_redirect_url";
 
 
-    public static string LoginPath(string redirect) => $"{LoginBasePath}/{LoginRedirectQuery}={redirect}";
-    public static string LogoutPath(string redirect) => $"{LogoutBasePath}/{LogoutRedirectQuery}={redirect}";
+    /// <summary>
+    /// Builds the StaticWebApp login path including the redirect query using the specified redirect URL.
+    /// </summary>
+    /// <param name="redirect">The URL to be redirected to following a successful login.</param>
+    /// <returns>Returns the full login path including the redirect query parameter.</returns>
+    public static string LoginPath(string? redirect) => $"{LoginBasePath}/{LoginRedirectQuery}={redirect}";
+
+    /// <summary>
+    /// Builds the StaticWebApp logout path including the redirect query using the specified redirect URL.
+    /// </summary>
+    /// <param name="redirect">The URL to be redirected to following a successful logout.</param>
+    /// <returns>Returns the full logout path including the redirect query parameter.</returns>
+    public static string LogoutPath(string? redirect) => $"{LogoutBasePath}/{LogoutRedirectQuery}={redirect}";
 }
