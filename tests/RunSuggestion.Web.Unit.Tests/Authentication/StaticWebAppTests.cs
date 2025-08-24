@@ -24,11 +24,25 @@ public class StaticWebAppTests
     }
 
     [Fact]
+    public void LoginPath_WithEmptyStringRedirect_ReturnsPathWithoutRedirectQuery()
+    {
+        // Arrange
+        const string redirect = "";
+        const string expectedPath = StaticWebApp.LoginBasePath;
+
+        //Act
+        string path = StaticWebApp.LoginPath(redirect);
+
+        //Assert
+        path.ShouldBe(expectedPath);
+    }
+
+    [Fact]
     public void LoginPath_WithNullRedirect_ReturnsPathWithoutRedirectQuery()
     {
         // Arrange
-        string redirect = null!;
-        string expectedPath = StaticWebApp.LoginBasePath;
+        const string redirect = null!;
+        const string expectedPath = StaticWebApp.LoginBasePath;
 
         //Act
         string path = StaticWebApp.LoginPath(redirect);
@@ -76,8 +90,22 @@ public class StaticWebAppTests
     public void LogoutPath_WithNullRedirect_ReturnsPathWithoutRedirectQuery()
     {
         // Arrange
-        string redirect = null!;
-        string expectedPath = StaticWebApp.LogoutBasePath;
+        const string redirect = null!;
+        const string expectedPath = StaticWebApp.LogoutBasePath;
+
+        //Act
+        string path = StaticWebApp.LogoutPath(redirect);
+
+        //Assert
+        path.ShouldBe(expectedPath);
+    }
+
+    [Fact]
+    public void LogoutPath_WithEmptyStringRedirect_ReturnsPathWithoutRedirectQuery()
+    {
+        // Arrange
+        const string redirect = "";
+        const string expectedPath = StaticWebApp.LogoutBasePath;
 
         //Act
         string path = StaticWebApp.LogoutPath(redirect);
