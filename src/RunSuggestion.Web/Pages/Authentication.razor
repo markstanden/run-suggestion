@@ -3,35 +3,27 @@
 @inject NavigationManager Navigation
 
 @code {
-    [Parameter] public string? Action { get; set; }
+    [Parameter] public string Action { get; set; } = string.Empty;
 
-    public static class AuthAction
+    private static class AuthAction
     {
-        private const string Login = "login";
-        private const string Logout = "logout";
-
-        public static bool IsLogin(string? action) => string.Equals(action, Login, StringComparison.OrdinalIgnoreCase);
-        public static bool IsLogout(string? action) => string.Equals(action, Logout, StringComparison.OrdinalIgnoreCase);
+        public const string Login = "login";
+        public const string Logout = "logout";
     }
 
     protected override void OnInitialized()
     {
-        string redirect = Navigation.Uri;
+        string action = Action.Trim().ToLower();
+        string redirectTarget = Navigation.Uri;
 
-
-        if (AuthAction.IsLogin(Action))
+        string navPath = action switch
         {
-            Navigation.NavigateTo(StaticWebApp.LoginPath(redirect), true);
-            return;
-        }
+            AuthAction.Login => StaticWebApp.LoginPath(redirectTarget),
+            AuthAction.Logout => StaticWebApp.LogoutPath(redirectTarget),
+            _ => "/"
+        };
 
-        if (AuthAction.IsLogout(Action))
-        {
-            Navigation.NavigateTo(StaticWebApp.LogoutPath(redirect), true);
-            return;
-        }
-
-        Navigation.NavigateTo("/", true);
+        Navigation.NavigateTo(navPath, true);
     }
 
 }
