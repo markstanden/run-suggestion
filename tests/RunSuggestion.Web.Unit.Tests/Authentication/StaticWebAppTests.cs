@@ -14,7 +14,7 @@ public class StaticWebAppTests
     public void LoginPath_WithValidRedirect_ReturnsPathWithRedirectQuery(string redirect)
     {
         // Arrange
-        string expectedPath = $"{StaticWebApp.LoginBasePath}/{StaticWebApp.LoginRedirectQuery}={redirect}";
+        string expectedPath = $"{StaticWebApp.LoginBasePath}?{StaticWebApp.LoginRedirectQuery}={redirect}";
 
         //Act
         string path = StaticWebApp.LoginPath(redirect);
@@ -44,7 +44,7 @@ public class StaticWebAppTests
     {
         // Arrange
         string urlEncodedRedirect = Uri.EscapeDataString(redirect);
-        string expectedPath = $"{StaticWebApp.LoginBasePath}/{StaticWebApp.LoginRedirectQuery}={urlEncodedRedirect}";
+        string expectedPath = $"{StaticWebApp.LoginBasePath}?{StaticWebApp.LoginRedirectQuery}={urlEncodedRedirect}";
 
         //Act
         string path = StaticWebApp.LoginPath(redirect);
@@ -63,7 +63,7 @@ public class StaticWebAppTests
     public void LogoutPath_WithValidRedirect_ReturnsPathWithRedirectQuery(string redirect)
     {
         // Arrange
-        string expectedPath = $"{StaticWebApp.LogoutBasePath}/{StaticWebApp.LogoutRedirectQuery}={redirect}";
+        string expectedPath = $"{StaticWebApp.LogoutBasePath}?{StaticWebApp.LogoutRedirectQuery}={redirect}";
 
         //Act
         string path = StaticWebApp.LogoutPath(redirect);
@@ -93,7 +93,7 @@ public class StaticWebAppTests
     {
         // Arrange
         string urlEncodedRedirect = Uri.EscapeDataString(redirect);
-        string expectedPath = $"{StaticWebApp.LogoutBasePath}/{StaticWebApp.LogoutRedirectQuery}={urlEncodedRedirect}";
+        string expectedPath = $"{StaticWebApp.LogoutBasePath}?{StaticWebApp.LogoutRedirectQuery}={urlEncodedRedirect}";
 
         //Act
         string path = StaticWebApp.LogoutPath(redirect);
