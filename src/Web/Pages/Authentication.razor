@@ -1,5 +1,6 @@
 ﻿@page "/authentication/{action}"
 @using RunSuggestion.Web.Authentication
+@using RunSuggestion.Web.Constants
 @inject NavigationManager Navigation
 
 @code {
@@ -14,12 +15,11 @@
     protected override void OnInitialized()
     {
         string action = Action.Trim().ToLower();
-        string redirectTarget = Navigation.Uri;
 
         string navPath = action switch
         {
-            AuthAction.Login => StaticWebApp.LoginPath(redirectTarget),
-            AuthAction.Logout => StaticWebApp.LogoutPath(redirectTarget),
+            AuthAction.Login => StaticWebApp.LoginPath(Routes.Home),
+            AuthAction.Logout => StaticWebApp.LogoutPath(Routes.Home),
             _ => "/"
         };
 
