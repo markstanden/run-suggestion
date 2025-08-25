@@ -6,6 +6,12 @@ using RunSuggestion.Web.Authentication;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 
+IConfigurationSection loggingConfigSection = builder.Configuration.GetSection("Logging");
+if (loggingConfigSection.Exists())
+{
+    builder.Logging.AddConfiguration(loggingConfigSection);
+}
+
 ///////////////////////////
 // Blazor initialisation
 ///////////////////////////
@@ -24,5 +30,4 @@ builder.Services
 // Register Azure StaticWebApp specific authentication
 builder.Services.AddScoped<AuthenticationStateProvider, StaticWebAppsAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
-
 await builder.Build().RunAsync();
