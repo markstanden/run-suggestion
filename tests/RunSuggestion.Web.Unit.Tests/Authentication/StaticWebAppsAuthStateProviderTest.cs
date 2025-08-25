@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
@@ -197,6 +198,32 @@ public class StaticWebAppsAuthStateProviderTest
         authenticationState.User.ShouldNotBeNull();
         authenticationState.User.Identity.ShouldNotBeNull();
         authenticationState.User.Identity.IsAuthenticated.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(Any.String)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.ShortAlphanumericString)]
+    public async Task GetAuthenticationStateAsync_WithTokenWithValidUserId_ReturnsUserIdInClaims(
+        string userId)
+    {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = userId,
+            IdentityProvider = Any.String,
+            UserDetails = Any.String
+        };
+        HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.HasClaim(ClaimTypes.NameIdentifier, userId).ShouldBeTrue();
     }
 
     [Theory]
