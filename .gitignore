@@ -83,10 +83,6 @@ coverage*.info
 # Azure Functions local settings
 local.settings.json
 
-# Submodule symlinks
-.editorconfig
-Directory.Build.props
-
 # Rider
 .idea
 
