@@ -2,8 +2,6 @@ namespace RunSuggestion.Api.Extensions;
 
 public static class StringExtensions
 {
-    private const int SubstringLength = 5;
-
     /// <summary>
     /// Returns the last 5 characters of the passed string if the length is greater than 5 chars long,
     /// or the original string if 5 or less characters long
@@ -13,10 +11,12 @@ public static class StringExtensions
     /// <exception cref="ArgumentNullException">Thrown if fullString is null</exception>
     public static string LastFiveChars(this string fullString)
     {
+        const int substringLength = 5;
+
         ArgumentNullException.ThrowIfNull(fullString);
 
-        return fullString.Length <= SubstringLength
+        return fullString.Length <= substringLength
             ? fullString
-            : fullString[^SubstringLength..];
+            : fullString[^substringLength..];
     }
 }

@@ -1,13 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+
+        <AssemblyName>RunSuggestion.Web</AssemblyName>
+        <RootNamespace>RunSuggestion.Web</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="$(MSBuildProjectName).Unit.Tests"/>
+        <InternalsVisibleTo Include="$(AssemblyName).Unit.Tests"/>
+        <InternalsVisibleTo Include="$(AssemblyName).Integration.Tests"/>
+        <InternalsVisibleTo Include="$(AssemblyName).Acceptance.Tests"/>
     </ItemGroup>
 
     <ItemGroup>

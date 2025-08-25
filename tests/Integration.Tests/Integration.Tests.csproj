@@ -7,6 +7,8 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <AssemblyName>RunSuggestion.Api.Integration.Tests</AssemblyName>
+        <RootNamespace>RunSuggestion.Api.Integration.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,9 +31,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RunSuggestion.Core\RunSuggestion.Core.csproj"/>
-        <ProjectReference Include="..\..\src\RunSuggestion.Api\RunSuggestion.Api.csproj"/>
-        <ProjectReference Include="..\RunSuggestion.TestHelpers\RunSuggestion.TestHelpers.csproj"/>
+        <ProjectReference Include="..\..\src\Core\Core.csproj"/>
+        <ProjectReference Include="..\..\src\Api\Api.csproj"/>
+        <ProjectReference Include="..\Common.TestHelpers\Common.TestHelpers.csproj"/>
     </ItemGroup>
 
 </Project>

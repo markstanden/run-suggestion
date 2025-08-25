@@ -7,6 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <AssemblyName>RunSuggestion.Core.Unit.Tests</AssemblyName>
         <RootNamespace>RunSuggestion.Core.Unit.Tests</RootNamespace>
     </PropertyGroup>
 
@@ -29,8 +30,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RunSuggestion.Core\RunSuggestion.Core.csproj"/>
-        <ProjectReference Include="..\RunSuggestion.TestHelpers\RunSuggestion.TestHelpers.csproj"/>
+        <ProjectReference Include="..\..\src\Core\Core.csproj"/>
+        <ProjectReference Include="..\Common.TestHelpers\Common.TestHelpers.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

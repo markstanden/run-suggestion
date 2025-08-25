@@ -7,6 +7,8 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <AssemblyName>RunSuggestion.Web.Unit.Tests</AssemblyName>
+        <RootNamespace>RunSuggestion.Web.Unit.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,8 +27,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\RunSuggestion.Web\RunSuggestion.Web.csproj"/>
-        <ProjectReference Include="..\RunSuggestion.TestHelpers\RunSuggestion.TestHelpers.csproj"/>
+        <ProjectReference Include="..\..\src\Web\Web.csproj"/>
+        <ProjectReference Include="..\Common.TestHelpers\Common.TestHelpers.csproj"/>
     </ItemGroup>
 
 </Project>
