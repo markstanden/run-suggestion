@@ -146,6 +146,19 @@ public class StaticWebAppsAuthStateProviderTest
     [Fact]
     public void GetAuthenticationStateAsync_WithInvalidToken_ReturnsFailedAuthenticationState()
     {
+        // Arrange
+        SwaClientPrincipal nullPrinciple = null!;
+        HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = nullPrinciple });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+
+        // Assert
+        authenticationState.ShouldNotBeNull();
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.Identity.IsAuthenticated.ShouldBeFalse();
     }
 
     [Fact]
