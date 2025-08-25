@@ -92,9 +92,9 @@ public class StaticWebAppsAuthStateProviderTest
         // Arrange
         SwaClientPrincipal principal = new()
         {
-            UserId = Any.LongAlphanumericString,
-            IdentityProvider = Any.FiveCharString,
-            UserDetails = Any.ShortAlphanumericString
+            UserId = Any.String,
+            IdentityProvider = Any.String,
+            UserDetails = Any.String
         };
         HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
         Mock<HttpMessageHandler> handlerMock = new();
@@ -127,9 +127,9 @@ public class StaticWebAppsAuthStateProviderTest
         // Arrange
         SwaClientPrincipal principal = new()
         {
-            UserId = Any.LongAlphanumericString,
-            IdentityProvider = Any.FiveCharString,
-            UserDetails = Any.ShortAlphanumericString
+            UserId = Any.String,
+            IdentityProvider = Any.String,
+            UserDetails = Any.String
         };
         HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
