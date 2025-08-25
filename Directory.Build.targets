@@ -1,0 +1,8 @@
+<!-- xml -->
+<Project>
+    <ItemGroup>
+        <InternalsVisibleTo Include="$(AssemblyName).Unit.Tests"/>
+        <InternalsVisibleTo Include="$(AssemblyName).Integration.Tests"/>
+        <InternalsVisibleTo Include="$(AssemblyName).Acceptance.Tests"/>
+    </ItemGroup>
+</Project>
