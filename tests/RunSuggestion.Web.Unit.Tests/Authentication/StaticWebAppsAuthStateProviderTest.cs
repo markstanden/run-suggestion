@@ -132,6 +132,33 @@ public class StaticWebAppsAuthStateProviderTest
                 ItExpr.IsAny<CancellationToken>());
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized)]
+    [InlineData(HttpStatusCode.Forbidden)]
+    [InlineData(HttpStatusCode.NotFound)]
+    [InlineData(HttpStatusCode.BadRequest)]
+    public void GetAuthenticationStateAsync_WithHttpError_ReturnsFailedAuthenticationState(HttpStatusCode statusCode)
+    {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = Any.String,
+            IdentityProvider = Any.String,
+            UserDetails = Any.String
+        };
+        HttpResponseMessage response =
+            CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal }, statusCode);
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.Identity.IsAuthenticated.ShouldBeFalse();
+    }
+
     [Fact]
     public void GetAuthenticationStateAsync_WithValidToken_ReturnsExpectedAuthenticationState()
     {
