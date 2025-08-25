@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace RunSuggestion.Web.Authentication.Models;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace RunSuggestion.Web.Authentication.Models;
 /// </summary>
 public class StaticWebAppsAuthDto
 {
-    public SwaClientPrincipal? ClientPrincipal { get; init; }
+    [JsonPropertyName("clientPrincipal")] public SwaClientPrincipal? ClientPrincipal { get; init; }
 }
 
 /// <summary>
@@ -26,7 +28,7 @@ public class StaticWebAppsAuthDto
 /// </example>
 public class SwaClientPrincipal
 {
-    public string? IdentityProvider { get; init; }
-    public string? UserId { get; init; }
-    public string? UserDetails { get; init; }
+    [JsonPropertyName("identityProvider")] public string? IdentityProvider { get; init; }
+    [JsonPropertyName("userId")] public string? UserId { get; init; }
+    [JsonPropertyName("userDetails")] public string? UserDetails { get; init; }
 }
