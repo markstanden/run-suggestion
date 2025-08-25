@@ -5,7 +5,7 @@ namespace RunSuggestion.Web.Authentication.Models;
 /// </summary>
 public class StaticWebAppsAuth
 {
-    public ClientPrincipal? ClientPrincipal { get; init; }
+    public SwaClientPrincipal? ClientPrincipal { get; init; }
 }
 
 /// <summary>
@@ -24,7 +24,7 @@ public class StaticWebAppsAuth
 ///   }]
 /// }
 /// </example>
-public class ClientPrincipal
+public class SwaClientPrincipal
 {
     public string? IdentityProvider { get; init; }
     public string? UserId { get; init; }
