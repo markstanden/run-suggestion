@@ -59,6 +59,40 @@ public class StaticWebAppsAuthStateProviderTest
 
     #region Constructor Tests
 
+    [Fact]
+    public void Constructor_WithNullHttpClient_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "httpClient";
+        HttpClient nullHttpClient = null!;
+
+        // Act
+        Func<StaticWebAppsAuthStateProvider> withNullHttpClient =
+            () => new StaticWebAppsAuthStateProvider(nullHttpClient, _logger.Object);
+
+        // Assert
+        ArgumentNullException ex = withNullHttpClient.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
+    [Fact]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        // Arrange
+        const string expectedParamName = "logger";
+        ILogger<StaticWebAppsAuthStateProvider> nullLogger = null!;
+        Mock<HttpMessageHandler> mockHandler = new();
+        HttpClient testHttpClient = new(mockHandler.Object);
+
+        // Act
+        Func<StaticWebAppsAuthStateProvider> withNullLoggerArgument =
+            () => new StaticWebAppsAuthStateProvider(testHttpClient, nullLogger);
+
+        // Assert
+        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
+        ex.ParamName.ShouldBe(expectedParamName);
+    }
+
     #endregion
 
     #region GetAuthenticationStateAsync Tests
