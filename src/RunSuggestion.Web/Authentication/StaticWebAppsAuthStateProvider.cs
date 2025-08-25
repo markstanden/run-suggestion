@@ -10,11 +10,11 @@ public class StaticWebAppsAuthStateProvider(
     ILogger<StaticWebAppsAuthStateProvider> logger
 ) : AuthenticationStateProvider
 {
-    private const string UnknownAuthProvider = "UNKNOWN";
-    private const string DefaultUserName = "Anonymous User";
-    private const string AuthTypeSwa = "swa";
-    private const string ClaimTypeProvider = "provider";
-    private const string RequestUri = "/.auth/me";
+    internal const string UnknownAuthProvider = "UNKNOWN";
+    internal const string DefaultUserName = "Anonymous User";
+    internal const string AuthTypeSwa = "swa";
+    internal const string ClaimTypeProvider = "provider";
+    internal const string RequestUri = "/.auth/me";
 
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
