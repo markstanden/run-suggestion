@@ -168,7 +168,7 @@ public class StaticWebAppsAuthStateProviderTest
     [InlineData("       ")]
     [InlineData("\n")]
     [InlineData("\r")]
-    [InlineData("\rn")]
+    [InlineData("\r\n")]
     public void GetAuthenticationStateAsync_WithTokenWithInvalidUserId_ReturnsFailedAuthenticationState(
         string invalidUserId)
     {
@@ -198,7 +198,7 @@ public class StaticWebAppsAuthStateProviderTest
     [InlineData("       ")]
     [InlineData("\n")]
     [InlineData("\r")]
-    [InlineData("\rn")]
+    [InlineData("\r\n")]
     public void
         GetAuthenticationStateAsync_WithTokenWithInvalidIdentityProvider_ReturnsDefaultIdentityProviderInAuthenticationState(
             string invalidIdentityProvider)
@@ -220,7 +220,9 @@ public class StaticWebAppsAuthStateProviderTest
         authenticationState.User.ShouldNotBeNull();
         authenticationState.User.Identity.ShouldNotBeNull();
         authenticationState.User.Identity.IsAuthenticated.ShouldBeTrue();
-        authenticationState.User.HasClaim("identityProvider", StaticWebAppsAuthStateProvider.UnknownAuthProvider)
+        authenticationState.User
+            .HasClaim(StaticWebAppsAuthStateProvider.ClaimTypeIdentityProvider,
+                      StaticWebAppsAuthStateProvider.UnknownAuthProvider)
             .ShouldBeTrue();
     }
 
