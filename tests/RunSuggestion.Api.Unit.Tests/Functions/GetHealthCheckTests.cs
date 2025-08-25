@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Functions;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
+using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;

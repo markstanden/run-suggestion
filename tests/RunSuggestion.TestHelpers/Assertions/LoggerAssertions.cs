@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
+namespace RunSuggestion.TestHelpers.Assertions;
 
 /// <summary>
 /// Extension methods for asserting logger behaviour in unit tests using the Shouldly-style syntax used within the test project.

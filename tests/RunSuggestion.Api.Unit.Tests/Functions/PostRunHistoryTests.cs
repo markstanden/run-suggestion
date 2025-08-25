@@ -6,8 +6,8 @@ using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
-using RunSuggestion.Core.Unit.Tests.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers;
+using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Api.Unit.Tests.Functions;
