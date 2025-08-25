@@ -48,7 +48,7 @@ public class StaticWebAppsAuthStateProvider(
             await using Stream stream = await response.Content.ReadAsStreamAsync();
 
             // Deserialize the JSON response into our expected token object.
-            StaticWebAppsAuth? authData = await JsonSerializer.DeserializeAsync<StaticWebAppsAuth>(
+            StaticWebAppsAuthDto? authData = await JsonSerializer.DeserializeAsync<StaticWebAppsAuthDto>(
                 stream,
                 JsonSerializerOptions
             );

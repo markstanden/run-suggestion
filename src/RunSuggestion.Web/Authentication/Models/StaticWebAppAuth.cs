@@ -3,7 +3,7 @@ namespace RunSuggestion.Web.Authentication.Models;
 /// <summary>
 /// The response returned by the Azure SWA /.auth/me endpoint.
 /// </summary>
-public class StaticWebAppsAuth
+public class StaticWebAppsAuthDto
 {
     public SwaClientPrincipal? ClientPrincipal { get; init; }
 }
