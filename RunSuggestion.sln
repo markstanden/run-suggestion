@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Unit.Tests", "tests\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Api.csproj", "{7A38330E-E163-4F63-87DD-451D639BE038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Tests", "tests\Integration.Tests\Integration.Tests.csproj", "{9C292EFB-4D91-48B0-9D74-92E335AB48A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Integration.Tests", "tests\Api.Integration.Tests\Api.Integration.Tests.csproj", "{9C292EFB-4D91-48B0-9D74-92E335AB48A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestHelpers", "tests\Common.TestHelpers\Common.TestHelpers.csproj", "{72FE84DC-54FF-4B15-80B7-C3506980CB57}"
 EndProject
