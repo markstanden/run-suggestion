@@ -18,29 +18,6 @@ public class StaticWebAppsAuthStateProviderTest
     # region TestHelpers
 
     /// <summary>
-    /// Method to allow mocking of an HTTPClient response.
-    /// We can't mock HTTPClient directly as it's a closed class, so we create a 'real' instance
-    /// with a mocked <see cref="HttpMessageHandler">HttpMessageHandler</see>.
-    /// By mocking the protected <see cref="HttpMessageHandler.SendAsync">SendAsync</see> method,
-    /// and returning the passed <see cref="HttpResponseMessage"/> we can mimic the behaviour of
-    /// the authentication call.
-    /// </summary>
-    /// <param name="response">The <see cref="HttpResponseMessage"/> response to be returned by the mocked client</param>
-    /// <returns>a <see cref="Mock{HttpMessageHandler}"/> instance that returns the passed <see cref="HttpMessageHandler"/> response on a call to <see cref="HttpMessageHandler.SendAsync">SendAsync</see></returns>
-    private static Mock<HttpMessageHandler> CreateMockHttpMessageHandler(HttpResponseMessage response)
-    {
-        Mock<HttpMessageHandler> handlerMock = new();
-        handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.IsAny<HttpRequestMessage>())
-            .ReturnsAsync(response);
-
-        return handlerMock;
-    }
-
-    /// <summary>
     /// A custom test implementation of <see cref="HttpMessageHandler"/> that handles
     /// http responses returning a pre-prepared <see cref="HttpResponseMessage"/>.
     /// </summary>
