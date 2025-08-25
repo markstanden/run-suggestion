@@ -73,11 +73,11 @@ public class StaticWebAppsAuthStateProvider(
 
                 // Used in the UI so the user can identify themselves (know who they are logged in as)
                 new(ClaimTypes.Name,
-                    GetOrDefault(authData.ClientPrincipal.UserDetails, DefaultUserName)),
+                    DefaultIfNullOrWhitespace(authData.ClientPrincipal.UserDetails, DefaultUserName)),
 
                 // This is also required for user identification, to prevent potential UserId collisions between providers
                 new(ClaimTypeIdentityProvider,
-                    GetOrDefault(authData.ClientPrincipal.IdentityProvider, UnknownAuthProvider)
+                    DefaultIfNullOrWhitespace(authData.ClientPrincipal.IdentityProvider, UnknownAuthProvider)
                 )
             ];
 
@@ -102,6 +102,6 @@ public class StaticWebAppsAuthStateProvider(
     /// <param name="value">The value to return if it _is not_ null or whitespace.</param>
     /// <param name="defaultValue">The value to return if the provided value _is_ null or whitespace.</param>
     /// <returns>The passed value if valid otherwise the default</returns>
-    internal static string GetOrDefault(string? value, string defaultValue) =>
+    internal static string DefaultIfNullOrWhitespace(string? value, string defaultValue) =>
         string.IsNullOrWhiteSpace(value) ? defaultValue : value;
 }
