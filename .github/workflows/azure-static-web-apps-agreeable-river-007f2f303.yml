@@ -2,6 +2,10 @@ name: Azure Static Web Apps CI/CD
 
 on:
   workflow_call:
+    outputs:
+      deploy_url:
+        description: 'The URL of the deployed Static Web App'
+        value: ${{ jobs.build_and_deploy_job.outputs.deploy_url }}
   push:
     branches:
       - main
