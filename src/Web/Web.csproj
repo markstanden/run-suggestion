@@ -1,12 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-
         <AssemblyName>RunSuggestion.Web</AssemblyName>
-        <RootNamespace>RunSuggestion.Web</RootNamespace>
+        <RootNamespace>$(AssemblyName)</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
