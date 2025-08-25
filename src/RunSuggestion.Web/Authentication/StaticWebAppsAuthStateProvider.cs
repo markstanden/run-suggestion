@@ -21,7 +21,7 @@ public class StaticWebAppsAuthStateProvider(
         PropertyNameCaseInsensitive = true
     };
 
-    private static AuthenticationState FailAuthentication() => new(new ClaimsPrincipal());
+    private static AuthenticationState FailAuthentication() => new(new ClaimsPrincipal(new ClaimsIdentity()));
 
     public async override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
