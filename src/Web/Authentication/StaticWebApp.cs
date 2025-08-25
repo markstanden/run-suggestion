@@ -2,7 +2,7 @@ namespace RunSuggestion.Web.Authentication;
 
 public static class StaticWebApp
 {
-    public const string SwaRootAuthPath = ".auth";
+    public const string SwaRootAuthPath = "/.auth";
     public const string DefaultProvider = "github";
 
     public const string LoginBasePath = $"{SwaRootAuthPath}/login/{DefaultProvider}";
