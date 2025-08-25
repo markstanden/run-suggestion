@@ -64,14 +64,6 @@ public class StaticWebAppsAuthStateProvider(
                 return FailAuthentication();
             }
 
-            string userName = string.IsNullOrWhiteSpace(authData.ClientPrincipal.UserDetails)
-                ? DefaultUserName
-                : authData.ClientPrincipal.UserDetails;
-
-            string userAuthProvider = string.IsNullOrWhiteSpace(authData.ClientPrincipal.IdentityProvider)
-                ? UnknownAuthProvider
-                : authData.ClientPrincipal.IdentityProvider;
-
             // Create a new ClaimsIdentity and ClaimsPrincipal from the contents of the token.
             // I have minimised claims here to increase user anonymity
             List<Claim> claims =
@@ -80,10 +72,13 @@ public class StaticWebAppsAuthStateProvider(
                 new(ClaimTypes.NameIdentifier, authData.ClientPrincipal.UserId),
 
                 // Used in the UI so the user can identify themselves (know who they are logged in as)
-                new(ClaimTypes.Name, userName),
+                new(ClaimTypes.Name,
+                    GetOrDefault(authData.ClientPrincipal.UserDetails, DefaultUserName)),
 
                 // This is also required for user identification, to prevent potential UserId collisions between providers
-                new(ClaimTypeIdentityProvider, userAuthProvider)
+                new(ClaimTypeIdentityProvider,
+                    GetOrDefault(authData.ClientPrincipal.IdentityProvider, UnknownAuthProvider)
+                )
             ];
 
             ClaimsIdentity identity = new(claims, AuthTypeSwa);
@@ -99,4 +94,14 @@ public class StaticWebAppsAuthStateProvider(
             return FailAuthentication();
         }
     }
+
+    /// <summary>
+    /// Returns the provided value if it is not null or whitespace
+    /// otherwise, returns the specified default value.
+    /// </summary>
+    /// <param name="value">The value to return if it _is not_ null or whitespace.</param>
+    /// <param name="defaultValue">The value to return if the provided value _is_ null or whitespace.</param>
+    /// <returns>The passed value if valid otherwise the default</returns>
+    internal static string GetOrDefault(string? value, string defaultValue) =>
+        string.IsNullOrWhiteSpace(value) ? defaultValue : value;
 }
