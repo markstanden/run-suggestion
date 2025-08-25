@@ -13,5 +13,9 @@ public static class Any
     public const string LongAlphaWithSpecialCharsString =
         "$-A^B*C(D)E&F*G£H!I<J>K|L,M.N?O;P:Q@'R~S#T[U]V{W}X-Y_Z-+1=2`3¬4%";
 
+    public const string Url = "https://www.anydomain.com";
+    public const string OtherUrl = "https://www.anotherdomain.com";
+
+
     public const int Integer = 1;
 }
