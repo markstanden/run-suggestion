@@ -66,7 +66,7 @@ public class StaticWebAppsAuthStateProvider(
 
             string userName = string.IsNullOrWhiteSpace(authData.ClientPrincipal.UserDetails)
                 ? DefaultUserName
-                : authData.ClientPrincipal.UserId;
+                : authData.ClientPrincipal.UserDetails;
 
             string userAuthProvider = string.IsNullOrWhiteSpace(authData.ClientPrincipal.IdentityProvider)
                 ? UnknownAuthProvider
