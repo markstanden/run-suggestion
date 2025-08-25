@@ -97,22 +97,22 @@ public class StaticWebAppsAuthStateProviderTest
             UserDetails = Any.String
         };
         HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
-        Mock<HttpMessageHandler> handlerMock = new();
-        handlerMock
+        Mock<HttpMessageHandler> mockHandler = new();
+        mockHandler
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
-        HttpClient testHttpClient = new(handlerMock.Object) { BaseAddress = Any.Url };
+        HttpClient testHttpClient = new(mockHandler.Object) { BaseAddress = Any.Url };
         StaticWebAppsAuthStateProvider sut = new(testHttpClient, _logger.Object);
 
         // Act
         await sut.GetAuthenticationStateAsync();
 
         // Assert
-        handlerMock
+        mockHandler
             .Protected()
             .Verify(
                 "SendAsync",
