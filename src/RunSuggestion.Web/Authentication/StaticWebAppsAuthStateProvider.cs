@@ -16,6 +16,9 @@ public class StaticWebAppsAuthStateProvider(
     internal const string ClaimTypeIdentityProvider = "provider";
     internal const string RequestUri = "/.auth/me";
 
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         PropertyNameCaseInsensitive = true
@@ -29,7 +32,7 @@ public class StaticWebAppsAuthStateProvider(
         {
             // Make the authentication request and progress as soon as the headers are received.
             // The .auth/me/ endpoint will approve the token and return the contents as json.
-            using HttpResponseMessage response = await httpClient.GetAsync(
+            using HttpResponseMessage response = await _httpClient.GetAsync(
                 RequestUri,
                 HttpCompletionOption.ResponseHeadersRead
             );
@@ -37,7 +40,7 @@ public class StaticWebAppsAuthStateProvider(
             // Check that the authentication request was successful
             if (!response.IsSuccessStatusCode)
             {
-                logger.LogError(
+                _logger.LogError(
                     "Authentication request failed with status code: {StatusCode}",
                     response.StatusCode
                 );
@@ -57,7 +60,7 @@ public class StaticWebAppsAuthStateProvider(
             // as this is used to identify the user.
             if (string.IsNullOrWhiteSpace(authData?.ClientPrincipal?.UserId))
             {
-                logger.LogError("Authentication request failed. UserId is missing from token.");
+                _logger.LogError("Authentication request failed. UserId is missing from token.");
                 return FailAuthentication();
             }
 
@@ -86,13 +89,13 @@ public class StaticWebAppsAuthStateProvider(
             ClaimsIdentity identity = new(claims, AuthTypeSwa);
             ClaimsPrincipal user = new(identity);
 
-            logger.LogInformation("Authentication request successful");
+            _logger.LogInformation("Authentication request successful");
             return new AuthenticationState(user);
         }
         catch (Exception ex)
         {
             // Catch any exceptions during authentication and return a failed authentication state.
-            logger.LogError(ex, "Failed to get authentication state");
+            _logger.LogError(ex, "Failed to get authentication state");
             return FailAuthentication();
         }
     }
