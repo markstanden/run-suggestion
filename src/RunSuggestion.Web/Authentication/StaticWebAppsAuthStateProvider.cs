@@ -61,7 +61,11 @@ public class StaticWebAppsAuthStateProvider(
                 return FailAuthentication();
             }
 
-            string identityProvider = string.IsNullOrWhiteSpace(authData.ClientPrincipal.IdentityProvider)
+            string userName = string.IsNullOrWhiteSpace(authData.ClientPrincipal.UserDetails)
+                ? DefaultUserName
+                : authData.ClientPrincipal.UserId;
+
+            string userAuthProvider = string.IsNullOrWhiteSpace(authData.ClientPrincipal.IdentityProvider)
                 ? UnknownAuthProvider
                 : authData.ClientPrincipal.IdentityProvider;
 
@@ -69,14 +73,14 @@ public class StaticWebAppsAuthStateProvider(
             // I have minimised claims here to increase user anonymity
             List<Claim> claims =
             [
-                // Used in the UI so the user can identify themselves (know who they are logged in as)
-                new(ClaimTypes.Name, authData.ClientPrincipal.UserDetails ?? DefaultUserName),
-
                 // We need to check this is present as this is part of the unique user identification
                 new(ClaimTypes.NameIdentifier, authData.ClientPrincipal.UserId),
 
+                // Used in the UI so the user can identify themselves (know who they are logged in as)
+                new(ClaimTypes.Name, userName),
+
                 // This is also required for user identification, to prevent potential UserId collisions between providers
-                new(ClaimTypeIdentityProvider, identityProvider)
+                new(ClaimTypeIdentityProvider, userAuthProvider)
             ];
 
             ClaimsIdentity identity = new(claims, AuthTypeSwa);
