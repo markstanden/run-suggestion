@@ -226,5 +226,37 @@ public class StaticWebAppsAuthStateProviderTest
             .ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(null!)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("       ")]
+    [InlineData("\n")]
+    [InlineData("\r")]
+    [InlineData("\r\n")]
+    public void
+        GetAuthenticationStateAsync_WithTokenWithInvalidUserDetails_ReturnsDefaultAnonymousUserHandleInAuthenticationState(
+            string invalidUserDetails)
+    {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = Any.String,
+            IdentityProvider = Any.String,
+            UserDetails = invalidUserDetails
+        };
+        HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.Identity.IsAuthenticated.ShouldBeTrue();
+        authenticationState.User.Identity.Name.ShouldBe(StaticWebAppsAuthStateProvider.DefaultUserName);
+    }
+
     #endregion
 }
