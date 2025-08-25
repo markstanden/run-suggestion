@@ -13,7 +13,7 @@ public class StaticWebAppsAuthStateProvider(
     internal const string UnknownAuthProvider = "UNKNOWN";
     internal const string DefaultUserName = "Anonymous User";
     internal const string AuthTypeSwa = "swa";
-    internal const string ClaimTypeProvider = "provider";
+    internal const string ClaimTypeIdentityProvider = "provider";
     internal const string RequestUri = "/.auth/me";
 
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
@@ -55,11 +55,15 @@ public class StaticWebAppsAuthStateProvider(
 
             // If the authentication token doesn't include a `UserId` we should fail fast
             // as this is used to identify the user.
-            if (authData?.ClientPrincipal?.UserId is null)
+            if (string.IsNullOrWhiteSpace(authData?.ClientPrincipal?.UserId))
             {
                 logger.LogError("Authentication request failed. UserId is missing from token.");
                 return FailAuthentication();
             }
+
+            string identityProvider = string.IsNullOrWhiteSpace(authData.ClientPrincipal.IdentityProvider)
+                ? UnknownAuthProvider
+                : authData.ClientPrincipal.IdentityProvider;
 
             // Create a new ClaimsIdentity and ClaimsPrincipal from the contents of the token.
             // I have minimised claims here to increase user anonymity
@@ -67,13 +71,12 @@ public class StaticWebAppsAuthStateProvider(
             [
                 // Used in the UI so the user can identify themselves (know who they are logged in as)
                 new(ClaimTypes.Name, authData.ClientPrincipal.UserDetails ?? DefaultUserName),
+
                 // We need to check this is present as this is part of the unique user identification
                 new(ClaimTypes.NameIdentifier, authData.ClientPrincipal.UserId),
+
                 // This is also required for user identification, to prevent potential UserId collisions between providers
-                new(
-                    ClaimTypeProvider,
-                    authData.ClientPrincipal.IdentityProvider ?? UnknownAuthProvider
-                )
+                new(ClaimTypeIdentityProvider, identityProvider)
             ];
 
             ClaimsIdentity identity = new(claims, AuthTypeSwa);
