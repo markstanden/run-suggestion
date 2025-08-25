@@ -292,6 +292,32 @@ public class StaticWebAppsAuthStateProviderTest
     }
 
     [Theory]
+    [InlineData(Any.String)]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.ShortAlphanumericString)]
+    public async Task GetAuthenticationStateAsync_WithTokenWithValidUserName_ReturnsUserNameIdentifierInClaims(
+        string userName)
+    {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = Any.String,
+            IdentityProvider = Any.String,
+            UserDetails = userName
+        };
+        HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.HasClaim(ClaimTypes.Name, userName).ShouldBeTrue();
+    }
+
+    [Theory]
     [InlineData(null!)]
     [InlineData("")]
     [InlineData(" ")]
