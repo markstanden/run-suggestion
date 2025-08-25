@@ -5,7 +5,7 @@ namespace RunSuggestion.Web.Authentication.Models;
 /// <summary>
 /// The response returned by the Azure SWA /.auth/me endpoint.
 /// </summary>
-public class StaticWebAppsAuthDto
+public record StaticWebAppsAuthDto
 {
     [JsonPropertyName("clientPrincipal")] public SwaClientPrincipal? ClientPrincipal { get; init; }
 }
@@ -26,7 +26,7 @@ public class StaticWebAppsAuthDto
 ///   }]
 /// }
 /// </example>
-public class SwaClientPrincipal
+public record SwaClientPrincipal
 {
     [JsonPropertyName("identityProvider")] public string? IdentityProvider { get; init; }
     [JsonPropertyName("userId")] public string? UserId { get; init; }
