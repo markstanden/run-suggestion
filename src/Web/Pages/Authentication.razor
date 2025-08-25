@@ -1,0 +1,29 @@
+﻿@page "/authentication/{action}"
+@using RunSuggestion.Web.Authentication
+@using RunSuggestion.Web.Constants
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public string Action { get; set; } = string.Empty;
+
+    private static class AuthAction
+    {
+        public const string Login = "login";
+        public const string Logout = "logout";
+    }
+
+    protected override void OnInitialized()
+    {
+        string action = Action.Trim().ToLower();
+
+        string navPath = action switch
+        {
+            AuthAction.Login => StaticWebApp.LoginPath(Routes.Home),
+            AuthAction.Logout => StaticWebApp.LogoutPath(Routes.Home),
+            _ => "/"
+        };
+
+        Navigation.NavigateTo(navPath, true);
+    }
+
+}

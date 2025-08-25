@@ -1,0 +1,15 @@
+﻿@using RunSuggestion.Web.Constants
+@inject NavigationManager Navigation
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        string current = Navigation.ToBaseRelativePath(Navigation.Uri);
+        if (!string.Equals(current, Routes.Login, StringComparison.OrdinalIgnoreCase))
+        {
+            Navigation.NavigateTo(Routes.Login, true);
+        }
+    }
+
+}
