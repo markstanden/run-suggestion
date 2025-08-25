@@ -161,9 +161,67 @@ public class StaticWebAppsAuthStateProviderTest
         authenticationState.User.Identity.IsAuthenticated.ShouldBeFalse();
     }
 
-    [Fact]
-    public void GetAuthenticationStateAsync_WithValidTokenWithoutUserId_ReturnsFailedAuthenticationState()
+    [Theory]
+    [InlineData(null!)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("       ")]
+    [InlineData("\n")]
+    [InlineData("\r")]
+    [InlineData("\rn")]
+    public void GetAuthenticationStateAsync_WithTokenWithInvalidUserId_ReturnsFailedAuthenticationState(
+        string invalidUserId)
     {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = invalidUserId,
+            IdentityProvider = Any.String,
+            UserDetails = Any.String
+        };
+        HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.Identity.IsAuthenticated.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(null!)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("       ")]
+    [InlineData("\n")]
+    [InlineData("\r")]
+    [InlineData("\rn")]
+    public void
+        GetAuthenticationStateAsync_WithTokenWithInvalidIdentityProvider_ReturnsDefaultIdentityProviderInAuthenticationState(
+            string invalidIdentityProvider)
+    {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = Any.String,
+            IdentityProvider = invalidIdentityProvider,
+            UserDetails = Any.String
+        };
+        HttpResponseMessage response = CreateResponse(new StaticWebAppsAuthDto { ClientPrincipal = principal });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.Identity.IsAuthenticated.ShouldBeTrue();
+        authenticationState.User.HasClaim("identityProvider", StaticWebAppsAuthStateProvider.UnknownAuthProvider)
+            .ShouldBeTrue();
     }
 
     #endregion
