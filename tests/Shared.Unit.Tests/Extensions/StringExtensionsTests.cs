@@ -1,10 +1,11 @@
-using RunSuggestion.Api.Extensions;
+using JetBrains.Annotations;
 using RunSuggestion.Shared.Extensions;
+using Shouldly;
 
-namespace RunSuggestion.Api.Unit.Tests.Extensions;
+namespace RunSuggestion.Shared.Unit.Tests.Extensions;
 
 [TestSubject(typeof(StringExtensions))]
-public class StringExtensionsTest
+public class StringExtensionsTests
 {
     [Theory]
     [InlineData("ABCDEF", "BCDEF")]
