@@ -6,6 +6,7 @@ using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Extensions;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Shared.Extensions;
 
 namespace RunSuggestion.Api.Functions;
 

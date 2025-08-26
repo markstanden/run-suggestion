@@ -7,6 +7,7 @@ using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Shared.Extensions;
 using RunSuggestion.TestHelpers.Creators;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Assertions;

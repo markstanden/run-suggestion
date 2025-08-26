@@ -1,4 +1,4 @@
-namespace RunSuggestion.Api.Extensions;
+namespace RunSuggestion.Shared.Extensions;
 
 public static class StringExtensions
 {
