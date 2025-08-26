@@ -1,4 +1,5 @@
 using RunSuggestion.Api.Extensions;
+using RunSuggestion.Shared.Extensions;
 
 namespace RunSuggestion.Api.Unit.Tests.Extensions;
 
