@@ -24,7 +24,8 @@ public class PostRunHistory(
         runHistoryAdder ?? throw new ArgumentNullException(nameof(runHistoryAdder));
 
     [Function(nameof(PostRunHistory))]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
+    public async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "history")] HttpRequest request)
     {
         _logger.LogInformation(Messages.CsvUpload.RequestReceived);
 

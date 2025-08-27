@@ -24,7 +24,8 @@ public class GetRunRecommendation(
         recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
 
     [Function(nameof(GetRunRecommendation))]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
+    public async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recommendations")] HttpRequest request)
     {
         _logger.LogInformation(Messages.Recommendation.RequestReceived);
 
