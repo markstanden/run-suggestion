@@ -27,7 +27,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Api\Api.csproj"/>
-        <ProjectReference Include="..\Common.TestHelpers\Common.TestHelpers.csproj"/>
+        <ProjectReference Include="..\TestHelpers\TestHelpers.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Api.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Integration.Tests", "tests\Api.Integration.Tests\Api.Integration.Tests.csproj", "{9C292EFB-4D91-48B0-9D74-92E335AB48A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestHelpers", "tests\Common.TestHelpers\Common.TestHelpers.csproj", "{72FE84DC-54FF-4B15-80B7-C3506980CB57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelpers", "tests\TestHelpers\TestHelpers.csproj", "{72FE84DC-54FF-4B15-80B7-C3506980CB57}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", ".github\workflows", "{EF538FAC-DE93-4172-A20A-011B2ADC67F3}"
 	ProjectSection(SolutionItems) = preProject
