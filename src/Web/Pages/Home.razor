@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using RunSuggestion.Web.Constants
+@inject ILogger<Home> Logger
 
 <PageTitle>RunRecommendation</PageTitle>
 
@@ -27,13 +28,13 @@
 
     private void PostUpload()
     {
-        Console.WriteLine(Logs.Upload.Start);
+        Logger.LogInformation(Logs.Upload.Start);
         Message = Status.Uploading;
     }
 
     private void GetRecommendation()
     {
-        Console.WriteLine(Logs.Recommendation.Start);
+        Logger.LogInformation(Logs.Recommendation.Start);
         Message = Status.GettingRecommendation;
     }
 
