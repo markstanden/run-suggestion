@@ -1,11 +1,40 @@
 ﻿@page "/"
+@using RunSuggestion.Web.Constants
 
-<PageTitle>Home</PageTitle>
+<PageTitle>RunRecommendation</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Run Recommendation Application</h1>
 
-<div class="alert alert-warning" role="alert">
-    Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
-</div>
+<section>
+    <h2>Upload</h2>
+    <button @onclick="PostUpload">
+        @ButtonText.UploadHistory
+    </button>
+</section>
 
-Welcome to your new app.
+<section>
+    <h2>Recommendation</h2>
+    <button @onclick="GetRecommendation">
+        @ButtonText.GetRecommendation
+    </button>
+</section>
+
+<p>@Message</p>
+
+@functions {
+
+    private string Message { get; set; } = string.Empty;
+
+    private void PostUpload()
+    {
+        Console.WriteLine(Logs.Upload.Start);
+        Message = Status.Uploading;
+    }
+
+    private void GetRecommendation()
+    {
+        Console.WriteLine(Logs.Recommendation.Start);
+        Message = Status.GettingRecommendation;
+    }
+
+}
