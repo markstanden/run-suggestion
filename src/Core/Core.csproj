@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>RunSuggestion.Core</AssemblyName>
-        <RootNamespace>$(AssemblyName)</RootNamespace>
+        <RootNamespace>RunSuggestion.Core</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

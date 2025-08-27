@@ -3,8 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <AssemblyName>RunSuggestion.Shared.Unit.Tests</AssemblyName>
-        <RootNamespace>$(AssemblyName)</RootNamespace>
+        <RootNamespace>RunSuggestion.Shared.Unit.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,6 +26,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Shared\Shared.csproj"/>
+        <ProjectReference Include="..\TestHelpers\TestHelpers.csproj"/>
     </ItemGroup>
 
 </Project>

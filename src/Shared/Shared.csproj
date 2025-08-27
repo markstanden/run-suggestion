@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>RunSuggestion.Shared</AssemblyName>
-        <RootNamespace>$(AssemblyName)</RootNamespace>
+        <RootNamespace>RunSuggestion.Shared</RootNamespace>
     </PropertyGroup>
 
 </Project>
