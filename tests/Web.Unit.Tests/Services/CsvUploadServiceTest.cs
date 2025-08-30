@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.Extensions.Logging;
 using Moq;
+using RunSuggestion.TestHelpers;
+using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.Web.Constants;
 using RunSuggestion.Web.Services;
 
@@ -51,5 +54,19 @@ public class CsvUploadServiceTest
         ArgumentException ex = withEmptyCsvContent.ShouldThrow<ArgumentException>();
         ex.ParamName.ShouldBe(expectedParamName);
         ex.Message.ShouldContain(expectedMessage);
+    }
+
+    [Fact]
+    public void Upload_WithNonEmptyCsvContent_LogsUploadStarted()
+    {
+        // Arrange
+        const string csvContent = Any.String;
+        const string expectedLog = Logs.Upload.Start;
+
+        // Act
+        _sut.Upload(csvContent);
+
+        // Assert
+        _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLog);
     }
 }
