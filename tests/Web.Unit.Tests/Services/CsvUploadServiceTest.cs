@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
+using RunSuggestion.Web.Constants;
 using RunSuggestion.Web.Services;
 
 namespace RunSuggestion.Web.Unit.Tests.Services;
@@ -40,12 +41,15 @@ public class CsvUploadServiceTest
     public void Upload_WithEmptyCsvContent_ThrowsArgumentException(string csvContent)
     {
         // Arrange
+        const string expectedParamName = "csvContent";
+        const string expectedMessage = Errors.Upload.NoCsvContent;
+
         // Act
         Func<Task> withEmptyCsvContent = async () => await _sut.Upload(csvContent);
 
         // Assert
         ArgumentException ex = withEmptyCsvContent.ShouldThrow<ArgumentException>();
-        ex.ParamName.ShouldBe("csvContent");
-        ex.Message.ShouldBe("CSV content empty or whitespace.");
+        ex.ParamName.ShouldBe(expectedParamName);
+        ex.Message.ShouldContain(expectedMessage);
     }
 }
