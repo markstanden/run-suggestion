@@ -1,10 +1,14 @@
 using System.Net;
 using System.Text.Json;
+using Moq.Protected;
 
 namespace RunSuggestion.TestHelpers.Creators;
 
 public static class HttpTestHelpers
 {
+    public const string Send = "Send";
+    public const string SendAsync = "SendAsync";
+
     /// <summary>
     /// A custom test implementation of <see cref="HttpMessageHandler"/> that handles
     /// http responses returning a pre-prepared <see cref="HttpResponseMessage"/>.
@@ -13,6 +17,21 @@ public static class HttpTestHelpers
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
             CancellationToken cancellationToken) => Task.FromResult(response);
+    }
+
+    public static Mock<HttpMessageHandler> CreateMockHttpMessageHandler(HttpResponseMessage response,
+        string methodName = SendAsync)
+    {
+        Mock<HttpMessageHandler> mockHandler = new();
+        mockHandler
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                methodName,
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
+
+        return mockHandler;
     }
 
 
