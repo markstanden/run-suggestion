@@ -17,8 +17,20 @@ public class CsvUploadService(ILogger<CsvUploadService> logger, HttpClient httpC
 
         _logger.LogInformation(Logs.Upload.Start);
 
-        HttpRequestMessage request = new(HttpMethod.Post, csvContent);
+        HttpRequestMessage request = new(HttpMethod.Post, Routes.UploadApiEndpoint)
+        {
+            Content = new StringContent(csvContent, System.Text.Encoding.UTF8, "text/csv")
+        };
         HttpResponseMessage result = await _httpClient.SendAsync(request);
+
+        if (result.IsSuccessStatusCode)
+        {
+            _logger.LogInformation(Logs.Upload.Success);
+        }
+        else
+        {
+            _logger.LogWarning(Logs.Upload.Failure);
+        }
 
         return result.IsSuccessStatusCode;
     }

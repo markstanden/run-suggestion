@@ -1,10 +1,8 @@
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Assertions;
-using RunSuggestion.TestHelpers.Creators;
 using RunSuggestion.Web.Constants;
 using RunSuggestion.Web.Services;
 using static RunSuggestion.TestHelpers.Creators.HttpTestHelpers;
@@ -84,7 +82,7 @@ public class CsvUploadServiceTest
     }
 
     [Fact]
-    public void Upload_WithNonEmptyCsvContent_LogsUploadStarted()
+    public async Task Upload_WithNonEmptyCsvContent_LogsUploadStarted()
     {
         // Arrange
         const string csvContent = Any.String;
@@ -92,21 +90,22 @@ public class CsvUploadServiceTest
         CsvUploadService sut = CreateSut();
 
         // Act
-        sut.Upload(csvContent);
+        await sut.Upload(csvContent);
 
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLog);
     }
 
     [Fact]
-    public void Upload_WithNonEmptyCsvContent_SendsToApiEndpoint()
+    public async Task Upload_WithNonEmptyCsvContent_SendsToApiEndpoint()
     {
         // Arrange
+        const string expectedApiEndpoint = Routes.UploadApiEndpoint;
         const string csvContent = Any.String;
         (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
 
         // Act
-        sut.Upload(csvContent);
+        await sut.Upload(csvContent);
 
         // Assert
         mockHttpMessageHandler
@@ -114,7 +113,32 @@ public class CsvUploadServiceTest
             .Verify(
                 SendAsync,
                 Times.Once(),
-                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.Is<HttpRequestMessage>(req =>
+                                                  req.Method == HttpMethod.Post &&
+                                                  req.RequestUri != null &&
+                                                  req.RequestUri.ToString().Contains(expectedApiEndpoint)),
+                ItExpr.IsAny<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Upload_WithNonEmptyCsvContent_SendsExpectedCsvData()
+    {
+        // Arrange
+        const string csvContent = Any.String;
+        (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
+
+        // Act
+        await sut.Upload(csvContent);
+
+        // Assert
+        mockHttpMessageHandler
+            .Protected()
+            .Verify(
+                SendAsync,
+                Times.Once(),
+                ItExpr.Is<HttpRequestMessage>(req =>
+                                                  req.Content != null &&
+                                                  req.Content.ReadAsStringAsync().Result == csvContent),
                 ItExpr.IsAny<CancellationToken>());
     }
 }
