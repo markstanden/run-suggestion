@@ -22,11 +22,6 @@ public static class HttpTestHelpers
     /// <param name="dto">The <see cref="StaticWebAppsAuthDto"/> to add to the response</param>
     /// <param name="statusCode">The HTTP status code to add to the response headers</param>
     /// <returns>A <see cref="HttpResponseMessage"/> containing the serialised DTO</returns>
-    public static HttpResponseMessage CreateResponse<T>(
-        T dto,
-        HttpStatusCode statusCode = HttpStatusCode.OK) =>
-        new(statusCode)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto))
-        };
+    public static HttpResponseMessage CreateResponse<T>(T dto, HttpStatusCode statusCode = HttpStatusCode.OK) =>
+        new(statusCode) { Content = new StringContent(JsonSerializer.Serialize(dto)) };
 }
