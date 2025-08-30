@@ -13,6 +13,6 @@ public static class Routes
     public const string UploadApiEndpoint = $"{ApiRoot}/{UploadPath}";
     public const string HealthCheckPath = "healthcheck";
     public const string HealthCheckApiEndpoint = $"{ApiRoot}/{HealthCheckPath}";
-    public const string RecommendationPath = "recommendation";
+    public const string RecommendationPath = "recommendations";
     public const string RecommendationApiEndpoint = $"{ApiRoot}/{RecommendationPath}";
 }
