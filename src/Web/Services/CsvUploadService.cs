@@ -14,6 +14,8 @@ public class CsvUploadService(ILogger<CsvUploadService> logger) : ICsvUploadServ
             throw new ArgumentException(Errors.Upload.NoCsvContent, nameof(csvContent));
         }
 
+        _logger.LogInformation(Logs.Upload.Start);
+
         return Task.FromResult(true);
     }
 }
