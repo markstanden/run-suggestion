@@ -1,6 +1,5 @@
 using System.Net;
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -8,6 +7,7 @@ using Moq.Protected;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.Web.Authentication;
 using RunSuggestion.Web.Authentication.Models;
+using static RunSuggestion.TestHelpers.Creators.HttpTestHelpers;
 
 namespace RunSuggestion.Web.Unit.Tests.Authentication;
 
@@ -17,16 +17,6 @@ public class StaticWebAppsAuthStateProviderTest
     private readonly Mock<ILogger<StaticWebAppsAuthStateProvider>> _logger = new();
 
     # region TestHelpers
-
-    /// <summary>
-    /// A custom test implementation of <see cref="HttpMessageHandler"/> that handles
-    /// http responses returning a pre-prepared <see cref="HttpResponseMessage"/>.
-    /// </summary>
-    private class TestHttpMessageHandler(HttpResponseMessage response) : HttpMessageHandler
-    {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-            CancellationToken cancellationToken) => Task.FromResult(response);
-    }
 
     /// <summary>
     /// Factory method returning a prepared SUT that returns the provided <see cref="HttpResponseMessage"/> response on all
@@ -41,20 +31,6 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = new(testHttpClient, _logger.Object);
         return sut;
     }
-
-    /// <summary>
-    /// Convenience method to serialise the authentication DTO and return as an <see cref="HttpResponseMessage"/>
-    /// </summary>
-    /// <param name="dto">The <see cref="StaticWebAppsAuthDto"/> to add to the response</param>
-    /// <param name="statusCode">The HTTP status code to add to the response headers</param>
-    /// <returns>A <see cref="HttpResponseMessage"/> containing the serialised DTO</returns>
-    private HttpResponseMessage CreateResponse(
-        StaticWebAppsAuthDto dto,
-        HttpStatusCode statusCode = HttpStatusCode.OK) =>
-        new(statusCode)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto))
-        };
 
     #endregion
 
