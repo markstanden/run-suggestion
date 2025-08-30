@@ -1,18 +1,17 @@
 using System.Diagnostics;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
+using RunSuggestion.Shared.Models.Dto;
+using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.TestHelpers.Creators;
 using static RunSuggestion.TestHelpers.Constants.NonFunctionalRequirements;
 

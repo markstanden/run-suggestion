@@ -1,4 +1,4 @@
-namespace RunSuggestion.Core.Models.Runs;
+namespace RunSuggestion.Shared.Models.Runs;
 
 /// <summary>
 /// Base class used to reduce repetition between internal run models

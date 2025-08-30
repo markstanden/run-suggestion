@@ -1,4 +1,4 @@
-namespace RunSuggestion.Api.Dto;
+namespace RunSuggestion.Shared.Models.Dto;
 
 public class UploadResponse
 {

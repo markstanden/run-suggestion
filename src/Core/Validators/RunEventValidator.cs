@@ -1,5 +1,5 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Shared.Models.Runs;
 
 namespace RunSuggestion.Core.Validators;
 

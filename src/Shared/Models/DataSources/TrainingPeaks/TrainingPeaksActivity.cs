@@ -1,6 +1,6 @@
-using RunSuggestion.Core.Constants;
+using RunSuggestion.Shared.Constants;
 
-namespace RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+namespace RunSuggestion.Shared.Models.DataSources.TrainingPeaks;
 
 public record TrainingPeaksActivity
 {

@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using RunSuggestion.Core.Constants;
-using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
+using RunSuggestion.Shared.Models.Runs;
 
 FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
 

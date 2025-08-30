@@ -1,4 +1,4 @@
-namespace RunSuggestion.Core.Constants;
+namespace RunSuggestion.Shared.Constants;
 
 public static class TrainingPeaksConstants
 {

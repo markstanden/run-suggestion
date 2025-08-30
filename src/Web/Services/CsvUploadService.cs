@@ -1,3 +1,4 @@
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Web.Constants;
 using RunSuggestion.Web.Interfaces;
 

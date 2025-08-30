@@ -1,4 +1,4 @@
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Shared.Models.DataSources.TrainingPeaks;
 
 namespace RunSuggestion.TestHelpers.Creators;
 

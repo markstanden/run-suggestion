@@ -1,6 +1,6 @@
-using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Shared.Models.Runs;
 
-namespace RunSuggestion.Api.Dto;
+namespace RunSuggestion.Shared.Models.Dto;
 
 public record RecommendationResponse
 {

@@ -1,6 +1,8 @@
+using System.Net;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.Web.Constants;
@@ -14,14 +16,15 @@ public class CsvUploadServiceTest
 {
     private readonly Mock<ILogger<CsvUploadService>> _mockLogger = new();
 
-    private CsvUploadService CreateSut(bool response = true, string baseAddress = Any.UrlString) =>
-        CreateSutWithMockHttpMessageHandler(response, baseAddress).sut;
+    private CsvUploadService CreateSut(int response = Any.Integer, HttpStatusCode status = HttpStatusCode.OK) =>
+        CreateSutWithMockHttpMessageHandler(response, status).sut;
 
     private (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler)
-        CreateSutWithMockHttpMessageHandler(bool response = true, string baseAddress = Any.UrlString)
+        CreateSutWithMockHttpMessageHandler(int response = Any.Integer, HttpStatusCode status = HttpStatusCode.OK)
     {
-        Mock<HttpMessageHandler> mockHttpMessageHandler = CreateMockHttpMessageHandler(CreateResponse(response));
-        HttpClient testHttpClient = new(mockHttpMessageHandler.Object) { BaseAddress = new Uri(baseAddress) };
+        Mock<HttpMessageHandler> mockHttpMessageHandler =
+            CreateMockHttpMessageHandler(CreateResponse(response, status));
+        HttpClient testHttpClient = new(mockHttpMessageHandler.Object) { BaseAddress = Any.Url };
         CsvUploadService sut = new(_mockLogger.Object, testHttpClient);
         return (sut, mockHttpMessageHandler);
     }
@@ -140,5 +143,19 @@ public class CsvUploadServiceTest
                                                   req.Content != null &&
                                                   req.Content.ReadAsStringAsync().Result == csvContent),
                 ItExpr.IsAny<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Upload_WithInvalidCsvContent_ReturnsFalse()
+    {
+        // Arrange
+        const string csvContent = Any.String;
+        CsvUploadService sut = CreateSut(0, HttpStatusCode.BadRequest);
+
+        // Act
+        bool result = await sut.Upload(csvContent);
+
+        // Assert
+        result.ShouldBeFalse();
     }
 }

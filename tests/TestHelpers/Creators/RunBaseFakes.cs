@@ -1,4 +1,4 @@
-using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Shared.Models.Runs;
 
 namespace RunSuggestion.TestHelpers.Creators;
 
@@ -30,13 +30,13 @@ public static class RunBaseFakes
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-        {
-            RunEventId = id ?? Defaults.UserId,
-            Date = dateTime ?? Defaults.DateTime,
-            Distance = distanceMetres ?? Defaults.DistanceMetres,
-            Effort = effort ?? Defaults.Effort,
-            Duration = duration ?? Defaults.Duration
-        };
+    {
+        RunEventId = id ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
 
     /// <summary>
     /// Test helper to create a fake run recommendation.
@@ -53,13 +53,13 @@ public static class RunBaseFakes
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-        {
-            RunRecommendationId = id ?? Defaults.UserId,
-            Date = dateTime ?? Defaults.DateTime,
-            Distance = distanceMetres ?? Defaults.DistanceMetres,
-            Effort = effort ?? Defaults.Effort,
-            Duration = duration ?? Defaults.Duration
-        };
+    {
+        RunRecommendationId = id ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
 
     /// <summary>
     /// Convenience method to create multiple default run events in a single call

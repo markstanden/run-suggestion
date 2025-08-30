@@ -1,4 +1,4 @@
-namespace RunSuggestion.Core.Models.Runs;
+namespace RunSuggestion.Shared.Models.Runs;
 
 public record RunRecommendation : RunBase
 {

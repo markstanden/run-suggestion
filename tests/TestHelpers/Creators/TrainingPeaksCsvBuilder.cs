@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using RunSuggestion.Core.Constants;
-using RunSuggestion.Core.Models.DataSources.TrainingPeaks;
+using RunSuggestion.Shared.Constants;
+using RunSuggestion.Shared.Models.DataSources.TrainingPeaks;
 
 namespace RunSuggestion.TestHelpers.Creators;
 

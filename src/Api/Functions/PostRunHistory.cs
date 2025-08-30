@@ -2,11 +2,11 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RunSuggestion.Api.Dto;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Extensions;
 using RunSuggestion.Shared.Extensions;
+using RunSuggestion.Shared.Models.Dto;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -25,7 +25,8 @@ public class PostRunHistory(
 
     [Function(nameof(PostRunHistory))]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "history")] HttpRequest request)
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "history")]
+        HttpRequest request)
     {
         _logger.LogInformation(Messages.CsvUpload.RequestReceived);
 

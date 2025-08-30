@@ -1,5 +1,5 @@
-using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Models.Users;
+using RunSuggestion.Shared.Models.Runs;
 
 namespace RunSuggestion.Core.Interfaces;
 

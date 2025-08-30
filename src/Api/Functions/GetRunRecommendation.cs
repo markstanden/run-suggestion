@@ -3,10 +3,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RunSuggestion.Api.Constants;
-using RunSuggestion.Api.Dto;
 using RunSuggestion.Api.Extensions;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Shared.Extensions;
+using RunSuggestion.Shared.Models.Dto;
 
 namespace RunSuggestion.Api.Functions;
 
@@ -25,7 +25,8 @@ public class GetRunRecommendation(
 
     [Function(nameof(GetRunRecommendation))]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recommendations")] HttpRequest request)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recommendations")]
+        HttpRequest request)
     {
         _logger.LogInformation(Messages.Recommendation.RequestReceived);
 
