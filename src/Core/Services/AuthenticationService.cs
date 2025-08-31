@@ -12,8 +12,9 @@ public class AuthenticationService(JwtSecurityTokenHandler? tokenHandler = null)
     private readonly TokenValidationParameters _validationParameters = new()
     {
         ValidateIssuerSigningKey = false,
+        RequireSignedTokens = false,
         ValidateIssuer = true,
-        ValidIssuers = Auth.AllowedProviders,
+        ValidIssuers = Auth.ValidIssuers,
         ValidateAudience = false,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.FromMinutes(Auth.AllowedClockSkewMinutes),
