@@ -13,7 +13,7 @@ public class CsvUploadService(ILogger<CsvUploadService> logger, HttpClient httpC
     {
         if (string.IsNullOrWhiteSpace(csvContent))
         {
-            throw new ArgumentException(Errors.Upload.NoCsvContent, nameof(csvContent));
+            throw new ArgumentException(Errors.History.NoCsvContent, nameof(csvContent));
         }
 
         _logger.LogInformation(Logs.Upload.Start);

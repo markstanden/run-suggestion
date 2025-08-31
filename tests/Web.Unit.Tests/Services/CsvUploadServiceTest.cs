@@ -72,7 +72,7 @@ public class CsvUploadServiceTest
     {
         // Arrange
         const string expectedParamName = "csvContent";
-        const string expectedMessage = Errors.Upload.NoCsvContent;
+        const string expectedMessage = Errors.History.NoCsvContent;
         CsvUploadService sut = CreateSut();
 
         // Act
