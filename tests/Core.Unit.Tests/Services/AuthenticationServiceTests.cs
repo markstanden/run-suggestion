@@ -43,7 +43,7 @@ public class AuthenticationServiceTests
     [Theory]
     [InlineData(Any.FourCharString)]
     [InlineData(Any.FiveCharString)]
-    [InlineData(Any.SixCharString)]
+    [InlineData(Any.LongAlphanumericString)]
     public void ExtractToken_WithValidBearerToken_ReturnsExtractedTokenString(string validBearerToken)
     {
         // Arrange
@@ -57,17 +57,19 @@ public class AuthenticationServiceTests
     }
 
     [Theory]
-    [InlineData($"{Any.FourCharString}")]
-    [InlineData($"    {Any.FourCharString}")]
-    [InlineData($"{Any.FourCharString}     ")]
-    [InlineData($"    {Any.FourCharString}    ")]
-    [InlineData($"{Any.FourCharString}\n")]
-    [InlineData($"{Any.FourCharString}\r")]
-    [InlineData($"{Any.FourCharString}\r\n")]
-    public void ExtractToken_WithValidBearerToken_ForgivesLeadingAndTrailingWhitespace(string validBearerToken)
+    [InlineData($"{Any.LongAlphanumericString}")]
+    [InlineData($"    {Any.LongAlphanumericString}")]
+    [InlineData($"{Any.LongAlphanumericString}     ")]
+    [InlineData($"    {Any.LongAlphanumericString}    ")]
+    [InlineData($"{Any.LongAlphanumericString}\n")]
+    [InlineData($"{Any.LongAlphanumericString}\r")]
+    [InlineData($"{Any.LongAlphanumericString}\r\n")]
+    public void ExtractToken_WithValidBearerToken_ForgivesLeadingAndTrailingWhitespace(
+        string? validBearerTokenWithWhitespace)
     {
         // Arrange
-        string headerValue = $"    {Auth.BearerTokenPrefix} {validBearerToken}    ";
+        const string validBearerToken = Any.LongAlphanumericString;
+        string headerValue = $"    {Auth.BearerTokenPrefix} {validBearerTokenWithWhitespace}    ";
 
         // Act
         string result = AuthenticationService.ExtractToken(headerValue);

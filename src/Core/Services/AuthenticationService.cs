@@ -31,11 +31,14 @@ public class AuthenticationService() : IAuthenticator
             throw new ArgumentException(Errors.Authentication.NullOrWhitespaceToken, nameof(token));
         }
 
-        if (!token.StartsWith(Auth.BearerTokenPrefix, StringComparison.OrdinalIgnoreCase))
+        string trimmedToken = token.Trim();
+
+        if (!trimmedToken.StartsWith(Auth.BearerTokenPrefix, StringComparison.OrdinalIgnoreCase))
         {
             throw new ArgumentException(Errors.Authentication.InvalidToken, nameof(token));
         }
 
-        return token[Auth.BearerTokenPrefix.Length..].Trim();
+        return trimmedToken[Auth.BearerTokenPrefix.Length..]
+            .TrimStart();
     }
 }
