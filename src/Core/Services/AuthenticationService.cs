@@ -80,11 +80,11 @@ public class AuthenticationService(JwtSecurityTokenHandler? tokenHandler = null)
 
     /// <summary>
     /// Parses a validated token, first checking that the required claims are present.
-    /// As we are accepting multiple providers, we need to provide an Id that includes the provider
-    /// to prevent id collisions.
+    /// As we could accept multiple providers, we need to return a composite Id that includes
+    /// both the provider and the subject to prevent potential id collisions.
     /// </summary>
     /// <param name="validatedToken">A previously validated JwtSecurityToken</param>
-    /// <returns>The custom ID based on the provided token</returns>
+    /// <returns>The custom ID based on the provided token's provider and subject combination</returns>
     /// <exception cref="ArgumentException">Throws an ArgumentException if any of the required claims are null or whitespace</exception>
     internal static string ParseIdFromToken(JwtSecurityToken validatedToken)
     {
