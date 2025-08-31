@@ -10,13 +10,13 @@ public class AuthenticationServiceTests
 {
     [Theory]
     [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
-    public void ValidateToken_WithInvalidToken_ThrowsException(string invalidToken)
+    public void ExtractToken_WithInvalidToken_ThrowsException(string invalidToken)
     {
         // Arrange
         const string expectedMessage = Errors.Authentication.NullOrWhitespaceToken;
 
         // Act
-        Func<string?> withInvalidToken = () => AuthenticationService.ValidateToken(invalidToken);
+        Func<string?> withInvalidToken = () => AuthenticationService.ExtractToken(invalidToken);
 
         // Assert 
         ArgumentException ex = withInvalidToken.ShouldThrow<ArgumentException>();
@@ -27,13 +27,13 @@ public class AuthenticationServiceTests
     [InlineData(Any.FourCharString)]
     [InlineData(Any.FiveCharString)]
     [InlineData(Any.SixCharString)]
-    public void ValidateToken_WithInvalidBearerToken_ThrowsArgumentException(string invalidBearerToken)
+    public void ExtractToken_WithInvalidBearerToken_ThrowsArgumentException(string invalidBearerToken)
     {
         // Arrange
         const string expectedMessage = Errors.Authentication.InvalidToken;
 
         // Act
-        Func<string?> withInvalidBearerToken = () => AuthenticationService.ValidateToken(invalidBearerToken);
+        Func<string?> withInvalidBearerToken = () => AuthenticationService.ExtractToken(invalidBearerToken);
 
         // Assert
         ArgumentException ex = withInvalidBearerToken.ShouldThrow<ArgumentException>();
