@@ -3,8 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <AssemblyName>RunSuggestion.Core.Unit.Tests</AssemblyName>
-        <RootNamespace>$(AssemblyName)</RootNamespace>
+        <RootNamespace>RunSuggestion.Core.Unit.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
