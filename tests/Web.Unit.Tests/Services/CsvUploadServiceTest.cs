@@ -103,7 +103,7 @@ public class CsvUploadServiceTest
     public async Task Upload_WithNonEmptyCsvContent_SendsToApiEndpoint()
     {
         // Arrange
-        const string expectedApiEndpoint = Routes.UploadApiEndpoint;
+        const string expectedApiEndpoint = Routes.UploadPath;
         const string csvContent = Any.String;
         (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
 

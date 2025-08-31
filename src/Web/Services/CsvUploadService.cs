@@ -18,7 +18,7 @@ public class CsvUploadService(ILogger<CsvUploadService> logger, HttpClient httpC
 
         _logger.LogInformation(Logs.Upload.Start);
 
-        HttpRequestMessage request = new(HttpMethod.Post, Routes.UploadApiEndpoint)
+        HttpRequestMessage request = new(HttpMethod.Post, Routes.UploadPath)
         {
             Content = new StringContent(csvContent, System.Text.Encoding.UTF8, "text/csv")
         };

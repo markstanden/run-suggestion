@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using RunSuggestion.Web.Constants
+@using RunSuggestion.Web.Interfaces
 @inject ILogger<Home> Logger
+@inject ICsvUploadService CsvUploadService
 
 <PageTitle>RunRecommendation</PageTitle>
 
@@ -15,11 +17,7 @@
             <h2 class="button-section-title">
                 Upload
             </h2>
-            <button class="button"
-                    type="button"
-                    @onclick="PostUpload">
-                @ButtonText.UploadHistory
-            </button>
+            <InputFile OnChange="PostUpload" multiple/>
         </section>
 
         <section class="button-section">
@@ -45,10 +43,20 @@
 
     private string Status { get; set; } = string.Empty;
 
-    private void PostUpload()
+    private async Task PostUpload(InputFileChangeEventArgs e)
     {
         Logger.LogInformation(Logs.Upload.Start);
         Status = Constants.Status.Uploading;
+
+        IBrowserFile csvFile = e.GetMultipleFiles(1)[0];
+        using MemoryStream memoryStream = new();
+        await csvFile.OpenReadStream().CopyToAsync(memoryStream);
+
+        memoryStream.Position = 0;
+        using StreamReader reader = new(memoryStream);
+        string csvContent = await reader.ReadToEndAsync();
+
+        await CsvUploadService.Upload(csvContent);
     }
 
     private void GetRecommendation()
