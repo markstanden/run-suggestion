@@ -39,4 +39,40 @@ public class AuthenticationServiceTests
         ArgumentException ex = withInvalidBearerToken.ShouldThrow<ArgumentException>();
         ex.Message.ShouldContain(expectedMessage);
     }
+
+    [Theory]
+    [InlineData(Any.FourCharString)]
+    [InlineData(Any.FiveCharString)]
+    [InlineData(Any.SixCharString)]
+    public void ExtractToken_WithValidBearerToken_ReturnsExtractedTokenString(string validBearerToken)
+    {
+        // Arrange
+        string headerValue = $"{Auth.BearerTokenPrefix} {validBearerToken}";
+
+        // Act
+        string result = AuthenticationService.ExtractToken(headerValue);
+
+        // Assert
+        result.ShouldBe(validBearerToken);
+    }
+
+    [Theory]
+    [InlineData($"{Any.FourCharString}")]
+    [InlineData($"    {Any.FourCharString}")]
+    [InlineData($"{Any.FourCharString}     ")]
+    [InlineData($"    {Any.FourCharString}    ")]
+    [InlineData($"{Any.FourCharString}\n")]
+    [InlineData($"{Any.FourCharString}\r")]
+    [InlineData($"{Any.FourCharString}\r\n")]
+    public void ExtractToken_WithValidBearerToken_ForgivesLeadingAndTrailingWhitespace(string validBearerToken)
+    {
+        // Arrange
+        string headerValue = $"    {Auth.BearerTokenPrefix} {validBearerToken}    ";
+
+        // Act
+        string result = AuthenticationService.ExtractToken(headerValue);
+
+        // Assert
+        result.ShouldBe(validBearerToken);
+    }
 }
