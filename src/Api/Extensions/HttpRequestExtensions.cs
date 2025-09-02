@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using RunSuggestion.Shared.Constants;
 
 namespace RunSuggestion.Api.Extensions;
 
@@ -10,5 +11,5 @@ public static class HttpRequestExtensions
     /// <param name="request">The HttpRequest containing the Authorization header.</param>
     /// <returns>The Authorization header as a string, returns an empty string if null</returns>
     public static string GetAuthHeader(this HttpRequest? request) =>
-        request?.Headers.Authorization.ToString() ?? string.Empty;
+        request?.Headers[Auth.Header].ToString() ?? string.Empty;
 }
