@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.DataSources.TrainingPeaks;
 using RunSuggestion.Shared.Models.Dto;
 using RunSuggestion.TestHelpers;
@@ -124,9 +125,9 @@ public class PostRunHistoryTests
     public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
-        string authHeader = $"Bearer {authToken}";
+        string authHeader = AuthFakes.CreateAuthHeader(authToken);
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
-        request.Headers.Authorization = authHeader;
+        request.Headers[Auth.Header] = authHeader;
 
         // Act
         await _sut.Run(request);
@@ -238,7 +239,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         IEnumerable<TrainingPeaksActivity> activities = TrainingPeaksActivityFakes.CreateRandomRuns(csvRows);
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(activities);
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
@@ -256,7 +257,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -276,7 +277,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         const string expectedMessage = Messages.CsvUpload.Success;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -301,7 +302,7 @@ public class PostRunHistoryTests
         int expectedAffectedRows)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -326,7 +327,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         const string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -350,7 +351,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -373,7 +374,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -392,7 +393,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.UnexpectedError;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string exceptionMessage = "Database connection failed";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -416,7 +417,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string exceptionMessage = "Database connection failed";
         HttpRequest request =
             HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);

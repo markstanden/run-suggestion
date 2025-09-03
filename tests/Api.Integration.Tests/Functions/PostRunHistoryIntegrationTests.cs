@@ -69,7 +69,7 @@ public class PostRunHistoryIntegrationTests
     public async Task PostRunHistory_NewUserWithValidCsvAndAuthentication_ReturnsSuccessAndUpdatedRows(int rowCount)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         SetupAuthenticatorMock(authToken);
 
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
@@ -92,7 +92,7 @@ public class PostRunHistoryIntegrationTests
     public async Task PostRunHistory_NewUserWithValidCsvAndAuthentication_WritesRunEventsToDB(int rowCount)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string entraId = SetupAuthenticatorMock(authToken);
 
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
@@ -113,7 +113,7 @@ public class PostRunHistoryIntegrationTests
     {
         // Arrange
         int zeroRowCount = 0;
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string entraId = SetupAuthenticatorMock(authToken);
 
         string csv =
@@ -138,7 +138,7 @@ public class PostRunHistoryIntegrationTests
         string csv)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string entraId = SetupAuthenticatorMock(authToken);
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
 
@@ -159,7 +159,7 @@ public class PostRunHistoryIntegrationTests
     public async Task PostRunHistory_NewUserWithInvalidCsvData_CreatesUserButWritesNoRunEventsToDB(int validRowCount)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string entraId = SetupAuthenticatorMock(authToken);
         string csv =
             TrainingPeaksCsvBuilder.CsvFromActivities(
@@ -187,7 +187,7 @@ public class PostRunHistoryIntegrationTests
         // Arrange
         int expectedRowTotal = rowCount * uploadCount;
         IEnumerable<int> uploadRange = Enumerable.Range(0, uploadCount);
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string entraId = SetupAuthenticatorMock(authToken);
 
         IEnumerable<HttpRequest> requests =
@@ -217,7 +217,7 @@ public class PostRunHistoryIntegrationTests
         int rowCount)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         SetupAuthenticatorMock(authToken);
 
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
@@ -245,7 +245,7 @@ public class PostRunHistoryIntegrationTests
     public async Task PostRunHistory_WithInvalidAuthentication_ReturnsUnauthorized(int rowCount)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         string nullEntraId = null!;
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(TrainingPeaksActivityFakes.CreateRandomRuns(rowCount));
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
@@ -264,7 +264,7 @@ public class PostRunHistoryIntegrationTests
     public async Task PostRunHistory_WithEmptyCsv_ReturnsBadRequest()
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         SetupAuthenticatorMock(authToken);
 
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
@@ -286,7 +286,7 @@ public class PostRunHistoryIntegrationTests
     public async Task PostRunHistory_WithFutureDatesInCsv_ReturnsBadRequest(int rowCount)
     {
         // Arrange
-        string authToken = $"Bearer {Guid.NewGuid()}";
+        string authToken = AuthFakes.CreateAuthHeader();
         SetupAuthenticatorMock(authToken);
         string invalidCsv = TrainingPeaksCsvBuilder.CsvFromActivities(
             TrainingPeaksActivityFakes.CreateRandomRuns(rowCount, -10)); // Negative offset produces dates in the future

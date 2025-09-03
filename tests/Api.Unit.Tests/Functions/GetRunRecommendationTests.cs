@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Extensions;
 using RunSuggestion.Shared.Models.Dto;
 using RunSuggestion.Shared.Models.Runs;
@@ -147,7 +148,7 @@ public class GetRunRecommendationTests
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
-        request.Headers.Authorization = authToken;
+        request.Headers[Auth.Header] = authToken;
 
         // Act
         await _sut.Run(request);
