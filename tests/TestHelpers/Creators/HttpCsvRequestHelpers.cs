@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using RunSuggestion.Shared.Constants;
 
 namespace RunSuggestion.TestHelpers.Creators;
 
@@ -11,7 +12,7 @@ public static class HttpCsvRequestHelpers
     /// <param name="csv">The CSV content for the request body</param>
     /// <returns>Configured HttpRequest for CSV upload</returns>
     public static HttpRequest CreateCsvUploadRequest(string authToken, string csv) =>
-        HttpRequestHelper.CreateHttpRequestWithHeader("Authorization",
+        HttpRequestHelper.CreateHttpRequestWithHeader(Auth.Header,
                                                       authToken,
                                                       "POST",
                                                       csv,

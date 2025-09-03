@@ -14,7 +14,7 @@ public static class Auth
         public const string SwaHeader = "x-ms-client-principal";
     }
 
-    public const string Header = JwtConfig.JwtHeader;
+    public const string Header = SwaConfig.SwaHeader;
     public static readonly IEnumerable<string> ValidIssuers = [Issuers.GitHub];
 
     public static class Issuers
