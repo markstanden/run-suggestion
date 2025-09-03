@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace RunSuggestion.Web.Authentication.Models;
+namespace RunSuggestion.Shared.Models.Auth;
 
 /// <summary>
 /// The response returned by the Azure SWA /.auth/me endpoint.

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
+using RunSuggestion.Shared.Models.Auth;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.Web.Authentication;
-using RunSuggestion.Web.Authentication.Models;
 using static RunSuggestion.TestHelpers.Creators.HttpTestHelpers;
 
 namespace RunSuggestion.Web.Unit.Tests.Authentication;
