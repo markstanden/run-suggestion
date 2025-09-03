@@ -3,10 +3,10 @@ using RunSuggestion.Shared.Constants;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Theory;
 
-namespace RunSuggestion.Core.Unit.Tests.Services;
+namespace RunSuggestion.Core.Unit.Tests.Services.JwtAuthenticationServiceTests;
 
-[TestSubject(typeof(AuthenticationService))]
-public class AuthenticationServiceExtractTokenTests
+[TestSubject(typeof(JwtAuthenticationService))]
+public class ExtractTokenTests
 {
     [Theory]
     [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
@@ -16,7 +16,7 @@ public class AuthenticationServiceExtractTokenTests
         const string expectedMessage = Errors.Authentication.NullOrWhitespaceToken;
 
         // Act
-        Func<string?> withInvalidToken = () => AuthenticationService.ExtractToken(invalidToken);
+        Func<string?> withInvalidToken = () => JwtAuthenticationService.ExtractToken(invalidToken);
 
         // Assert 
         ArgumentException ex = withInvalidToken.ShouldThrow<ArgumentException>();
@@ -33,7 +33,7 @@ public class AuthenticationServiceExtractTokenTests
         const string expectedMessage = Errors.Authentication.InvalidToken;
 
         // Act
-        Func<string?> withInvalidBearerToken = () => AuthenticationService.ExtractToken(invalidBearerToken);
+        Func<string?> withInvalidBearerToken = () => JwtAuthenticationService.ExtractToken(invalidBearerToken);
 
         // Assert
         ArgumentException ex = withInvalidBearerToken.ShouldThrow<ArgumentException>();
@@ -47,10 +47,10 @@ public class AuthenticationServiceExtractTokenTests
     public void ExtractToken_WithValidBearerToken_ReturnsExtractedTokenString(string validBearerToken)
     {
         // Arrange
-        string headerValue = $"{Auth.BearerTokenPrefix} {validBearerToken}";
+        string headerValue = $"{Auth.JwtConfig.BearerTokenPrefix} {validBearerToken}";
 
         // Act
-        string result = AuthenticationService.ExtractToken(headerValue);
+        string result = JwtAuthenticationService.ExtractToken(headerValue);
 
         // Assert
         result.ShouldBe(validBearerToken);
@@ -69,10 +69,10 @@ public class AuthenticationServiceExtractTokenTests
     {
         // Arrange
         const string validBearerToken = Any.LongAlphanumericString;
-        string headerValue = $"    {Auth.BearerTokenPrefix} {validBearerTokenWithWhitespace}    ";
+        string headerValue = $"    {Auth.JwtConfig.BearerTokenPrefix} {validBearerTokenWithWhitespace}    ";
 
         // Act
-        string result = AuthenticationService.ExtractToken(headerValue);
+        string result = JwtAuthenticationService.ExtractToken(headerValue);
 
         // Assert
         result.ShouldBe(validBearerToken);

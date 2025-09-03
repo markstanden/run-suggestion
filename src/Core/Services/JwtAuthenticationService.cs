@@ -5,7 +5,7 @@ using RunSuggestion.Shared.Constants;
 
 namespace RunSuggestion.Core.Services;
 
-public class AuthenticationService(JwtSecurityTokenHandler? tokenHandler = null) : IAuthenticator
+public class JwtAuthenticationService(JwtSecurityTokenHandler? tokenHandler = null) : IAuthenticator
 {
     private readonly JwtSecurityTokenHandler _tokenHandler = tokenHandler ?? new JwtSecurityTokenHandler();
 
@@ -17,7 +17,7 @@ public class AuthenticationService(JwtSecurityTokenHandler? tokenHandler = null)
         ValidIssuers = Auth.ValidIssuers,
         ValidateAudience = false,
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.FromMinutes(Auth.AllowedClockSkewMinutes),
+        ClockSkew = TimeSpan.FromMinutes(Auth.JwtConfig.AllowedClockSkewMinutes),
         RequireExpirationTime = true
     };
 
@@ -52,12 +52,12 @@ public class AuthenticationService(JwtSecurityTokenHandler? tokenHandler = null)
 
         string trimmedToken = authHeader.Trim();
 
-        if (!trimmedToken.StartsWith(Auth.BearerTokenPrefix, StringComparison.OrdinalIgnoreCase))
+        if (!trimmedToken.StartsWith(Auth.JwtConfig.BearerTokenPrefix, StringComparison.OrdinalIgnoreCase))
         {
             throw new ArgumentException(Errors.Authentication.InvalidToken, nameof(authHeader));
         }
 
-        return trimmedToken[Auth.BearerTokenPrefix.Length..]
+        return trimmedToken[Auth.JwtConfig.BearerTokenPrefix.Length..]
             .TrimStart();
     }
 

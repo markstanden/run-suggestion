@@ -5,15 +5,15 @@ using RunSuggestion.TestHelpers.Theory;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;
 
-[TestSubject(typeof(AuthenticationService))]
-public class AuthenticationServiceAuthenticateTests
+[TestSubject(typeof(JwtAuthenticationService))]
+public class AuthenticateTests
 {
     [Theory]
     [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
     public void Authenticate_WithInvalidToken_ReturnsNull(string invalidToken)
     {
         // Arrange
-        AuthenticationService sut = new();
+        JwtAuthenticationService sut = new();
 
         // Act
         string? result = sut.Authenticate(invalidToken);
@@ -29,7 +29,7 @@ public class AuthenticationServiceAuthenticateTests
     public void Authenticate_WithInvalidBearerToken_ReturnsNull(string invalidBearerToken)
     {
         // Arrange
-        AuthenticationService sut = new();
+        JwtAuthenticationService sut = new();
 
         // Act
         string? result = sut.Authenticate(invalidBearerToken);

@@ -7,13 +7,13 @@ using RunSuggestion.TestHelpers;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;
 
-public class AuthenticationServiceValidateTokenTests
+public class ValidateTokenTests
 {
-    private readonly AuthenticationService _sut;
+    private readonly JwtAuthenticationService _sut;
 
-    public AuthenticationServiceValidateTokenTests()
+    public ValidateTokenTests()
     {
-        _sut = new AuthenticationService();
+        _sut = new JwtAuthenticationService();
     }
 
     private static JwtSecurityToken CreateFakeJwtToken(
@@ -28,7 +28,7 @@ public class AuthenticationServiceValidateTokenTests
         }
 
         return new JwtSecurityToken(
-            issuer: issuer,
+            issuer,
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(5)
         );
@@ -41,7 +41,7 @@ public class AuthenticationServiceValidateTokenTests
     {
         // Arrange
         JwtSecurityToken token = CreateFakeJwtToken(
-            issuer: validIssuer,
+            validIssuer,
             Any.LongAlphanumericString);
         string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -62,7 +62,7 @@ public class AuthenticationServiceValidateTokenTests
     {
         // Arrange
         JwtSecurityToken token = CreateFakeJwtToken(
-            issuer: unsupportedIssuer,
+            unsupportedIssuer,
             Any.LongAlphanumericString);
         string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 

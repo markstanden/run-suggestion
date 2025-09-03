@@ -125,7 +125,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenCalledWithAuthHeaderSet_CallsAuthenticatorWithHeaderValue(string authToken)
     {
         // Arrange
-        string authHeader = AuthFakes.CreateAuthHeader(authToken);
+        string authHeader = AuthFakes.CreateJwtAuthHeader(authToken);
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         request.Headers[Auth.Header] = authHeader;
 
@@ -239,7 +239,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenAuthenticationSucceedsAndCsvPresent_CsvIsPassedIntoHistoryAdder(int csvRows)
     {
         // Arrange
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         IEnumerable<TrainingPeaksActivity> activities = TrainingPeaksActivityFakes.CreateRandomRuns(csvRows);
         string csv = TrainingPeaksCsvBuilder.CsvFromActivities(activities);
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, csv);
@@ -257,7 +257,7 @@ public class PostRunHistoryTests
     public async Task Run_WhenAuthenticationSucceedsAndValidCsvPresent_Returns200OkResult()
     {
         // Arrange
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -277,7 +277,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         const string expectedMessage = Messages.CsvUpload.Success;
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -302,7 +302,7 @@ public class PostRunHistoryTests
         int expectedAffectedRows)
     {
         // Arrange
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -327,7 +327,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         const string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -351,7 +351,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -374,7 +374,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(EntraIdFakes.CreateEntraId());
@@ -393,7 +393,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.UnexpectedError;
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         string exceptionMessage = "Database connection failed";
         HttpRequest request = HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
@@ -417,7 +417,7 @@ public class PostRunHistoryTests
     {
         // Arrange
         string expectedMessage = Messages.CsvUpload.Failure;
-        string authToken = AuthFakes.CreateAuthHeader();
+        string authToken = AuthFakes.CreateJwtAuthHeader();
         string exceptionMessage = "Database connection failed";
         HttpRequest request =
             HttpCsvRequestHelpers.CreateCsvUploadRequest(authToken, string.Empty);

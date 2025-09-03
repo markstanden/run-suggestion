@@ -22,7 +22,7 @@ string connectionString = builder.Configuration[DatabaseConstants.SqliteConnecti
                           DatabaseConstants.SqliteConnection.Default;
 
 builder.Services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
-builder.Services.AddScoped<IAuthenticator, AuthenticationService>();
+builder.Services.AddScoped<IAuthenticator, JwtAuthenticationService>();
 builder.Services.AddScoped<ICsvParser, CsvParser>();
 builder.Services.AddScoped<IRunHistoryTransformer, CsvToRunHistoryTransformer>();
 builder.Services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>();
