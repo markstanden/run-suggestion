@@ -1,6 +1,6 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Shared.Models.Runs;
+using RunSuggestion.Shared.Models.Users;
 
 namespace RunSuggestion.Core.Services;
 

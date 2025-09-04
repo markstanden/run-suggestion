@@ -1,7 +1,7 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Shared.Models.Runs;
+using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;

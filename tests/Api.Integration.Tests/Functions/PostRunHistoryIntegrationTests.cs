@@ -5,13 +5,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
 using RunSuggestion.Shared.Models.Dto;
 using RunSuggestion.Shared.Models.Runs;
+using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Creators;
 using static RunSuggestion.TestHelpers.Constants.NonFunctionalRequirements;
 

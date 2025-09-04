@@ -5,7 +5,7 @@ using RunSuggestion.Core.Services;
 using RunSuggestion.Shared.Constants;
 using RunSuggestion.TestHelpers;
 
-namespace RunSuggestion.Core.Unit.Tests.Services;
+namespace RunSuggestion.Core.Unit.Tests.Services.JwtAuthenticationServiceTests;
 
 public class ValidateTokenTests
 {
@@ -46,7 +46,7 @@ public class ValidateTokenTests
         string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
         // Act
-        JwtSecurityToken? result = _sut.ValidateToken(tokenString);
+        JwtSecurityToken result = _sut.ValidateToken(tokenString);
 
         // Assert
         result.ShouldNotBeNull();

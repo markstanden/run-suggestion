@@ -1,6 +1,6 @@
 using RunSuggestion.Shared.Models.Runs;
 
-namespace RunSuggestion.Core.Models.Users;
+namespace RunSuggestion.Shared.Models.Users;
 
 public class UserData
 {

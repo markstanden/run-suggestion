@@ -1,6 +1,6 @@
-using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Shared.Models.Runs;
+using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
 

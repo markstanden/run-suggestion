@@ -1,9 +1,8 @@
 using RunSuggestion.Core.Services;
-using RunSuggestion.Shared.Constants;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Theory;
 
-namespace RunSuggestion.Core.Unit.Tests.Services;
+namespace RunSuggestion.Core.Unit.Tests.Services.JwtAuthenticationServiceTests;
 
 [TestSubject(typeof(JwtAuthenticationService))]
 public class AuthenticateTests

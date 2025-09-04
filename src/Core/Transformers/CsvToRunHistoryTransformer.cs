@@ -8,8 +8,8 @@ namespace RunSuggestion.Core.Transformers;
 /// Implementation to create RunHistory from a provided csv file.
 /// CSV parser may be overkill for this project as the CSV is single source, with known delimiters and format,
 /// but is highly recommended
-/// <see cref="https://stackoverflow.com/questions/3507498/reading-csv-files-using-c-sharp"/>
 /// </summary>
+/// <seealso href="https://stackoverflow.com/questions/3507498/reading-csv-files-using-c-sharp">Read CSV files using C#</seealso>
 public class CsvToRunHistoryTransformer : IRunHistoryTransformer
 {
     private readonly ICsvParser _csvParser;
