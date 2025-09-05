@@ -44,7 +44,7 @@ public static class AuthFakes
         new()
         {
             UserId = userId ?? Any.LongAlphanumericString,
-            IdentityProvider = identityProvider ?? Any.ShortAlphanumericString,
+            IdentityProvider = identityProvider ?? Auth.ValidIssuers.First(),
             UserDetails = userDetails ?? Any.ShortAlphaWithSpecialCharsString
         };
 
