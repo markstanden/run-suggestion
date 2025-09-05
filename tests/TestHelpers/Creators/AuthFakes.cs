@@ -48,12 +48,19 @@ public static class AuthFakes
             UserDetails = userDetails ?? Any.ShortAlphaWithSpecialCharsString
         };
 
+
     public static string CreateFakeBase64SwaClientPrincipal(
         string? userId = null,
         string? identityProvider = null,
         string? userDetails = null)
     {
-        string json = JsonSerializer.Serialize(CreateFakeClientPrincipal(userId, identityProvider, userDetails));
+        SwaClientPrincipal principal = CreateFakeClientPrincipal(userId, identityProvider, userDetails);
+        return EncodePrincipalToTokenString(principal);
+    }
+
+    public static string EncodePrincipalToTokenString(SwaClientPrincipal principal)
+    {
+        string json = JsonSerializer.Serialize(principal);
         return Base64UrlEncoder.Encode(json);
     }
 }
