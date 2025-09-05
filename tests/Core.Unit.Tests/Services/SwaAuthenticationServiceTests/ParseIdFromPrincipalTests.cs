@@ -49,4 +49,25 @@ public class ParseIdFromPrincipalTests
         Exception ex = withEmptyIdentityProvider.ShouldThrow<ArgumentException>();
         ex.Message.ShouldContain(Errors.Authentication.InvalidToken);
     }
+
+    [Theory]
+    [InlineData(Any.String, Auth.Issuers.GitHub)]
+    [InlineData(Any.LongAlphanumericString, Auth.Issuers.GitHub)]
+    public void ParseIdFromPrincipal_WithValidUserIdAndProvider_ShouldReturnStringContainingBothUserIdAndProvider(
+        string validUserId, string validIdentityProvider)
+    {
+        // Arrange
+        SwaClientPrincipal principal = new()
+        {
+            UserId = validUserId,
+            IdentityProvider = validIdentityProvider
+        };
+
+        // Act
+        string result = SwaAuthenticationService.ParseIdFromPrincipal(principal);
+
+        // Assert
+        result.ShouldContain(validUserId);
+        result.ShouldContain(validIdentityProvider);
+    }
 }

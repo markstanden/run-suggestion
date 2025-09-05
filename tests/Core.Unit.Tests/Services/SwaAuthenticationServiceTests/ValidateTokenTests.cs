@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Shared.Constants;
@@ -34,11 +35,8 @@ public class ValidateTokenTests
     public void ValidateToken_WithInvalidJson_ThrowsSecurityTokenException(
         string invalidJson)
     {
-        // Arrange
-        string encodedToken = Base64UrlEncoder.Encode(invalidJson);
-
         // Act
-        Func<SwaClientPrincipal> withInvalidJson = () => SwaAuthenticationService.ValidateToken(encodedToken);
+        Func<SwaClientPrincipal> withInvalidJson = () => SwaAuthenticationService.ValidateToken(invalidJson);
 
         // Assert
         Exception ex = withInvalidJson.ShouldThrow<SecurityTokenException>();
@@ -51,8 +49,13 @@ public class ValidateTokenTests
         string invalidUserId)
     {
         // Arrange
-        SwaClientPrincipal principal = AuthFakes.CreateFakeClientPrincipal(invalidUserId);
-        string encodedToken = AuthFakes.EncodePrincipalToTokenString(principal);
+        SwaClientPrincipal principal = new()
+        {
+            UserId = invalidUserId,
+            IdentityProvider = Auth.ValidIssuers.First(),
+            UserDetails = Any.String
+        };
+        string encodedToken = JsonSerializer.Serialize(principal);
 
         // Act
         Func<SwaClientPrincipal> withInvalidUserId = () => SwaAuthenticationService.ValidateToken(encodedToken);
@@ -70,8 +73,13 @@ public class ValidateTokenTests
         string invalidIdentityProvider)
     {
         // Arrange
-        SwaClientPrincipal principal = AuthFakes.CreateFakeClientPrincipal(identityProvider: invalidIdentityProvider);
-        string encodedToken = AuthFakes.EncodePrincipalToTokenString(principal);
+        SwaClientPrincipal principal = new()
+        {
+            UserId = Any.String,
+            IdentityProvider = invalidIdentityProvider,
+            UserDetails = Any.String
+        };
+        string encodedToken = JsonSerializer.Serialize(principal);
 
         // Act
         Func<SwaClientPrincipal> withInvalidUserId = () => SwaAuthenticationService.ValidateToken(encodedToken);
@@ -82,13 +90,14 @@ public class ValidateTokenTests
     }
 
     [Theory]
-    [InlineData(Any.String, Auth.Issuers.GitHub)]
-    [InlineData(Any.LongAlphanumericString, Auth.Issuers.GitHub)]
-    public void ValidateToken_WithValidUserIdAndProvider_ReturnsExpectedPrincipal(
-        string validUserId, string validIdentityProvider)
+    [InlineData(Any.String)]
+    [InlineData(Any.LongAlphanumericString)]
+    public void ValidateToken_WithValidUserIdAndProvider_ReturnsExpectedPrincipal(string validUserId)
     {
         // Arrange
-        string encodedToken = AuthFakes.CreateFakeBase64SwaClientPrincipal(validUserId, validIdentityProvider);
+        string validIdentityProvider = Auth.ValidIssuers.First();
+        SwaClientPrincipal principal = AuthFakes.CreateFakeClientPrincipal(validUserId, validIdentityProvider);
+        string encodedToken = JsonSerializer.Serialize(principal);
 
         // Act
         SwaClientPrincipal result = SwaAuthenticationService.ValidateToken(encodedToken);
