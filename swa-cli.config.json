@@ -4,10 +4,10 @@
     "run-suggestion": {
       "appLocation": "src/Web",
       "apiLocation": "src/Api",
-      "outputLocation": "bin/wwwroot",
+      "outputLocation": "bin/Release/net8.0/publish/wwwroot",
       "apiLanguage": "dotnetisolated",
       "apiVersion": "8.0",
-      "appBuildCommand": "dotnet publish -c Release -o bin",
+      "appBuildCommand": "dotnet publish -c Release",
       "apiBuildCommand": "dotnet publish -c Release",
       "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5281",
