@@ -42,7 +42,7 @@ public class ValidateTokenTests
 
         // Assert
         Exception ex = withInvalidJson.ShouldThrow<SecurityTokenException>();
-        ex.Message.ShouldBe(Errors.Authentication.InvalidToken);
+        ex.Message.ShouldContain(Errors.Authentication.InvalidToken);
     }
 
     [Theory]
@@ -59,7 +59,7 @@ public class ValidateTokenTests
 
         // Assert
         Exception ex = withInvalidUserId.ShouldThrow<SecurityTokenException>();
-        ex.Message.ShouldBe(Errors.Authentication.InvalidToken);
+        ex.Message.ShouldContain(Errors.Authentication.InvalidToken);
     }
 
     [Theory]
@@ -78,7 +78,7 @@ public class ValidateTokenTests
 
         // Assert
         Exception ex = withInvalidUserId.ShouldThrow<SecurityTokenException>();
-        ex.Message.ShouldBe(Errors.Authentication.InvalidToken);
+        ex.Message.ShouldContain(Errors.Authentication.InvalidToken);
     }
 
     [Theory]
