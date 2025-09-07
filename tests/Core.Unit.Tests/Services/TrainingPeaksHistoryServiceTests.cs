@@ -1,8 +1,9 @@
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Runs;
-using RunSuggestion.Core.Models.Users;
 using RunSuggestion.Core.Services;
+using RunSuggestion.Shared.Models.Runs;
+using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Creators;
+using RunSuggestion.TestHelpers.Theory;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;
 
@@ -72,9 +73,7 @@ public class TrainingPeaksHistoryServiceTests
     #endregion
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData(null)]
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
     public async Task AddRunHistory_WithInvalidEntraId_ThrowsArgumentException(string invalidEntraId)
     {
         // Arrange
@@ -90,9 +89,7 @@ public class TrainingPeaksHistoryServiceTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData(null)]
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
     public async Task AddRunHistory_WithInvalidCsv_ThrowsArgumentException(string? invalidCsv)
     {
         // Arrange
@@ -108,9 +105,7 @@ public class TrainingPeaksHistoryServiceTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData(null)]
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
     public async Task AddRunHistory_WithInvalidCsv_CreatesUser(string? invalidCsv)
     {
         // Arrange
@@ -125,9 +120,7 @@ public class TrainingPeaksHistoryServiceTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData(null)]
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
     public async Task AddRunHistory_WithInvalidCsv_DoesNotCallTransformerWithInvalidCsv(string? invalidCsv)
     {
         // Arrange

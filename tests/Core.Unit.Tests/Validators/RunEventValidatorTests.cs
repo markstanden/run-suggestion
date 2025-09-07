@@ -1,5 +1,5 @@
-using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Validators;
+using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Validators;

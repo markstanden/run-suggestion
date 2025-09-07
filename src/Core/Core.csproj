@@ -1,14 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>RunSuggestion.Core</AssemblyName>
-        <RootNamespace>$(AssemblyName)</RootNamespace>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>RunSuggestion.Core</RootNamespace>
     </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Shared\Shared.csproj"/>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="33.1.0"/>
         <PackageReference Include="Dapper" Version="2.1.66"/>
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.6"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -16,5 +21,5 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
+    
 </Project>

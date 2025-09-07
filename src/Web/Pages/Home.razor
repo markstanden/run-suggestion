@@ -1,11 +1,68 @@
 ﻿@page "/"
+@using RunSuggestion.Web.Constants
+@using RunSuggestion.Web.Interfaces
+@inject ILogger<Home> Logger
+@inject ICsvUploadService CsvUploadService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>RunRecommendation</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1 class="page-title">
+    Run Recommendation Application
+</h1>
 
-<div class="alert alert-warning" role="alert">
-    Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
-</div>
+<AuthorizeView>
+    <Authorized>
 
-Welcome to your new app.
+        <section class="button-section">
+            <h2 class="button-section-title">
+                Upload
+            </h2>
+            <InputFile OnChange="PostUpload" multiple/>
+        </section>
+
+        <section class="button-section">
+            <h2 class="button-section-title">
+                Recommendation
+            </h2>
+            <button class="button"
+                    type="button"
+                    @onclick="GetRecommendation">
+                @ButtonText.GetRecommendation
+            </button>
+        </section>
+
+        <section class="status-section">
+            <p>
+                @Status
+            </p>
+        </section>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    private string Status { get; set; } = string.Empty;
+
+    private async Task PostUpload(InputFileChangeEventArgs e)
+    {
+        Logger.LogInformation(Logs.Upload.Start);
+        Status = Constants.Status.Uploading;
+
+        IBrowserFile csvFile = e.GetMultipleFiles(1)[0];
+        using MemoryStream memoryStream = new();
+        await csvFile.OpenReadStream().CopyToAsync(memoryStream);
+
+        memoryStream.Position = 0;
+        using StreamReader reader = new(memoryStream);
+        string csvContent = await reader.ReadToEndAsync();
+
+        await CsvUploadService.Upload(csvContent);
+    }
+
+    private void GetRecommendation()
+    {
+        Logger.LogInformation(Logs.Recommendation.Start);
+        Status = Constants.Status.GettingRecommendation;
+    }
+
+}

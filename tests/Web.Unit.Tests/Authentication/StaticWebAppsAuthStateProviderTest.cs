@@ -1,13 +1,14 @@
 using System.Net;
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
+using RunSuggestion.Shared.Models.Auth;
 using RunSuggestion.TestHelpers;
+using RunSuggestion.TestHelpers.Theory;
 using RunSuggestion.Web.Authentication;
-using RunSuggestion.Web.Authentication.Models;
+using static RunSuggestion.TestHelpers.Creators.HttpTestHelpers;
 
 namespace RunSuggestion.Web.Unit.Tests.Authentication;
 
@@ -15,18 +16,6 @@ namespace RunSuggestion.Web.Unit.Tests.Authentication;
 public class StaticWebAppsAuthStateProviderTest
 {
     private readonly Mock<ILogger<StaticWebAppsAuthStateProvider>> _logger = new();
-
-    # region TestHelpers
-
-    /// <summary>
-    /// A custom test implementation of <see cref="HttpMessageHandler"/> that handles
-    /// http responses returning a pre-prepared <see cref="HttpResponseMessage"/>.
-    /// </summary>
-    private class TestHttpMessageHandler(HttpResponseMessage response) : HttpMessageHandler
-    {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-            CancellationToken cancellationToken) => Task.FromResult(response);
-    }
 
     /// <summary>
     /// Factory method returning a prepared SUT that returns the provided <see cref="HttpResponseMessage"/> response on all
@@ -41,24 +30,6 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = new(testHttpClient, _logger.Object);
         return sut;
     }
-
-    /// <summary>
-    /// Convenience method to serialise the authentication DTO and return as an <see cref="HttpResponseMessage"/>
-    /// </summary>
-    /// <param name="dto">The <see cref="StaticWebAppsAuthDto"/> to add to the response</param>
-    /// <param name="statusCode">The HTTP status code to add to the response headers</param>
-    /// <returns>A <see cref="HttpResponseMessage"/> containing the serialised DTO</returns>
-    private HttpResponseMessage CreateResponse(
-        StaticWebAppsAuthDto dto,
-        HttpStatusCode statusCode = HttpStatusCode.OK) =>
-        new(statusCode)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto))
-        };
-
-    #endregion
-
-    #region Constructor Tests
 
     [Fact]
     public void Constructor_WithNullHttpClient_ThrowsArgumentNullException()
@@ -93,10 +64,6 @@ public class StaticWebAppsAuthStateProviderTest
         ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
         ex.ParamName.ShouldBe(expectedParamName);
     }
-
-    #endregion
-
-    #region GetAuthenticationStateAsync Tests
 
     [Fact]
     public async Task GetAuthenticationStateAsync_Always_CallsAuthenticationEndpoint()
@@ -138,7 +105,8 @@ public class StaticWebAppsAuthStateProviderTest
     [InlineData(HttpStatusCode.Forbidden)]
     [InlineData(HttpStatusCode.NotFound)]
     [InlineData(HttpStatusCode.BadRequest)]
-    public void GetAuthenticationStateAsync_WithHttpError_ReturnsFailedAuthenticationState(HttpStatusCode statusCode)
+    public async Task GetAuthenticationStateAsync_WithHttpError_ReturnsFailedAuthenticationState(
+        HttpStatusCode statusCode)
     {
         // Arrange
         SwaClientPrincipal principal = new()
@@ -152,7 +120,7 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
 
         // Act
-        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
 
         // Assert
         authenticationState.User.ShouldNotBeNull();
@@ -161,7 +129,7 @@ public class StaticWebAppsAuthStateProviderTest
     }
 
     [Fact]
-    public void GetAuthenticationStateAsync_WithValidToken_ReturnsExpectedAuthenticationState()
+    public async Task GetAuthenticationStateAsync_WithValidToken_ReturnsExpectedAuthenticationState()
     {
         // Arrange
         SwaClientPrincipal principal = new()
@@ -174,7 +142,7 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
 
         // Act
-        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
 
         // Assert
         authenticationState.User.ShouldNotBeNull();
@@ -183,7 +151,7 @@ public class StaticWebAppsAuthStateProviderTest
     }
 
     [Fact]
-    public void GetAuthenticationStateAsync_WithInvalidToken_ReturnsFailedAuthenticationState()
+    public async Task GetAuthenticationStateAsync_WithInvalidToken_ReturnsFailedAuthenticationState()
     {
         // Arrange
         SwaClientPrincipal nullPrinciple = null!;
@@ -191,7 +159,7 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
 
         // Act
-        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
 
         // Assert
         authenticationState.ShouldNotBeNull();
@@ -227,15 +195,9 @@ public class StaticWebAppsAuthStateProviderTest
     }
 
     [Theory]
-    [InlineData(null!)]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("       ")]
-    [InlineData("\n")]
-    [InlineData("\r")]
-    [InlineData("\r\n")]
-    public void GetAuthenticationStateAsync_WithTokenWithInvalidUserId_ReturnsFailedAuthenticationState(
-        string invalidUserId)
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
+    public async Task GetAuthenticationStateAsync_WithTokenWithInvalidUserId_ReturnsFailedAuthenticationState(
+        string? invalidUserId)
     {
         // Arrange
         SwaClientPrincipal principal = new()
@@ -248,7 +210,7 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
 
         // Act
-        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
 
         // Assert
         authenticationState.User.ShouldNotBeNull();
@@ -257,14 +219,8 @@ public class StaticWebAppsAuthStateProviderTest
     }
 
     [Theory]
-    [InlineData(null!)]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("       ")]
-    [InlineData("\n")]
-    [InlineData("\r")]
-    [InlineData("\r\n")]
-    public void
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
+    public async Task
         GetAuthenticationStateAsync_WithTokenWithInvalidIdentityProvider_ReturnsDefaultIdentityProviderInAuthenticationState(
             string invalidIdentityProvider)
     {
@@ -279,7 +235,7 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
 
         // Act
-        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
 
         // Assert
         authenticationState.User.ShouldNotBeNull();
@@ -318,14 +274,8 @@ public class StaticWebAppsAuthStateProviderTest
     }
 
     [Theory]
-    [InlineData(null!)]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("       ")]
-    [InlineData("\n")]
-    [InlineData("\r")]
-    [InlineData("\r\n")]
-    public void
+    [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
+    public async Task
         GetAuthenticationStateAsync_WithTokenWithInvalidUserDetails_ReturnsDefaultAnonymousUserHandleInAuthenticationState(
             string invalidUserDetails)
     {
@@ -340,7 +290,7 @@ public class StaticWebAppsAuthStateProviderTest
         StaticWebAppsAuthStateProvider sut = CreateSut(response);
 
         // Act
-        AuthenticationState authenticationState = sut.GetAuthenticationStateAsync().Result;
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
 
         // Assert
         authenticationState.User.ShouldNotBeNull();
@@ -348,6 +298,4 @@ public class StaticWebAppsAuthStateProviderTest
         authenticationState.User.Identity.IsAuthenticated.ShouldBeTrue();
         authenticationState.User.Identity.Name.ShouldBe(StaticWebAppsAuthStateProvider.DefaultUserName);
     }
-
-    #endregion
 }

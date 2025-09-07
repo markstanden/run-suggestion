@@ -17,13 +17,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Api.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Integration.Tests", "tests\Api.Integration.Tests\Api.Integration.Tests.csproj", "{9C292EFB-4D91-48B0-9D74-92E335AB48A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestHelpers", "tests\Common.TestHelpers\Common.TestHelpers.csproj", "{72FE84DC-54FF-4B15-80B7-C3506980CB57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelpers", "tests\TestHelpers\TestHelpers.csproj", "{72FE84DC-54FF-4B15-80B7-C3506980CB57}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", ".github\workflows", "{EF538FAC-DE93-4172-A20A-011B2ADC67F3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\azure-static-web-apps-agreeable-river-007f2f303.yml = .github\workflows\azure-static-web-apps-agreeable-river-007f2f303.yml
+		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{4B9E02F5-0E34-4BA8-A786-317502FE94A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Unit.Tests", "tests\Web.Unit.Tests\Web.Unit.Tests.csproj", "{C2B18C14-82FC-447B-87B1-DF51E2E96C78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "src\Shared\Shared.csproj", "{C80012B6-55DF-4075-9AC5-452E6795942B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Unit.Tests", "tests\Shared.Unit.Tests\Shared.Unit.Tests.csproj", "{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{925674D6-6671-40B1-A3D9-12D8A3255459}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +76,14 @@ Global
 		{C2B18C14-82FC-447B-87B1-DF51E2E96C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2B18C14-82FC-447B-87B1-DF51E2E96C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2B18C14-82FC-447B-87B1-DF51E2E96C78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C80012B6-55DF-4075-9AC5-452E6795942B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C80012B6-55DF-4075-9AC5-452E6795942B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C80012B6-55DF-4075-9AC5-452E6795942B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C80012B6-55DF-4075-9AC5-452E6795942B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D08D2376-8193-4192-8AEB-AD3906864EC0} = {F7956033-D64C-4420-80D5-4AE98EF4670E}
@@ -76,5 +94,7 @@ Global
 		{72FE84DC-54FF-4B15-80B7-C3506980CB57} = {E1E21B6B-A00E-4919-A541-5025AF800539}
 		{4B9E02F5-0E34-4BA8-A786-317502FE94A8} = {F7956033-D64C-4420-80D5-4AE98EF4670E}
 		{C2B18C14-82FC-447B-87B1-DF51E2E96C78} = {E1E21B6B-A00E-4919-A541-5025AF800539}
+		{C80012B6-55DF-4075-9AC5-452E6795942B} = {F7956033-D64C-4420-80D5-4AE98EF4670E}
+		{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3} = {E1E21B6B-A00E-4919-A541-5025AF800539}
 	EndGlobalSection
 EndGlobal

@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using RunSuggestion.Core.Constants;
-using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Repositories;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
 using RunSuggestion.Core.Validators;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
+using RunSuggestion.Shared.Models.Runs;
 
 FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
 
@@ -22,11 +22,11 @@ string connectionString = builder.Configuration[DatabaseConstants.SqliteConnecti
                           DatabaseConstants.SqliteConnection.Default;
 
 builder.Services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
-builder.Services.AddScoped<IAuthenticator, AuthenticationService>();
+builder.Services.AddScoped<IAuthenticator, SwaAuthenticationService>();
 builder.Services.AddScoped<ICsvParser, CsvParser>();
 builder.Services.AddScoped<IRunHistoryTransformer, CsvToRunHistoryTransformer>();
 builder.Services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>();
-builder.Services.AddScoped<IValidator<RunEvent>>(_ => new RunEventValidator(DateTime.Now));
+builder.Services.AddScoped<IValidator<RunEvent>>(_ => new RunEventValidator(DateTime.UtcNow));
 
 await builder
     .Build()

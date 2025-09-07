@@ -1,8 +1,8 @@
-using RunSuggestion.Core.Constants;
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Runs;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Core.Transformers;
+using RunSuggestion.Shared.Constants;
+using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.TestHelpers.Creators;
 
 namespace RunSuggestion.Core.Unit.Tests.Transformers;

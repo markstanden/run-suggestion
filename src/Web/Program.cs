@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Web;
 using RunSuggestion.Web.Authentication;
+using RunSuggestion.Web.Interfaces;
+using RunSuggestion.Web.Services;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -21,13 +24,13 @@ builder.RootComponents.Add<App>("#app");
 // HeadOutlet contains dynamic page information, like <PageTitle>
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-//////////////////////////
-// Register the API
-//////////////////////////
+UriBuilder uriBuilder = new(builder.HostEnvironment.BaseAddress);
+uriBuilder.Path = Routes.ApiBasePath;
 builder.Services
-    .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+    .AddScoped(_ => new HttpClient { BaseAddress = uriBuilder.Uri });
 
 // Register Azure StaticWebApp specific authentication
 builder.Services.AddScoped<AuthenticationStateProvider, StaticWebAppsAuthStateProvider>();
+builder.Services.AddScoped<ICsvUploadService, CsvUploadService>();
 builder.Services.AddAuthorizationCore();
 await builder.Build().RunAsync();

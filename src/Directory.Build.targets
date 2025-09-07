@@ -4,5 +4,6 @@
         <InternalsVisibleTo Include="$(AssemblyName).Unit.Tests"/>
         <InternalsVisibleTo Include="$(AssemblyName).Integration.Tests"/>
         <InternalsVisibleTo Include="$(AssemblyName).Acceptance.Tests"/>
+        <InternalsVisibleTo Include="TestHelpers"/>
     </ItemGroup>
 </Project>

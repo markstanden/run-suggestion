@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Api.Constants;
-using RunSuggestion.Api.Dto;
-using RunSuggestion.Api.Extensions;
 using RunSuggestion.Api.Functions;
 using RunSuggestion.Core.Interfaces;
-using RunSuggestion.Core.Models.Runs;
+using RunSuggestion.Shared.Constants;
+using RunSuggestion.Shared.Extensions;
+using RunSuggestion.Shared.Models.Dto;
+using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.TestHelpers.Creators;
 using RunSuggestion.TestHelpers;
 using RunSuggestion.TestHelpers.Assertions;
@@ -147,7 +148,7 @@ public class GetRunRecommendationTests
     {
         // Arrange
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
-        request.Headers.Authorization = authToken;
+        request.Headers[Auth.Header] = authToken;
 
         // Act
         await _sut.Run(request);
