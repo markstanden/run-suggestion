@@ -27,7 +27,7 @@ public record RunBase
     /// </summary>
     /// <example>
     /// // Display as "45 minutes"
-    /// $"{Duration.TotalMinutes: F0} minutes"
+    /// $"{Duration.TotalMinutes:F0} minutes"
     /// </example>
     /// <seealso cref="TimeSpan">TimeSpan</seealso> 
     public TimeSpan Duration { get; init; }
