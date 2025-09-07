@@ -8,7 +8,7 @@ using RunSuggestion.TestHelpers.Theory;
 
 namespace RunSuggestion.Core.Unit.Tests.Services.SwaAuthenticationServiceTests;
 
-[TestSubject(typeof(JwtAuthenticationService))]
+[TestSubject(typeof(SwaAuthenticationService))]
 public class ExtractTokenTests
 {
     [Theory]
