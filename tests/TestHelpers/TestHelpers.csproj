@@ -6,8 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Castle.Core" Version="5.2.1"/>
         <PackageReference Include="CsvHelper" Version="33.1.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
         <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0"/>
         <PackageReference Include="Moq" Version="4.20.72"/>
