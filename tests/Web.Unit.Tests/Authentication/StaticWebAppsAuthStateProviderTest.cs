@@ -16,7 +16,7 @@ public class StaticWebAppsAuthStateProviderTest
 {
     private readonly Mock<ILogger<StaticWebAppsAuthStateProvider>> _logger = new();
 
-    # region TestHelpers
+    #region TestHelpers
 
     /// <summary>
     /// Factory method returning a prepared SUT that returns the provided <see cref="HttpResponseMessage"/> response on all
