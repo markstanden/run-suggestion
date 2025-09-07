@@ -5,20 +5,23 @@
         <IsTestProject>false</IsTestProject>
         <RootNamespace>RunSuggestion.TestHelpers</RootNamespace>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Core\Core.csproj"/>
+        <ProjectReference Include="..\..\src\Shared\Shared.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="33.1.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
         <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0"/>
         <PackageReference Include="Moq" Version="4.20.72"/>
         <PackageReference Include="Shouldly" Version="4.3.0"/>
         <PackageReference Include="xunit.core" Version="2.9.3"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Core\Core.csproj"/>
-        <ProjectReference Include="..\..\src\Shared\Shared.csproj"/>
     </ItemGroup>
 
 </Project>

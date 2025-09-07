@@ -6,6 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Shared\Shared.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="CsvHelper" Version="33.1.0"/>
         <PackageReference Include="Dapper" Version="2.1.66"/>
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.6"/>
@@ -17,9 +21,5 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Shared\Shared.csproj"/>
-    </ItemGroup>
-
+    
 </Project>
