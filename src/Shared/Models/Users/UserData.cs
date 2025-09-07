@@ -24,5 +24,5 @@ public class UserData
     /// The current run recommendation history of the user.
     /// Used to record previous recommendations
     /// </summary>
-    public IEnumerable<RunEvent> RunRecommendationHistory { get; init; } = [];
+    public IEnumerable<RunRecommendation> RunRecommendationHistory { get; init; } = [];
 }
