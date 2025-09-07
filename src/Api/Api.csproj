@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+
     <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <AzureFunctionsVersion>v4</AzureFunctionsVersion>
         <RootNamespace>RunSuggestion.Api</RootNamespace>
     </PropertyGroup>
 
