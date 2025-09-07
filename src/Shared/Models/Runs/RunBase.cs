@@ -16,18 +16,19 @@ public record RunBase
     public int Distance { get; init; }
 
     /// <summary>
-    /// Essentially the rate of perceived exhertion (RPE)
+    /// Essentially the Rate of Perceived Exertion (RPE)
     /// How difficult the run feels on a scale of 1-10
     /// </summary>
     public byte Effort { get; init; }
 
     /// <summary>
-    /// How long the run took, as a C# TimeSpan.
-    /// TimeSpans allow the duration to be expressed easily in any appropriate time measurement
+    /// How long the run took, as a C# TimeSpan,
+    /// allowing durations to be expressed in any appropriate time measurement
     /// </summary>
     /// <example>
     /// // Display as "45 minutes"
-    /// $"{Duration.TotalMinutes:F0} minutes"
+    /// $"{Duration.TotalMinutes: F0} minutes"
     /// </example>
+    /// <seealso cref="TimeSpan">TimeSpan</seealso> 
     public TimeSpan Duration { get; init; }
 }
