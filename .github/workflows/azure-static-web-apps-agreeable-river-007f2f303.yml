@@ -6,6 +6,9 @@ on:
       deploy_url:
         description: 'The URL of the deployed Static Web App'
         value: ${{ jobs.build_and_deploy_job.outputs.deploy_url }}
+      healthcheck_url:
+        description: 'The URL of the deployed Static Web App API healthcheck endpoint'
+        value: ${{ jobs.build_and_deploy_job.outputs.deploy_url }}/api/healthcheck
   push:
     branches:
       - main
@@ -23,7 +26,7 @@ jobs:
       (github.event_name == 'pull_request' && github.event.action != 'closed')
     name: Build and Deploy Job
     outputs:
-      deploy_url: ${{ steps.builddeploy.outputs.static_web_app_url }}
+      deploy_url: ${{ steps.deploy_swa.outputs.static_web_app_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,17 +35,31 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Build Blazor WASM
-      - name: Publish Blazor WASM
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', 'global.json', 'NuGet.config') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore .NET solution dependencies
+        run: |
+          dotnet restore src/Web/Web.csproj
+          dotnet restore src/Api/Api.csproj
+
+      - name: Build & publish Blazor WASM frontend project
         run: dotnet publish src/Web/Web.csproj -c Release -o build/web
 
-      # Build Azure Function API (isolated worker)
-      - name: Publish API
+      - name: Build & publish Azure Function API (isolated worker)
         run: dotnet publish src/Api/Api.csproj -c Release -o build/api
 
-      # Deploy to Azure Static Web Apps
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Verify published artifacts exist
+        run: |
+          test -f build/web/wwwroot/index.html
+          test -f build/api/host.json
+
+      - name: Deploy built artifacts to Azure Static Web App resource
+        id: deploy_swa
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_RIVER_007F2F303 }}
@@ -50,15 +67,23 @@ jobs:
           action: "upload"
           app_location: "build/web/wwwroot"
           api_location: "build/api"
+          skip_app_build: true
+          skip_api_build: true
+          config_file_location: "."
+
+      - name: Output site URLs
+        run: |
+          echo "Frontend URL: ${{ steps.deploy_swa.outputs.static_web_app_url }}"
+          echo "API healthcheck URL: ${{ steps.deploy_swa.outputs.static_web_app_url }}/api/healthcheck"
 
 
   close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && !github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
       - name: Close Pull Request
-        id: closepullrequest
+        id: close_pull_request
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_RIVER_007F2F303 }}
