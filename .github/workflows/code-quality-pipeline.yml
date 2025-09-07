@@ -26,6 +26,7 @@ jobs:
     needs: call-build
     with:
       dotnet-version: '8.0.x'
+      test-filter: 'FullyQualifiedName~Unit.Tests'
   
   call-integration-tests:
     name: Run Unit Tests
@@ -33,3 +34,4 @@ jobs:
     needs: call-build
     with:
       dotnet-version: '8.0.x'
+      test-filter: 'FullyQualifiedName~Integration.Tests'
