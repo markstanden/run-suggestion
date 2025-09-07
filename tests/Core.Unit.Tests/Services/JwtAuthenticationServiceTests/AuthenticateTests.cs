@@ -36,23 +36,4 @@ public class AuthenticateTests
         // Assert 
         result.ShouldBeNull();
     }
-
-    /*
-    [Theory]
-    [InlineData(Any.LongAlphanumericString, "")]
-    public void Authenticate_WithValidBearerToken_ReturnsExtractedTokenString(string validBearerToken,
-        string? expectedEntraId)
-    {
-        // Arrange
-        string headerValue = $"{Auth.BearerTokenPrefix} {validBearerToken}";
-        AuthenticationService sut = new();
-
-        // Act
-        string? result = sut.Authenticate(headerValue);
-
-        // Assert
-        result.ShouldNotBeNull();
-        result.ShouldBe(expectedEntraId);
-    }
-    */
 }

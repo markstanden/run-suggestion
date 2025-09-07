@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace RunSuggestion.TestHelpers.Theory;
 
 public static class TestData
