@@ -51,15 +51,14 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "build/web/wwwroot"
-          output_location: ''
           api_location: "build/api"
           skip_app_build: true
           skip_api_build: true
-          config_file_location: "/"
+          config_file_location: "."
 
 
   close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && !github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
