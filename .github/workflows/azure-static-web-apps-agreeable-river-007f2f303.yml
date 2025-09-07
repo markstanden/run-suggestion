@@ -36,8 +36,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', 'global.json', 'NuGet.config') }}
           restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore .NET solution dependencies
+        run: |
+          dotnet restore src/Web/Web.csproj
+          dotnet restore src/Api/Api.csproj
 
       - name: Build & publish Blazor WASM frontend project
         run: dotnet publish src/Web/Web.csproj -c Release -o build/web
