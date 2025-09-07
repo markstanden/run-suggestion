@@ -31,7 +31,7 @@ public static class HttpRequestHelper
 
         foreach (KeyValuePair<string, StringValues> param in queryParams ?? [])
         {
-            request.QueryString = request.QueryString.Add(param.Key, param.Value);
+            request.QueryString = request.QueryString.Add(param.Key, param.Value.ToString());
         }
 
         foreach ((string key, StringValues value) in headers ?? [])
