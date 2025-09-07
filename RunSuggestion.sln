@@ -22,7 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", ".github\workflows", "{EF538FAC-DE93-4172-A20A-011B2ADC67F3}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\azure-static-web-apps-agreeable-river-007f2f303.yml = .github\workflows\azure-static-web-apps-agreeable-river-007f2f303.yml
-		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
+		.github\workflows\code-quality-pipeline.yml = .github\workflows\code-quality-pipeline.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{4B9E02F5-0E34-4BA8-A786-317502FE94A8}"
@@ -32,8 +32,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "src\Shared\Shared.csproj", "{C80012B6-55DF-4075-9AC5-452E6795942B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Unit.Tests", "tests\Shared.Unit.Tests\Shared.Unit.Tests.csproj", "{0F9C08C9-8C13-40A9-BC27-27BAE4D51BD3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{925674D6-6671-40B1-A3D9-12D8A3255459}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
