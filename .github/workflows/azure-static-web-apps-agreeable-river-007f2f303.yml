@@ -6,6 +6,9 @@ on:
       deploy_url:
         description: 'The URL of the deployed Static Web App'
         value: ${{ jobs.build_and_deploy_job.outputs.deploy_url }}
+      healthcheck_url:
+        description: 'The URL of the deployed Static Web App API healthcheck endpoint'
+        value: ${{ jobs.build_and_deploy_job.outputs.deploy_url }}api/healthcheck
   push:
     branches:
       - main
@@ -67,6 +70,11 @@ jobs:
           skip_app_build: true
           skip_api_build: true
           config_file_location: "."
+
+      - name: Output site URLs
+        run: |
+          echo "Frontend URL: ${{ steps.deploy_swa.outputs.static_web_app_url }}"
+          echo "API healthcheck URL: ${{ steps.deploy_swa.outputs.static_web_app_url }}api/healthcheck"
 
 
   close_pull_request_job:
