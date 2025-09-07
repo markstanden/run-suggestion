@@ -20,6 +20,12 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    concurrency:
+      group: swa-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      DOTNET_NOLOGO: 'true'
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
     if: |
       github.event_name == 'push' ||
       github.event_name == 'workflow_call' ||
@@ -48,13 +54,14 @@ jobs:
           dotnet restore src/Api/Api.csproj
 
       - name: Build & publish Blazor WASM frontend project
-        run: dotnet publish src/Web/Web.csproj -c Release -o build/web
+        run: dotnet publish src/Web/Web.csproj -c Release --no-restore -o build/web
 
       - name: Build & publish Azure Function API (isolated worker)
-        run: dotnet publish src/Api/Api.csproj -c Release -o build/api
+        run: dotnet publish src/Api/Api.csproj -c Release --no-restore -o build/api
 
       - name: Verify published artifacts exist
         run: |
+          set -euxo pipefail
           test -f build/web/wwwroot/index.html
           test -f build/api/host.json
 
@@ -67,6 +74,7 @@ jobs:
           action: "upload"
           app_location: "build/web/wwwroot"
           api_location: "build/api"
+          output_location: ""
           skip_app_build: true
           skip_api_build: true
           config_file_location: "."
