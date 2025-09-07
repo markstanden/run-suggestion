@@ -3,8 +3,8 @@
   "configurations": {
     "run-suggestion": {
       "appLocation": "src/Web",
-      "apiLocation": "src/Api",
-      "outputLocation": "bin/Release/net8.0/publish/wwwroot",
+      "apiLocation": "src/Api/bin/Release/net8.0/publish",
+      "outputLocation": "src/Web/bin/Release/net8.0/publish/wwwroot",
       "apiLanguage": "dotnetisolated",
       "apiVersion": "8.0",
       "appBuildCommand": "dotnet publish -c Release",
