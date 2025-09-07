@@ -15,7 +15,6 @@ public class SwaAuthenticationService : IAuthenticator
         try
         {
             string json = ExtractJson(token);
-            Console.WriteLine(json);
             SwaClientPrincipal principal = ValidateToken(json);
             string id = ParseIdFromPrincipal(principal);
             return id;
