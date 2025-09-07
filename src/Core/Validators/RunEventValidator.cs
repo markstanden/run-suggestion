@@ -20,13 +20,20 @@ public class RunEventValidator : IValidator<RunEvent>
     /// <param name="runEvents">Collection of RunEvents to validate</param>
     /// <returns>Collection of validation error messages, empty if all valid.</returns>
     /// <exception cref="ArgumentNullException">Throws an argument null exception if the provided collection is null</exception>
-    public IEnumerable<string> Validate(IEnumerable<RunEvent> runEvents)
+    public IEnumerable<string> Validate(IEnumerable<RunEvent?> runEvents)
     {
         ArgumentNullException.ThrowIfNull(runEvents);
 
         return runEvents.SelectMany((runEvent, index) =>
         {
             List<string> validationErrors = [];
+
+            if (runEvent is null)
+            {
+                validationErrors.Add($"{index}: Invalid run event - cannot be null");
+                return validationErrors;
+            }
+
             if (!IsValidDate(runEvent.Date))
             {
                 validationErrors.Add($"{index}: Invalid run date {runEvent.Date:d} - cannot be in the future");
