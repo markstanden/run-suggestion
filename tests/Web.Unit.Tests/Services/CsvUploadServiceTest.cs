@@ -67,8 +67,8 @@ public class CsvUploadServiceTest
     [InlineData("\n")]
     [InlineData("\r")]
     [InlineData("\r\n")]
-    [InlineData(null!)]
-    public void Upload_WithEmptyCsvContent_ThrowsArgumentException(string csvContent)
+    [InlineData(null)]
+    public void Upload_WithEmptyCsvContent_ThrowsArgumentException(string? csvContent)
     {
         // Arrange
         const string expectedParamName = "csvContent";
@@ -76,7 +76,7 @@ public class CsvUploadServiceTest
         CsvUploadService sut = CreateSut();
 
         // Act
-        Func<Task> withEmptyCsvContent = async () => await sut.Upload(csvContent);
+        Func<Task> withEmptyCsvContent = async () => await sut.Upload(csvContent!);
 
         // Assert
         ArgumentException ex = withEmptyCsvContent.ShouldThrow<ArgumentException>();
