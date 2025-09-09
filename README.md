@@ -95,26 +95,46 @@ following [terraform issue](https://github.com/hashicorp/terraform-provider-azur
 
 5. Run locally
 
-   - Full stack via Static Web Apps CLI (builds Web and API) - requires Azure SWA CLI tool (recommended):
+    - **Full stack via Static Web Apps CLI** (recommended):
 
-     ```bash
-     swa start --config swa-cli.config.json
-     ```
+      ```bash
+      # Local development (with hot reload)
+      swa start --config-name dev
+      # Shortcut (undocumented, may break in future versions):
+      swa start dev
+      
+      # Deploy to Azure Static Web Apps
+      swa deploy --config-name deploy
+      ```
 
-   - Separately 
+    - **Run separately**:
 
-   - API (Azure Functions):
+    - API (Azure Functions):
 
-     ```bash
-     cd src/Api
-     func start
-     ```
+      ```bash
+      cd src/Api
+      func start
+      ```
 
-   - Web (Blazor):
+    - Web (Blazor):
 
-     ```bash
-     dotnet watch run --project src/Web/Web.csproj
-     ```
+      ```bash
+      dotnet watch run --project src/Web/Web.csproj
+      ```
+
+## SWA CLI Configuration
+
+This project uses Azure Static Web Apps CLI with two configurations:
+
+- **Default config**: Used for deployment (`swa deploy`) - builds and deploys Release versions
+- **`dev` config**: Used for local development (`swa start dev`) - runs Debug builds with hot reload
+
+The SWA CLI configuration is in `./swa-cli.config.json` and handles:
+
+- Frontend serving (Blazor WebAssembly)
+- API proxying (Azure Functions)
+- Build commands for both Web and API projects
+- Port configuration for local development
 
 ## CI/CD Pipeline
 
