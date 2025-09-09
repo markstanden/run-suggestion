@@ -4,35 +4,43 @@
 @inject ILogger<Home> Logger
 @inject ICsvUploadService CsvUploadService
 
-<PageTitle>RunRecommendation</PageTitle>
+<PageTitle>@Site.HomePage.Title</PageTitle>
 
-<h1 class="page-title">
-    Run Recommendation Application
+<h1 class="page-heading" data-testid="homepage-heading">
+    @Site.HomePage.Heading
 </h1>
 
 <AuthorizeView>
     <Authorized>
 
-        <section class="button-section">
-            <h2 class="button-section-title">
+        <section class="button-section"
+                 data-testid="upload-section">
+            <h2 class="button-section-title"
+                data-testid="upload-section--title">
                 Upload
             </h2>
-            <InputFile OnChange="PostUpload" multiple/>
+            <InputFile data-testid="upload-section--input"
+                       OnChange="PostUpload"
+                       multiple/>
         </section>
 
-        <section class="button-section">
-            <h2 class="button-section-title">
+        <section class="button-section"
+                 data-testid="recommendation-section">
+            <h2 class="button-section-title"
+                data-testid="recommendation-section--title">
                 Recommendation
             </h2>
             <button class="button"
+                    data-testid="recommendation-section--button"
                     type="button"
                     @onclick="GetRecommendation">
                 @ButtonText.GetRecommendation
             </button>
         </section>
 
-        <section class="status-section">
-            <p>
+        <section class="status-section"
+                 data-testid="status-section">
+            <p data-testid="status-section--output">
                 @Status
             </p>
         </section>
