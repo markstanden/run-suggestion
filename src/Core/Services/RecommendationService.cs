@@ -10,11 +10,23 @@ public class RecommendationService : IRecommendationService
 {
     private readonly ILogger<RecommendationService> _logger;
     private readonly IUserRepository _userRepository;
+    private readonly DateTime _currentDate;
 
-    public RecommendationService(ILogger<RecommendationService> logger, IUserRepository userRepository)
+    private RunRecommendation GetBaseRecommendation() => new()
+    {
+        RunRecommendationId = 1,
+        Date = _currentDate.Date,
+        Distance = Runs.RunDistanceBaseMetres,
+        Effort = Runs.RunEffortBase,
+        Duration = Runs.RunDistanceBaseDurationTimeSpan
+    };
+
+    public RecommendationService(ILogger<RecommendationService> logger, IUserRepository userRepository,
+        DateTime? currentDate = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _currentDate = currentDate ?? DateTime.Now;
     }
 
     /// <inheritdoc/>
@@ -27,15 +39,64 @@ public class RecommendationService : IRecommendationService
 
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
 
-        RunRecommendation result = new()
+        if (userData is null || IsEmptyRunHistory(userData.RunHistory))
+        {
+            return GetBaseRecommendation();
+        }
+
+        return new RunRecommendation
         {
             RunRecommendationId = 1,
-            Date = DateTime.Today,
-            Distance = Runs.RunDistanceBaseMetres,
+            Date = _currentDate.Date,
+            Distance = CalculateDistance(userData.RunHistory),
             Effort = Runs.RunEffortBase,
             Duration = Runs.RunDistanceBaseDurationTimeSpan
         };
-
-        return result;
     }
+
+    /// <summary>
+    /// User configuarble rule to calculate distance based on weekly average. 
+    /// </summary>
+    /// <param name="runEvents">The users passed completed run events</param>
+    /// <param name="progressionPercent">The target weekly progression.</param>
+    /// <returns>A rounded target distance based on the users history and target progression</returns>
+    internal int CalculateDistance(IEnumerable<RunEvent> runEvents,
+        int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
+    {
+        double currentWeekLoad = CalculateRollingTotalLoad(runEvents, _currentDate);
+
+        double previousWeekLoad = CalculateRollingTotalLoad(runEvents, _currentDate.AddDays(-7));
+
+        return (int)Math.Round((previousWeekLoad - currentWeekLoad) * CalculateProgressionRatio(progressionPercent));
+    }
+
+    internal static double CalculateProgressionRatio(int progressionPercent)
+    {
+        if (progressionPercent < 0 || progressionPercent > 100)
+        {
+            throw new ArgumentOutOfRangeException(nameof(progressionPercent),
+                                                  progressionPercent,
+                                                  "Progression percentage must be between 0 and 100");
+        }
+
+        double progressionPercentage = 100 + progressionPercent;
+        return progressionPercentage / 100;
+    }
+
+    internal static double CalculateRollingTotalLoad(IEnumerable<RunEvent> runEvents, DateTime endDate,
+        int dayCount = 7)
+    {
+        return runEvents
+            .Where(re => re.Date <= endDate)
+            .Where(re => re.Date > endDate.AddDays(dayCount * -1))
+            .Sum(re => re.Distance);
+    }
+
+    /// <summary>
+    /// Helper method to check whether the returned run history is empty.
+    /// </summary>
+    /// <param name="runEvents">The nullable RunEvent collection</param>
+    /// <returns>true if the run history is empty</returns>
+    internal static bool IsEmptyRunHistory(IEnumerable<RunEvent>? runEvents) =>
+        runEvents is null || !runEvents.Any();
 }
