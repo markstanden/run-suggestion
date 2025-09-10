@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.Shared.Models.Users;
 
@@ -28,11 +29,11 @@ public class RecommendationService : IRecommendationService
 
         RunRecommendation result = new()
         {
-            RunRecommendationId = default,
-            Date = default,
-            Distance = default,
-            Effort = default,
-            Duration = default
+            RunRecommendationId = 1,
+            Date = DateTime.Today,
+            Distance = Runs.RunDistanceBaseMetres,
+            Effort = Runs.RunEffortBase,
+            Duration = Runs.RunDistanceBaseDurationTimeSpan
         };
 
         return result;

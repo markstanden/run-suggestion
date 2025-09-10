@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Services;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.Shared.Models.Users;
 
@@ -78,5 +79,23 @@ public class RecommendationServiceTests
 
         // Assert
         _mockRepository.Verify(x => x.GetUserDataByEntraIdAsync(entraId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetRecommendationAsync_WithEmptyRunHistory_ReturnsBaseRunRecommendation()
+    {
+        // Arrange
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new UserData());
+
+        // Act
+        RunRecommendation result = await _sut.GetRecommendationAsync(Any.LongAlphanumericString);
+
+        // Assert
+        result.ShouldNotBe(null);
+        result.RunRecommendationId.ShouldBeGreaterThan(0);
+        result.Distance.ShouldBe(Runs.RunDistanceBaseMetres);
+        result.Effort.ShouldBe(Runs.RunEffortBase);
+        result.Duration.ShouldBe(Runs.RunDistanceBaseDurationTimeSpan);
     }
 }
