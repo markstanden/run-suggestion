@@ -10,7 +10,8 @@
       "apiLocation": "src/Api/bin/Release/net8.0/publish",
       "apiBuildCommand": "dotnet publish -c Release",
       "appName": "swa-runsugg-dev",
-      "resourceGroup": "rg-runsugg-dev-uks"
+      "resourceGroup": "rg-runsugg-dev-uks",
+      "open": false
     },
     "dev": {
       "apiLanguage": "dotnetisolated",
@@ -23,6 +24,18 @@
       "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5281",
       "open": true
+    },
+    "automated-tests": {
+      "apiLanguage": "dotnetisolated",
+      "apiVersion": "8.0",
+      "appLocation": "src/Web",
+      "appBuildCommand": "dotnet publish -c Debug",
+      "outputLocation": "src/Web/bin/Debug/net8.0/publish/wwwroot",
+      "apiLocation": "src/Api",
+      "apiBuildCommand": "dotnet publish -c Debug",
+      "run": "dotnet run",
+      "appDevserverUrl": "http://localhost:5281",
+      "open": false
     }
   }
 }
