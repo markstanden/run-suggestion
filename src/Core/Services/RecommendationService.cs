@@ -18,6 +18,11 @@ public class RecommendationService : IRecommendationService
     /// <inheritdoc/>
     public Task<RunRecommendation> GetRecommendation(string entraId)
     {
+        if (string.IsNullOrWhiteSpace(entraId))
+        {
+            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
+        }
+
         RunRecommendation result = new()
         {
             RunRecommendationId = default,
