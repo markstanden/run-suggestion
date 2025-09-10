@@ -85,8 +85,12 @@ public class RecommendationServiceTests
     public async Task GetRecommendationAsync_WithEmptyRunHistory_ReturnsBaseRunRecommendation()
     {
         // Arrange
+        UserData userDataWithEmptyRunHistory = new()
+        {
+            RunHistory = []
+        };
         _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(It.IsAny<string>()))
-            .ReturnsAsync(new UserData());
+            .ReturnsAsync(userDataWithEmptyRunHistory);
 
         // Act
         RunRecommendation result = await _sut.GetRecommendationAsync(Any.LongAlphanumericString);
