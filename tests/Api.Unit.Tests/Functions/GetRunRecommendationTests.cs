@@ -220,7 +220,7 @@ public class GetRunRecommendationTests
         await _sut.Run(request);
 
         // Assert
-        _mockRecommendationService.Verify(x => x.GetRecommendation(It.IsAny<string>()), Times.Once);
+        _mockRecommendationService.Verify(x => x.GetRecommendationAsync(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
@@ -236,7 +236,7 @@ public class GetRunRecommendationTests
         await _sut.Run(request);
 
         // Assert
-        _mockRecommendationService.Verify(x => x.GetRecommendation(It.IsAny<string>()), Times.Never);
+        _mockRecommendationService.Verify(x => x.GetRecommendationAsync(It.IsAny<string>()), Times.Never);
     }
 
     #endregion
@@ -251,7 +251,7 @@ public class GetRunRecommendationTests
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(Any.LongAlphanumericString);
-        _mockRecommendationService.Setup(x => x.GetRecommendation(It.IsAny<string>()))
+        _mockRecommendationService.Setup(x => x.GetRecommendationAsync(It.IsAny<string>()))
             .ReturnsAsync(RunBaseFakes.CreateRunRecommendation());
 
         // Act
@@ -271,7 +271,7 @@ public class GetRunRecommendationTests
         HttpRequest request = HttpRequestHelper.CreateHttpRequest();
         _mockAuthenticator.Setup(x => x.Authenticate(It.IsAny<string>()))
             .Returns(Any.LongAlphanumericString);
-        _mockRecommendationService.Setup(x => x.GetRecommendation(It.IsAny<string>()))
+        _mockRecommendationService.Setup(x => x.GetRecommendationAsync(It.IsAny<string>()))
             .ReturnsAsync(expectedRecommendation);
 
         // Act

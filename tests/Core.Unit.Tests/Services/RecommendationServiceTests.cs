@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Shared.Models.Runs;
-using RunSuggestion.TestHelpers.Theory;
+using RunSuggestion.Shared.Models.Users;
 
 namespace RunSuggestion.Core.Unit.Tests.Services;
 
@@ -52,14 +52,31 @@ public class RecommendationServiceTests
 
     [Theory]
     [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
-    public async Task GetRecommendation_WithInvalidEntraId_ThrowsArgumentException(string invalidEntraId)
+    public async Task GetRecommendationAsync_WithInvalidEntraId_ThrowsArgumentException(string invalidEntraId)
     {
         // Act
-        Func<Task<RunRecommendation>> withInvalidEntraId = async () => await _sut.GetRecommendation(invalidEntraId);
+        Func<Task<RunRecommendation>> withInvalidEntraId =
+            async () => await _sut.GetRecommendationAsync(invalidEntraId);
 
         // Assert
         Exception ex = await withInvalidEntraId.ShouldThrowAsync<ArgumentException>();
         ex.Message.ShouldContain("Invalid");
         ex.Message.ShouldContain("entraId");
+    }
+
+    [Theory]
+    [InlineData(Any.LongAlphanumericString)]
+    [InlineData(Any.ShortAlphanumericString)]
+    public async Task GetRecommendationAsync_WithValidEntraId_CallsRepositoryWithProvidedId(string entraId)
+    {
+        // Arrange
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new UserData());
+
+        // Act
+        await _sut.GetRecommendationAsync(entraId);
+
+        // Assert
+        _mockRepository.Verify(x => x.GetUserDataByEntraIdAsync(entraId), Times.Once);
     }
 }

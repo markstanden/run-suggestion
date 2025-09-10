@@ -9,5 +9,5 @@ public interface IRecommendationService
     /// </summary>
     /// <param name="entraId">The User's Unique identifier within the authentication provider</param>
     /// <returns>A run recommendation based on the users' preferences and run history</returns>
-    Task<RunRecommendation> GetRecommendation(string entraId);
+    Task<RunRecommendation> GetRecommendationAsync(string entraId);
 }

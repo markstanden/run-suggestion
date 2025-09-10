@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Shared.Models.Runs;
+using RunSuggestion.Shared.Models.Users;
 
 namespace RunSuggestion.Core.Services;
 
@@ -16,12 +17,14 @@ public class RecommendationService : IRecommendationService
     }
 
     /// <inheritdoc/>
-    public Task<RunRecommendation> GetRecommendation(string entraId)
+    public async Task<RunRecommendation> GetRecommendationAsync(string entraId)
     {
         if (string.IsNullOrWhiteSpace(entraId))
         {
             throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
         }
+
+        UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
 
         RunRecommendation result = new()
         {
@@ -32,6 +35,6 @@ public class RecommendationService : IRecommendationService
             Duration = default
         };
 
-        return Task.FromResult(result);
+        return result;
     }
 }
