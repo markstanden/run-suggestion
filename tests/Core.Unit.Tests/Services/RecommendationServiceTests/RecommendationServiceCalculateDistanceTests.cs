@@ -72,4 +72,36 @@ public class RecommendationServiceCalculateDistanceTests
         // Assert
         result.ShouldBe(expectedDistance);
     }
+
+
+    [Theory]
+    [MemberData(nameof(TestData.VaryingWeeklyLoadsTestData), MemberType = typeof(TestData))]
+    public void CalculateDistance_WithVaryingWeeklyLoads_ShouldUseFourWeekAverageForRecommendation(
+        int[] weeklyRunDistances)
+    {
+        // Arrange
+        int weeklyRunCount = 3;
+        int percentageProgression = 10;
+        double weeklyRunAverage = weeklyRunDistances.Average(x => x);
+        double weeklyLoadAverage = weeklyRunAverage * weeklyRunCount;
+        int expectedWeeklyTotal = (int)(weeklyLoadAverage * 1.1);
+        List<RunEvent> runEvents = weeklyRunDistances
+            .SelectMany((weeklyRunDistance, index) => RunBaseFakes.CreateWeekOfRuns(
+                            weeklyRunDistance,
+                            _currentDate.AddDays(-7 * index),
+                            weeklyRunCount))
+            .OrderBy(run => run.Date)
+            .SkipLast(1)
+            .ToList();
+        int currentWeeklyTotal = runEvents
+            .Where(x => x.Date > _currentDate.AddDays(-7))
+            .Sum(x => x.Distance);
+
+        // Act
+        int result = _sut.CalculateDistance(runEvents, percentageProgression);
+
+        // Assert
+        int weeklyTotal = currentWeeklyTotal + result;
+        weeklyTotal.ShouldBe(expectedWeeklyTotal);
+    }
 }
