@@ -46,4 +46,30 @@ public class RecommendationServiceCalculateDistanceTests
         // Assert
         result.ShouldBe(expectedDistance);
     }
+
+    [Theory]
+    [InlineData(2500, 5, 125)]
+    [InlineData(5000, 5, 250)]
+    [InlineData(10000, 5, 500)]
+    [InlineData(15000, 5, 750)]
+    [InlineData(20000, 10, 2000)]
+    public void CalculateDistance_WithConsistentWeeklyRunning_ShouldSuggestOffset(
+        int runDistance,
+        int percentageProgression,
+        int expectedDistance)
+    {
+        // Arrange
+        int weeklyRuns = 3;
+        int numberOfWeeks = 4;
+        IEnumerable<RunEvent> runEvents = Enumerable.Range(0, numberOfWeeks)
+            .SelectMany(weekNumber => RunBaseFakes.CreateWeekOfRuns(runDistance,
+                                                                    _currentDate.AddDays(-7 * weekNumber),
+                                                                    weeklyRuns));
+
+        // Act
+        int result = _sut.CalculateDistance(runEvents, percentageProgression);
+
+        // Assert
+        result.ShouldBe(expectedDistance);
+    }
 }
