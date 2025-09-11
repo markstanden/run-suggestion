@@ -72,6 +72,25 @@ public static class RunBaseFakes
             .Select(_ => CreateRunEvent());
     }
 
+
+    /// <summary>
+    /// Creates a week of run events with the specified distance and week offset from the current date.
+    /// </summary>
+    /// <param name="runDistance">Distance for each run in metres</param>
+    /// <param name="weekEndingDate">The final day of the week (inclusive)</param>
+    /// <param name="runsPerWeek">Number of runs to create for the week</param>
+    /// <returns>Collection of run events for the week</returns>
+    public static IEnumerable<RunEvent> CreateWeekOfRuns(int runDistance, DateTime weekEndingDate, int runsPerWeek = 3)
+    {
+        const double weekLength = 7D;
+        int runSpacing = (int)Math.Floor(weekLength / runsPerWeek);
+
+        return Enumerable.Range(0, (int)weekLength)
+            .Where(dayNumber => dayNumber % runSpacing == 0)
+            .Select(dayNumber => CreateRunEvent(distanceMetres: runDistance,
+                                                dateTime: weekEndingDate.AddDays(-dayNumber)));
+    }
+
     public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate) =>
     [
         CreateRunEvent(1, todayDate.AddDays(-20), 1000, 1),

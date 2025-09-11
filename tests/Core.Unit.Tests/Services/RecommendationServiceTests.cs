@@ -11,7 +11,7 @@ namespace RunSuggestion.Core.Unit.Tests.Services;
 [TestSubject(typeof(RecommendationService))]
 public class RecommendationServiceTests
 {
-    private readonly DateTime _currentDate = new(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc);
+    private readonly DateTime _currentDate = new(2025, 8, 28, 0, 0, 0, DateTimeKind.Utc);
     private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly Mock<ILogger<RecommendationService>> _mockLogger = new();
     private readonly RecommendationService _sut;
@@ -143,30 +143,19 @@ public class RecommendationServiceTests
         int percentageProgression, int expectedDistance)
     {
         // Arrange
-        int accuracyMetres = 10;
         int runDistance = weeklyAverage / 3;
         IEnumerable<RunEvent> runEvents =
         [
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-3)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-5)),
-
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-8)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-10)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-12)),
-
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-15)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-17)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-19)),
-
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-22)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-24)),
-            RunBaseFakes.CreateRunEvent(distanceMetres: runDistance, dateTime: _currentDate.AddDays(-26))
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate, 2),
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-7), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-14), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-21), 3)
         ];
 
         // Act
         int result = _sut.CalculateDistance(runEvents, percentageProgression);
 
         // Assert
-        result.ShouldBeInRange(expectedDistance - accuracyMetres, expectedDistance + accuracyMetres);
+        result.ShouldBe(expectedDistance);
     }
 }
