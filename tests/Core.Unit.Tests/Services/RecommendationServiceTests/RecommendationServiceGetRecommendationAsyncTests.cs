@@ -6,17 +6,17 @@ using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Creators;
 
-namespace RunSuggestion.Core.Unit.Tests.Services;
+namespace RunSuggestion.Core.Unit.Tests.Services.RecommendationServiceTests;
 
 [TestSubject(typeof(RecommendationService))]
-public class RecommendationServiceTests
+public class RecommendationServiceGetRecommendationAsyncTests
 {
     private readonly DateTime _currentDate = new(2025, 8, 28, 0, 0, 0, DateTimeKind.Utc);
     private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly Mock<ILogger<RecommendationService>> _mockLogger = new();
     private readonly RecommendationService _sut;
 
-    public RecommendationServiceTests()
+    public RecommendationServiceGetRecommendationAsyncTests()
     {
         _sut = new RecommendationService(_mockLogger.Object, _mockRepository.Object, _currentDate);
     }
@@ -31,38 +31,6 @@ public class RecommendationServiceTests
         runRecommendation.Distance == Runs.RunDistanceBaseMetres &&
         runRecommendation.Effort == Runs.RunEffortBase &&
         runRecommendation.Duration == Runs.RunDistanceBaseDurationTimeSpan;
-
-    [Fact]
-    public void Constructor_WithNullLoggerArgument_ThrowsArgumentNullException()
-    {
-        // Arrange
-        const string expectedParamName = "logger";
-        ILogger<RecommendationService> nullLoggerArgument = null!;
-
-        // Act
-        Func<RecommendationService> withNullLoggerArgument = () =>
-            new RecommendationService(nullLoggerArgument, _mockRepository.Object);
-
-        // Assert
-        ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
-        ex.ParamName.ShouldBe(expectedParamName);
-    }
-
-    [Fact]
-    public void Constructor_WithNullRepositoryArgument_ThrowsArgumentNullException()
-    {
-        // Arrange
-        const string expectedParamName = "userRepository";
-        IUserRepository nullRepositoryArgument = null!;
-
-        // Act
-        Func<RecommendationService> withNullRepositoryArgument = () =>
-            new RecommendationService(_mockLogger.Object, nullRepositoryArgument);
-
-        // Assert
-        ArgumentNullException ex = withNullRepositoryArgument.ShouldThrow<ArgumentNullException>();
-        ex.ParamName.ShouldBe(expectedParamName);
-    }
 
     [Theory]
     [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
@@ -130,33 +98,5 @@ public class RecommendationServiceTests
         // Assert
         result.ShouldNotBe(null);
         IsBaseRunRecommendation(result).ShouldBeFalse();
-    }
-
-    [Theory]
-    [InlineData(2500, 5, 2625)]
-    [InlineData(5000, 5, 5250)]
-    [InlineData(10000, 5, 10500)]
-    [InlineData(15000, 5, 15750)]
-    [InlineData(20000, 10, 22000)]
-    public void CalculateDistance_WithOneRemainingRunAndProvidedPercentageProgression_ProvidesExpectedDistance(
-        int runDistance,
-        int percentageProgression,
-        int expectedDistance)
-    {
-        // Arrange
-        int weeklyRuns = 3;
-        IEnumerable<RunEvent> runEvents =
-        [
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate, weeklyRuns - 1),
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-7), weeklyRuns),
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-14), weeklyRuns),
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-21), weeklyRuns)
-        ];
-
-        // Act
-        int result = _sut.CalculateDistance(runEvents, percentageProgression);
-
-        // Assert
-        result.ShouldBe(expectedDistance);
     }
 }
