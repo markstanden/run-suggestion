@@ -66,7 +66,7 @@ public static class RunBaseFakes
     /// </summary>
     /// <param name="count">The number of RunEvents to return, defaults to 1</param>
     /// <returns>Collection of RunEvents with 'count' items</returns>
-    public static IEnumerable<RunEvent> CreateRunEvents(int count = 1)
+    public static IEnumerable<RunEvent> CreateDefaultRunEvents(int count = 1)
     {
         return Enumerable.Range(0, count)
             .Select(_ => CreateRunEvent());
