@@ -10,8 +10,8 @@ namespace RunSuggestion.Core.Unit.Tests.Services.RecommendationServiceTests;
 public class RecommendationServiceCalculateDistanceTests
 {
     private readonly DateTime _currentDate = new(2025, 8, 28, 0, 0, 0, DateTimeKind.Utc);
-    private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly Mock<ILogger<RecommendationService>> _mockLogger = new();
+    private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly RecommendationService _sut;
 
     public RecommendationServiceCalculateDistanceTests()
@@ -20,18 +20,18 @@ public class RecommendationServiceCalculateDistanceTests
     }
 
     [Theory]
-    [InlineData(2500, 5, 2625)]
-    [InlineData(5000, 5, 5250)]
-    [InlineData(10000, 5, 10500)]
-    [InlineData(15000, 5, 15750)]
-    [InlineData(20000, 10, 22000)]
+    [InlineData(10000, 3, 5, 11500)]
+    [InlineData(10000, 3, 10, 13000)]
+    [InlineData(10000, 3, 15, 14500)]
+    [InlineData(10000, 3, 20, 16000)]
+    [InlineData(20000, 3, 10, 26000)]
     public void CalculateDistance_WithOneRemainingRunAndProvidedPercentageProgression_ProvidesExpectedDistance(
         int runDistance,
+        int weeklyRuns,
         int percentageProgression,
         int expectedDistance)
     {
         // Arrange
-        int weeklyRuns = 3;
         int numberOfWeeks = 4;
         IEnumerable<RunEvent> runEvents = Enumerable.Range(0, numberOfWeeks)
             .SelectMany(weekNumber => RunBaseFakes.CreateWeekOfRuns(runDistance,
@@ -48,18 +48,18 @@ public class RecommendationServiceCalculateDistanceTests
     }
 
     [Theory]
-    [InlineData(2500, 5, 125)]
-    [InlineData(5000, 5, 250)]
-    [InlineData(10000, 5, 500)]
-    [InlineData(15000, 5, 750)]
-    [InlineData(20000, 10, 2000)]
-    public void CalculateDistance_WithConsistentWeeklyRunning_ShouldSuggestOffset(
+    [InlineData(10000, 3, 5, 1500)]
+    [InlineData(10000, 3, 10, 3000)]
+    [InlineData(10000, 3, 15, 4500)]
+    [InlineData(10000, 3, 20, 6000)]
+    [InlineData(20000, 3, 10, 6000)]
+    public void CalculateDistance_WithConsistentWeeklyRunning_ShouldSuggestWeeklyOffset(
         int runDistance,
+        int weeklyRuns,
         int percentageProgression,
         int expectedDistance)
     {
         // Arrange
-        int weeklyRuns = 3;
         int numberOfWeeks = 4;
         IEnumerable<RunEvent> runEvents = Enumerable.Range(0, numberOfWeeks)
             .SelectMany(weekNumber => RunBaseFakes.CreateWeekOfRuns(runDistance,
