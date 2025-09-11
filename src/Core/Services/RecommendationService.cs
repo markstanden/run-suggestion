@@ -8,18 +8,9 @@ namespace RunSuggestion.Core.Services;
 
 public class RecommendationService : IRecommendationService
 {
+    private readonly DateTime _currentDate;
     private readonly ILogger<RecommendationService> _logger;
     private readonly IUserRepository _userRepository;
-    private readonly DateTime _currentDate;
-
-    private RunRecommendation GetBaseRecommendation() => new()
-    {
-        RunRecommendationId = 1,
-        Date = _currentDate.Date,
-        Distance = Runs.RunDistanceBaseMetres,
-        Effort = Runs.RunEffortBase,
-        Duration = Runs.RunDistanceBaseDurationTimeSpan
-    };
 
     public RecommendationService(ILogger<RecommendationService> logger, IUserRepository userRepository,
         DateTime? currentDate = null)
@@ -54,6 +45,15 @@ public class RecommendationService : IRecommendationService
         };
     }
 
+    private RunRecommendation GetBaseRecommendation() => new()
+    {
+        RunRecommendationId = 1,
+        Date = _currentDate.Date,
+        Distance = Runs.RunDistanceBaseMetres,
+        Effort = Runs.RunEffortBase,
+        Duration = Runs.RunDistanceBaseDurationTimeSpan
+    };
+
     /// <summary>
     /// User configuarble rule to calculate distance based on weekly average. 
     /// </summary>
@@ -63,11 +63,13 @@ public class RecommendationService : IRecommendationService
     internal int CalculateDistance(IEnumerable<RunEvent> runEvents,
         int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
     {
-        double currentWeekLoad = CalculateRollingTotalLoad(runEvents, _currentDate);
+        double currentWeeklyLoad = CalculateRollingTotalLoad(runEvents, _currentDate, 7);
 
-        double previousWeekLoad = CalculateRollingTotalLoad(runEvents, _currentDate.AddDays(-7));
+        double previousWeeklyLoad = CalculateRollingTotalLoad(runEvents, _currentDate.AddDays(-7), 7);
 
-        return (int)Math.Round((previousWeekLoad - currentWeekLoad) * CalculateProgressionRatio(progressionPercent));
+        double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
+
+        return (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
     }
 
     internal static double CalculateProgressionRatio(int progressionPercent)
