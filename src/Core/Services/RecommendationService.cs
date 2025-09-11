@@ -65,7 +65,6 @@ public class RecommendationService : IRecommendationService
     {
         double currentWeeklyLoad = CalculateRollingTotalLoad(runEvents, _currentDate, 7);
 
-
         double previousWeeklyLoad = CalculateHistoricAverage(runEvents, _currentDate);
 
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
@@ -73,13 +72,21 @@ public class RecommendationService : IRecommendationService
         return (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
     }
 
+    /// <summary>
+    /// Converts a progression percentage into a multiplier ratio
+    /// throws if a value outside of a safe range is provided
+    /// </summary>
+    /// <param name="progressionPercent">Percentage increase to convert - must be between <see cref="RuleConfig.MinProgressionPercent"/> and <see cref="RuleConfig.MaxProgressionPercent"/></param>
+    /// <returns>multiplier to apply</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if progressionPercent is outside of permitted range</exception>
     internal static double CalculateProgressionRatio(int progressionPercent)
     {
-        if (progressionPercent < 0 || progressionPercent > 100)
+        if (progressionPercent < RuleConfig.MinProgressionPercent ||
+            progressionPercent > RuleConfig.MaxProgressionPercent)
         {
-            throw new ArgumentOutOfRangeException(nameof(progressionPercent),
-                                                  progressionPercent,
-                                                  "Progression percentage must be between 0 and 100");
+            string errorMessage =
+                $"Progression percentage must be between {RuleConfig.MinProgressionPercent} and {RuleConfig.MaxProgressionPercent} (inclusive)";
+            throw new ArgumentOutOfRangeException(nameof(progressionPercent), progressionPercent, errorMessage);
         }
 
         double progressionPercentage = 100 + progressionPercent;
