@@ -11,7 +11,7 @@ public class RecommendationServiceCalculateProgressionRatioTests
     [InlineData(999)]
     [InlineData(RuleConfig.MinProgressionPercent - 1)]
     [InlineData(RuleConfig.MaxProgressionPercent + 1)]
-    public void CalculateProgressionRatio_WithOneRemainingRunAndProvidedPercentageProgression_ProvidesExpectedDistance(
+    public void CalculateProgressionRatio_WithInvalidProgressionPercentage_ThrowsArgumentOutOfRangeException(
         int invalidProgressionPercentage)
     {
         // Act
@@ -20,7 +20,7 @@ public class RecommendationServiceCalculateProgressionRatioTests
 
         // Assert
         Exception ex =
-            withInvalidProgressionPercentage.ShouldThrow<ArgumentException>();
+            withInvalidProgressionPercentage.ShouldThrow<ArgumentOutOfRangeException>();
         ex.Message.ShouldContain("progression percentage");
         ex.Message.ShouldContain($"{invalidProgressionPercentage}");
         ex.Message.ShouldContain($"{RuleConfig.MinProgressionPercent}");
