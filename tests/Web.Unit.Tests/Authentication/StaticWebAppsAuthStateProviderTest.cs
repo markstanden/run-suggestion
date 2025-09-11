@@ -298,4 +298,26 @@ public class StaticWebAppsAuthStateProviderTest
         authenticationState.User.Identity.IsAuthenticated.ShouldBeTrue();
         authenticationState.User.Identity.Name.ShouldBe(StaticWebAppsAuthStateProvider.DefaultUserName);
     }
+
+    [Fact]
+    public async Task GetAuthenticationStateAsync_WithInvalidPrincipalObject_ReturnsFailedAuthenticationState()
+    {
+        // Arrange
+        object principal = new
+        {
+            NotUserId = Any.String,
+            NotIdentityProvider = Any.String,
+            NotUserDetails = Any.String
+        };
+        HttpResponseMessage response = CreateResponse(new { ClientPrincipal = principal });
+        StaticWebAppsAuthStateProvider sut = CreateSut(response);
+
+        // Act
+        AuthenticationState authenticationState = await sut.GetAuthenticationStateAsync();
+
+        // Assert
+        authenticationState.User.ShouldNotBeNull();
+        authenticationState.User.Identity.ShouldNotBeNull();
+        authenticationState.User.Identity.IsAuthenticated.ShouldBeFalse();
+    }
 }

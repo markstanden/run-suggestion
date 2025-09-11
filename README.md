@@ -77,44 +77,74 @@ following [terraform issue](https://github.com/hashicorp/terraform-provider-azur
 1. Clone the repository
 2. Copy the local settings template:
 
-    ```bash
-    cp src/Api/local.settings.template.json src/Api/local.settings.json
-    ```
+```bash
+cp src/Api/local.settings.template.json src/Api/local.settings.json
+```
 
 3. Build the solution:
 
-   ```bash
-   dotnet build
-   ```
+```bash
+dotnet build
+```
 
 4. Run tests:
 
-   ```bash
-   dotnet test
-   ```
+```bash
+dotnet test
+```
 
 5. Run locally
 
-   - Full stack via Static Web Apps CLI (builds Web and API) - requires Azure SWA CLI tool (recommended):
+    - **Full stack via Static Web Apps CLI** (recommended):
 
-     ```bash
-     swa start --config swa-cli.config.json
-     ```
+    ```bash
+    # prerequisite: install the SWA CLI
+    npm i -g @azure/static-web-apps-cli
+    ```
 
-   - Separately 
+    ```bash
+    # Local development (with hot reload)
+    swa start --config-name dev
+    # Shortcut (undocumented, may break in future versions):
+    swa start dev
+    
+    # Deploy to Azure Static Web Apps
+    swa deploy --config-name deploy
+    ```
 
-   - API (Azure Functions):
+    - **Run separately**:
 
-     ```bash
-     cd src/Api
-     func start
-     ```
+        - API (Azure Functions):
 
-   - Web (Blazor):
+        ```bash
+        cd src/Api
+        func start
+        ```
 
-     ```bash
-     dotnet watch run --project src/Web/Web.csproj
-     ```
+        - Web (Blazor):
+
+        ```bash
+        dotnet watch run --project src/Web/Web.csproj
+        ```
+
+## SWA CLI Configuration
+
+This project uses Azure Static Web Apps CLI with two configurations:
+
+- **Default config**: Used for deployment (`swa deploy`/`swa deploy --config-name deploy`)
+    - builds and deploys Release versions
+- **`dev` config**: Used for local development (`swa start dev`/`swa start --config-name dev`)
+    - runs Debug builds with hot reload
+- **`automated-tests` config**: Used for automated/end-to-end tests (`swa start automated-tests`/
+  `swa start --config-name automated-tests`)
+    - Debug build, no browser, stable dev-server URL
+
+The SWA CLI configuration is in `./swa-cli.config.json` and handles:
+
+- Frontend serving (Blazor WebAssembly)
+- API proxying (Azure Functions)
+- Build commands for both Web and API projects
+- Port configuration for local development
 
 ## CI/CD Pipeline
 

@@ -45,7 +45,7 @@ public class GetRunRecommendation(
 
         RecommendationResponse response = new()
         {
-            Recommendation = await _recommendationService.GetRecommendation(entraId)
+            Recommendation = await _recommendationService.GetRecommendationAsync(entraId)
         };
 
         return new OkObjectResult(response);
