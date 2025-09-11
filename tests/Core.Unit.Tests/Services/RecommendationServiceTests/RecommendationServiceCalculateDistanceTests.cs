@@ -32,7 +32,7 @@ public class RecommendationServiceCalculateDistanceTests
         int expectedDistance)
     {
         // Arrange
-        int numberOfWeeks = 4;
+        int numberOfWeeks = 5; // Current week plus 4 weeks historic run data
         IEnumerable<RunEvent> runEvents = Enumerable.Range(0, numberOfWeeks)
             .SelectMany(weekNumber => RunBaseFakes.CreateWeekOfRuns(runDistance,
                                                                     _currentDate.AddDays(-7 * weekNumber),
@@ -60,7 +60,7 @@ public class RecommendationServiceCalculateDistanceTests
         int expectedDistance)
     {
         // Arrange
-        int numberOfWeeks = 4;
+        int numberOfWeeks = 5; // Current week plus 4 weeks historic run data
         IEnumerable<RunEvent> runEvents = Enumerable.Range(0, numberOfWeeks)
             .SelectMany(weekNumber => RunBaseFakes.CreateWeekOfRuns(runDistance,
                                                                     _currentDate.AddDays(-7 * weekNumber),

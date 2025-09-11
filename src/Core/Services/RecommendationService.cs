@@ -65,7 +65,8 @@ public class RecommendationService : IRecommendationService
     {
         double currentWeeklyLoad = CalculateRollingTotalLoad(runEvents, _currentDate, 7);
 
-        double previousWeeklyLoad = CalculateRollingTotalLoad(runEvents, _currentDate.AddDays(-7), 7);
+
+        double previousWeeklyLoad = CalculateHistoricAverage(runEvents, _currentDate);
 
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
 
@@ -92,6 +93,14 @@ public class RecommendationService : IRecommendationService
             .Where(re => re.Date <= endDate)
             .Where(re => re.Date > endDate.AddDays(dayCount * -1))
             .Sum(re => re.Distance);
+    }
+
+    internal static double CalculateHistoricAverage(IEnumerable<RunEvent> runEvents, DateTime endDate,
+        int weeks = 4)
+    {
+        return Enumerable.Range(1, weeks)
+            .Select(week => CalculateRollingTotalLoad(runEvents, endDate.AddDays(-7 * week)))
+            .Average(x => x);
     }
 
     /// <summary>
