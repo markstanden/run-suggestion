@@ -133,23 +133,24 @@ public class RecommendationServiceTests
     }
 
     [Theory]
-    [InlineData(1500, 5, 525)]
-    [InlineData(3000, 5, 1050)]
-    [InlineData(4500, 5, 1575)]
-    [InlineData(3000, 10, 1100)]
-    [InlineData(3000, 20, 1200)]
-    public void CalculateDistance_With3RunsWeeklyAndProvidedProgressionPercent_ProvidesExpectedDistance(
-        int weeklyAverage,
-        int percentageProgression, int expectedDistance)
+    [InlineData(2500, 5, 2625)]
+    [InlineData(5000, 5, 5250)]
+    [InlineData(10000, 5, 10500)]
+    [InlineData(15000, 5, 15750)]
+    [InlineData(20000, 10, 22000)]
+    public void CalculateDistance_WithOneRemainingRunAndProvidedPercentageProgression_ProvidesExpectedDistance(
+        int runDistance,
+        int percentageProgression,
+        int expectedDistance)
     {
         // Arrange
-        int runDistance = weeklyAverage / 3;
+        int weeklyRuns = 3;
         IEnumerable<RunEvent> runEvents =
         [
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate, 2),
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-7), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-14), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-21), 3)
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate, weeklyRuns - 1),
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-7), weeklyRuns),
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-14), weeklyRuns),
+            ..RunBaseFakes.CreateWeekOfRuns(runDistance, _currentDate.AddDays(-21), weeklyRuns)
         ];
 
         // Act
