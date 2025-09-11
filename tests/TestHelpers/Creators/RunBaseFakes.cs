@@ -85,10 +85,9 @@ public static class RunBaseFakes
         const double weekLength = 7D;
         int runSpacing = (int)Math.Floor(weekLength / runsPerWeek);
 
-        return Enumerable.Range(0, (int)weekLength)
-            .Where(dayNumber => dayNumber % runSpacing == 0)
-            .Select(dayNumber => CreateRunEvent(distanceMetres: runDistance,
-                                                dateTime: weekEndingDate.AddDays(-dayNumber)));
+        return Enumerable.Range(0, runsPerWeek)
+            .Select(runNumber => CreateRunEvent(distanceMetres: runDistance,
+                                                dateTime: weekEndingDate.AddDays(-runNumber * runSpacing)));
     }
 
     public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate) =>
