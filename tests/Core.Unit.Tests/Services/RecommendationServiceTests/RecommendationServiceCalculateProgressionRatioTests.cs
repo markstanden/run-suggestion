@@ -35,14 +35,14 @@ public class RecommendationServiceCalculateProgressionRatioTests
     [InlineData(15)]
     [InlineData(RuleConfig.MaxProgressionPercent - 1)]
     [InlineData(RuleConfig.MaxProgressionPercent)]
-    public void CalculateProgressionRatio_WithValidInputPercentage_ProvidesValidRatio(int progressionPercantage)
+    public void CalculateProgressionRatio_WithValidInputPercentage_ProvidesValidRatio(int progressionPercentage)
     {
         // Arrange
         double expectedMin = 1.0D; // 0% progression ratio
         double expectedMax = 1.2D; // 20% progression ratio
 
         // Act
-        double result = RecommendationService.CalculateProgressionRatio(progressionPercantage);
+        double result = RecommendationService.CalculateProgressionRatio(progressionPercentage);
 
         // Assert
         result.ShouldBeInRange(expectedMin, expectedMax);
@@ -54,11 +54,11 @@ public class RecommendationServiceCalculateProgressionRatioTests
     [InlineData(10, 1.10D)]
     [InlineData(15, 1.15D)]
     [InlineData(20, 1.20D)]
-    public void CalculateProgressionRatio_WithValidInputPercentage_ProvidesExpectedRatio(int progressionPercantage,
+    public void CalculateProgressionRatio_WithValidInputPercentage_ProvidesExpectedRatio(int progressionPercentage,
         double expectedRatio)
     {
         // Act
-        double result = RecommendationService.CalculateProgressionRatio(progressionPercantage);
+        double result = RecommendationService.CalculateProgressionRatio(progressionPercentage);
 
         // Assert
         result.ShouldBe(expectedRatio);
