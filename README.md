@@ -77,57 +77,67 @@ following [terraform issue](https://github.com/hashicorp/terraform-provider-azur
 1. Clone the repository
 2. Copy the local settings template:
 
-    ```bash
-    cp src/Api/local.settings.template.json src/Api/local.settings.json
-    ```
+```bash
+cp src/Api/local.settings.template.json src/Api/local.settings.json
+```
 
 3. Build the solution:
 
-   ```bash
-   dotnet build
-   ```
+```bash
+dotnet build
+```
 
 4. Run tests:
 
-   ```bash
-   dotnet test
-   ```
+```bash
+dotnet test
+```
 
 5. Run locally
 
     - **Full stack via Static Web Apps CLI** (recommended):
 
-      ```bash
-      # Local development (with hot reload)
-      swa start --config-name dev
-      # Shortcut (undocumented, may break in future versions):
-      swa start dev
-      
-      # Deploy to Azure Static Web Apps
-      swa deploy --config-name deploy
-      ```
+    ```bash
+    # prerequisite: install the SWA CLI
+    npm i -g @azure/static-web-apps-cli
+    ```
+
+    ```bash
+    # Local development (with hot reload)
+    swa start --config-name dev
+    # Shortcut (undocumented, may break in future versions):
+    swa start dev
+    
+    # Deploy to Azure Static Web Apps
+    swa deploy --config-name deploy
+    ```
 
     - **Run separately**:
 
-    - API (Azure Functions):
+        - API (Azure Functions):
 
-      ```bash
-      cd src/Api
-      func start
-      ```
+        ```bash
+        cd src/Api
+        func start
+        ```
 
-    - Web (Blazor):
+        - Web (Blazor):
 
-      ```bash
-      dotnet watch run --project src/Web/Web.csproj
-      ```
+        ```bash
+        dotnet watch run --project src/Web/Web.csproj
+        ```
 
 ## SWA CLI Configuration
 
 This project uses Azure Static Web Apps CLI with two configurations:
 
-- **Default config**: Used for deployment (`swa deploy`) - builds and deploys Release versions
-- **`dev` config**: Used for local development (`swa start dev`) - runs Debug builds with hot reload
+- **Default config**: Used for deployment (`swa deploy`/`swa deploy --config-name deploy`)
+    - builds and deploys Release versions
+- **`dev` config**: Used for local development (`swa start dev`/`swa start --config-name dev`)
+    - runs Debug builds with hot reload
+- **`automated-tests` config**: Used for automated/end-to-end tests (`swa start automated-tests`/
+  `swa start --config-name automated-tests`)
+    - Debug build, no browser, stable dev-server URL
 
 The SWA CLI configuration is in `./swa-cli.config.json` and handles:
 
