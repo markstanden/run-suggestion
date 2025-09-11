@@ -29,7 +29,6 @@ public static class TestData
         "\t"
     ];
 
-
     public static TheoryData<int[]> VaryingWeeklyLoadsTestData =>
     [
         FourWeekRunLoads.FiveKmAverage.NoVariance,
