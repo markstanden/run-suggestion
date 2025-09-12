@@ -6,20 +6,22 @@ using RunSuggestion.Shared.Models.Users;
 
 namespace RunSuggestion.Core.Services;
 
-public class RecommendationService : IRecommendationService
+public class RecommendationService(
+    ILogger<RecommendationService> logger,
+    IUserRepository userRepository,
+    DateTime? currentDate = null)
+    : IRecommendationService
 {
     private const int PrevWeek = -7;
-    private readonly DateTime _currentDate;
-    private readonly ILogger<RecommendationService> _logger;
-    private readonly IUserRepository _userRepository;
 
-    public RecommendationService(ILogger<RecommendationService> logger, IUserRepository userRepository,
-        DateTime? currentDate = null)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _currentDate = currentDate ?? DateTime.Now;
-    }
+    private readonly DateTime _currentDate =
+        currentDate ?? DateTime.Now;
+
+    private readonly ILogger<RecommendationService> _logger =
+        logger ?? throw new ArgumentNullException(nameof(logger));
+
+    private readonly IUserRepository _userRepository =
+        userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 
     /// <inheritdoc/>
     public async Task<RunRecommendation> GetRecommendationAsync(string entraId)
