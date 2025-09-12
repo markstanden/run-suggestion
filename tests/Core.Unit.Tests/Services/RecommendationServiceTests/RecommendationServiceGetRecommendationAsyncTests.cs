@@ -12,8 +12,8 @@ namespace RunSuggestion.Core.Unit.Tests.Services.RecommendationServiceTests;
 public class RecommendationServiceGetRecommendationAsyncTests
 {
     private readonly DateTime _currentDate = new(2025, 8, 28, 0, 0, 0, DateTimeKind.Utc);
-    private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly Mock<ILogger<RecommendationService>> _mockLogger = new();
+    private readonly Mock<IUserRepository> _mockRepository = new();
     private readonly RecommendationService _sut;
 
     public RecommendationServiceGetRecommendationAsyncTests()
@@ -29,7 +29,7 @@ public class RecommendationServiceGetRecommendationAsyncTests
     /// <returns>true if the provided RunRecommendation is the base recommendation</returns>
     private static bool IsBaseRunRecommendation(RunRecommendation runRecommendation) =>
         runRecommendation.Distance == Runs.RunDistanceBaseMetres &&
-        runRecommendation.Effort == Runs.RunEffortBase &&
+        runRecommendation.Effort == Runs.EffortLevel.Easy &&
         runRecommendation.Duration == Runs.RunDistanceBaseDurationTimeSpan;
 
     [Theory]

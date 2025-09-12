@@ -50,7 +50,7 @@ public class RecommendationService : IRecommendationService
         RunRecommendationId = 1,
         Date = _currentDate.Date,
         Distance = Runs.RunDistanceBaseMetres,
-        Effort = Runs.RunEffortBase,
+        Effort = Runs.EffortLevel.Easy,
         Duration = Runs.RunDistanceBaseDurationTimeSpan
     };
 
