@@ -77,10 +77,9 @@ public class RecommendationService : IRecommendationService
     internal int CalculateDistance(IEnumerable<RunEvent> runEvents,
         int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
     {
-        double currentWeeklyLoad = CalculateRollingTotalLoad(runEvents, _currentDate, 7);
-
-        double previousWeeklyLoad = CalculateHistoricAverage(runEvents, _currentDate);
-
+        List<RunEvent> recentRunEvents = runEvents.ToList();
+        double currentWeeklyLoad = CalculateRollingTotalLoad(recentRunEvents, _currentDate, 7);
+        double previousWeeklyLoad = CalculateHistoricWeeklyAverageDistance(recentRunEvents, _currentDate);
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
 
         return (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
@@ -107,20 +106,40 @@ public class RecommendationService : IRecommendationService
         return progressionPercentage / 100;
     }
 
-    internal static double CalculateRollingTotalLoad(IEnumerable<RunEvent> runEvents, DateTime endDate,
+    /// <summary>
+    /// Calculates the total load (distance) of runs within a specified time period ending at a given date.
+    /// </summary>
+    /// <param name="runEvents">A collection of <see cref="RunEvent"/>s to calculate the total distance from</param>
+    /// <param name="endDate">The (inclusive) end date of run events to be included in the calculation</param>
+    /// <param name="dayCount">The number of days before the end date to include in the calculation. Default is 7 days.</param>
+    /// <returns>The total distance of completed runs within the time period.</returns>
+    internal static double CalculateRollingTotalLoad(
+        IEnumerable<RunEvent> runEvents,
+        DateTime endDate,
         int dayCount = 7)
     {
         return runEvents
             .Where(re => re.Date <= endDate)
-            .Where(re => re.Date > endDate.AddDays(dayCount * -1))
+            .Where(re => re.Date > endDate.AddDays(-dayCount))
             .Sum(re => re.Distance);
     }
 
-    internal static double CalculateHistoricAverage(IEnumerable<RunEvent> runEvents, DateTime endDate,
+    /// <summary>
+    /// Calculates the historic average weekly distance for a specified number of weeks
+    /// (defaults to 4 weeks) based on the provided run events and the provided end date.
+    /// Excludes any run events that have taken place in the last week
+    /// </summary>
+    /// <param name="runEvents">A collection of run events from which to calculate the historic weekly averages.</param>
+    /// <param name="currentDate">The current date, from which the history range is calculated</param>
+    /// <param name="weeks">The number of weeks to include in the averaging. Defaults to 4 weeks.</param>
+    /// <returns>The calculated average weekly distance over the specified duration, excluding the most recent week</returns>
+    internal static double CalculateHistoricWeeklyAverageDistance(
+        IEnumerable<RunEvent> runEvents,
+        DateTime currentDate,
         int weeks = 4)
     {
         return Enumerable.Range(1, weeks)
-            .Select(week => CalculateRollingTotalLoad(runEvents, endDate.AddDays(-7 * week)))
+            .Select(week => CalculateRollingTotalLoad(runEvents, currentDate.AddDays(-7 * week)))
             .Average(x => x);
     }
 
