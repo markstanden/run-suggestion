@@ -14,6 +14,15 @@ public class RecommendationService(
 {
     private const int PrevWeek = -7;
 
+    internal const string LogMessageCalled =
+        "Attempting to calculate RunRecommendation";
+
+    internal const string LogMessageInvalidId =
+        "Invalid EntraId - cannot be null or whitespace";
+
+    internal const string LogMessageInsufficientHistory =
+        "Insufficient RunEvent history provided, supplying a cautious base recommendation";
+
     private readonly DateTime _currentDate =
         currentDate ?? DateTime.Now;
 
@@ -26,15 +35,18 @@ public class RecommendationService(
     /// <inheritdoc/>
     public async Task<RunRecommendation> GetRecommendationAsync(string entraId)
     {
+        _logger.LogInformation(LogMessageCalled);
         if (string.IsNullOrWhiteSpace(entraId))
         {
-            throw new ArgumentException("Invalid EntraId - cannot be null or whitespace", nameof(entraId));
+            _logger.LogCritical(LogMessageInvalidId);
+            throw new ArgumentException(LogMessageInvalidId, nameof(entraId));
         }
 
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
 
         if (userData is null || IsEmptyRunHistory(userData.RunHistory))
         {
+            _logger.LogInformation(LogMessageInsufficientHistory);
             return GetBaseRecommendation();
         }
 
