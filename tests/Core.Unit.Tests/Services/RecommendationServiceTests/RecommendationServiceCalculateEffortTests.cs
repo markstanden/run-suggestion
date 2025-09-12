@@ -20,15 +20,13 @@ public class RecommendationServiceCalculateEffortTests
     }
 
     [Theory]
-    [InlineData(new byte[] { 1, 1, 1, 1 }, 20, 4)]
-    [InlineData(new byte[] { 2, 1, 2, 1 }, 20, 4)]
-    [InlineData(new byte[] { 2, 2, 2, 2 }, 20, 4)]
-    [InlineData(new byte[] { 1, 1, 1 }, 25, 4)]
-    [InlineData(new byte[] { 2, 2, 2 }, 25, 4)]
-    public void CalculateEffort_WithMostRunsAtLowEffort_ReturnsHighEffort(byte[] currentWeeklyEffort, int targetEffort,
-        byte minSuggestedEffort)
+    [InlineData(new byte[] { 1, 1, 1, 1 }, 20)]
+    [InlineData(new byte[] { 1, 1, 1 }, 25)]
+    public void CalculateEffort_WithAnyRunHistory_ReturnsMaxStrongEffort(byte[] currentWeeklyEffort,
+        int targetEffort)
     {
         // Arrange
+        const byte expectedStrongEffortLevel = 4;
         IEnumerable<RunEvent> runEvents = currentWeeklyEffort
             .Select((eff, index) =>
                         RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(6 - index), effort: eff));
@@ -37,6 +35,73 @@ public class RecommendationServiceCalculateEffortTests
         byte result = _sut.CalculateEffort(runEvents, targetEffort);
 
         // Assert
-        result.ShouldBeGreaterThanOrEqualTo(minSuggestedEffort);
+        result.ShouldBeLessThanOrEqualTo(expectedStrongEffortLevel);
+    }
+
+    [Theory]
+    [InlineData(new byte[] { 1, 1, 1, 1 }, 20)]
+    [InlineData(new byte[] { 2, 1, 2, 1 }, 20)]
+    [InlineData(new byte[] { 2, 2, 2, 2 }, 20)]
+    [InlineData(new byte[] { 1, 1, 1 }, 25)]
+    [InlineData(new byte[] { 2, 2, 2 }, 25)]
+    public void CalculateEffort_WithMostRunsAtLowEffort_ReturnsStrongEffort(byte[] currentWeeklyEffort,
+        int targetEffort)
+    {
+        // Arrange
+        const byte expectedStrongEffortLevel = 4;
+        IEnumerable<RunEvent> runEvents = currentWeeklyEffort
+            .Select((eff, index) =>
+                        RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(6 - index), effort: eff));
+
+        // Act  
+        byte result = _sut.CalculateEffort(runEvents, targetEffort);
+
+        // Assert
+        result.ShouldBe(expectedStrongEffortLevel);
+    }
+
+    [Theory]
+    [InlineData(new byte[] { 4, 1, 1, 1 }, 20)]
+    [InlineData(new byte[] { 4, 1, 2, 1 }, 20)]
+    [InlineData(new byte[] { 4, 2, 2, 2 }, 20)]
+    [InlineData(new byte[] { 4, 1, 1 }, 25)]
+    [InlineData(new byte[] { 4, 2, 2 }, 25)]
+    public void CalculateEffort_WithRunsAlreadyMeetingTargetEffortPercentage_ReturnsEasyEffort(
+        byte[] currentWeeklyEffort, int targetEffort)
+    {
+        // Arrange
+        const byte expectedEasyEffortLevel = 2;
+        IEnumerable<RunEvent> runEvents = currentWeeklyEffort
+            .Select((eff, index) =>
+                        RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(6 - index), effort: eff));
+
+        // Act  
+        byte result = _sut.CalculateEffort(runEvents, targetEffort);
+
+        // Assert
+        result.ShouldBe(expectedEasyEffortLevel);
+    }
+
+    [Theory]
+    [InlineData(new byte[] { 4, 1, 3, 1 }, 20)]
+    [InlineData(new byte[] { 4, 2, 3, 1 }, 20)]
+    [InlineData(new byte[] { 4, 1, 3, 2 }, 20)]
+    [InlineData(new byte[] { 4, 2, 3, 2 }, 20)]
+    [InlineData(new byte[] { 4, 1, 3 }, 25)]
+    [InlineData(new byte[] { 4, 2, 3 }, 25)]
+    public void CalculateEffort_WithRunsAlreadyExceedingTargetEffortPercentage_ReturnsRecoveryEffort(
+        byte[] currentWeeklyEffort, int targetEffort)
+    {
+        // Arrange
+        const byte expectedRecoveryEffortLevel = 1;
+        IEnumerable<RunEvent> runEvents = currentWeeklyEffort
+            .Select((eff, index) =>
+                        RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(6 - index), effort: eff));
+
+        // Act  
+        byte result = _sut.CalculateEffort(runEvents, targetEffort);
+
+        // Assert
+        result.ShouldBe(expectedRecoveryEffortLevel);
     }
 }
