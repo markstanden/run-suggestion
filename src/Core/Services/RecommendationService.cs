@@ -13,6 +13,7 @@ public class RecommendationService(
     : IRecommendationService
 {
     private const int PrevWeek = -7;
+    private const int RequiredRunHistoryWeeks = 5;
 
     internal const string LogMessageCalled =
         "Attempting to calculate RunRecommendation";
@@ -44,36 +45,39 @@ public class RecommendationService(
 
         UserData? userData = await _userRepository.GetUserDataByEntraIdAsync(entraId);
 
-        if (userData is null || IsEmptyRunHistory(userData.RunHistory))
+        IEnumerable<RunEvent> fullRunHistory = userData?.RunHistory ?? [];
+        List<RunEvent> recentRunHistory = fullRunHistory
+            .Where(rh => rh.Date > _currentDate.AddDays(PrevWeek * RequiredRunHistoryWeeks))
+            .ToList();
+
+        if (IsEmptyRunHistory(recentRunHistory))
         {
             _logger.LogInformation(LogMessageInsufficientHistory);
-            return GetBaseRecommendation();
         }
 
         return new RunRecommendation
         {
-            RunRecommendationId = 1,
             Date = _currentDate.Date,
-            Distance = CalculateDistance(userData.RunHistory),
-            Effort = CalculateEffort(userData.RunHistory),
-            Duration = Runs.InsufficientHistory.RunDurationTimeSpan
+            Distance = CalculateDistance(recentRunHistory),
+            Effort = CalculateEffort(recentRunHistory),
+            Duration = CalculateDuration(recentRunHistory)
         };
     }
 
     /// <summary>
-    /// Generates a base run recommendation with default values,
-    /// used when the user's provided run history is insufficient.
+    /// User-configurable rule to calculate run duration based on run history.
     /// </summary>
-    /// <returns>
-    /// A <see cref="RunRecommendation"/> containing safe default values for date, distance, effort, and duration.
-    /// </returns>
-    internal RunRecommendation GetBaseRecommendation() => new()
+    /// <param name="runEvents">The users past completed run events</param>
+    /// <returns>A target duration for the recommended run</returns>
+    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents)
     {
-        Date = _currentDate.Date,
-        Distance = Runs.InsufficientHistory.RunDistanceMetres,
-        Effort = Runs.InsufficientHistory.RunEffort,
-        Duration = Runs.InsufficientHistory.RunDurationTimeSpan
-    };
+        if (IsEmptyRunHistory(runEvents))
+        {
+            return Runs.InsufficientHistory.RunDurationTimeSpan;
+        }
+
+        return TimeSpan.FromMinutes(30);
+    }
 
     /// <summary>
     /// User-configurable rule to calculate run effort based on a flexible low-effort / high-effort ratio.
@@ -81,20 +85,21 @@ public class RecommendationService(
     /// <param name="runEvents">The users passed completed run events</param>
     /// <param name="highEffortPercentage">The target weekly percentage of runs that should be high effort</param>
     /// <returns>a rough target effort level to apply during the run</returns>
-    internal byte CalculateEffort(IEnumerable<RunEvent> runEvents,
+    internal byte CalculateEffort(IEnumerable<RunEvent>? runEvents,
         int highEffortPercentage = RuleConfig.Default.SafeHighEffortTargetPercentage)
     {
-        List<RunEvent> lastWeeksRuns = runEvents
+        List<RunEvent> recentRunEvents = runEvents?.ToList() ?? [];
+        if (IsEmptyRunHistory(recentRunEvents))
+        {
+            return Runs.InsufficientHistory.RunEffort;
+        }
+
+        List<RunEvent> currentWeeksRuns = recentRunEvents
             .Where(re => re.Date > _currentDate.AddDays(PrevWeek))
             .ToList();
 
-        if (IsEmptyRunHistory(lastWeeksRuns))
-        {
-            return Runs.EffortLevel.Recovery;
-        }
-
-        int highEffortCount = CalculateHighEffortCount(lastWeeksRuns);
-        int targetHighEffortCount = CalculateTargetHighEffortRunQuantity(lastWeeksRuns.Count, highEffortPercentage);
+        int highEffortCount = CalculateHighEffortCount(currentWeeksRuns);
+        int targetHighEffortCount = CalculateTargetHighEffortRunQuantity(currentWeeksRuns.Count, highEffortPercentage);
 
         if (highEffortCount > targetHighEffortCount)
         {
@@ -108,6 +113,7 @@ public class RecommendationService(
             return Runs.EffortLevel.Easy;
         }
 
+        // User is ready for a hard run
         return Runs.EffortLevel.Strong;
     }
 
@@ -144,10 +150,15 @@ public class RecommendationService(
     /// <param name="runEvents">The users passed completed run events</param>
     /// <param name="progressionPercent">The target weekly progression.</param>
     /// <returns>A rounded target distance based on the users history and target progression</returns>
-    internal int CalculateDistance(IEnumerable<RunEvent> runEvents,
+    internal int CalculateDistance(IEnumerable<RunEvent>? runEvents,
         int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
     {
-        List<RunEvent> recentRunEvents = runEvents.ToList();
+        List<RunEvent> recentRunEvents = runEvents?.ToList() ?? [];
+        if (IsEmptyRunHistory(recentRunEvents))
+        {
+            return Runs.InsufficientHistory.RunDistanceMetres;
+        }
+
         double currentWeeklyLoad = CalculateRollingTotalLoad(recentRunEvents, _currentDate, 7);
         double previousWeeklyLoad = CalculateHistoricWeeklyAverageDistance(recentRunEvents, _currentDate);
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
