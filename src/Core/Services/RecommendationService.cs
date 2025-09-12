@@ -33,7 +33,16 @@ public class RecommendationService(
     private readonly IUserRepository _userRepository =
         userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Generates a run recommendation for the user identified by the given Entra ID.
+    /// </summary>
+    /// <remarks>
+    /// The recommendation is based on the user's recent run history: only runs within the last 5 weeks are considered.
+    /// If no recent history exists the method logs that history is insufficient but still returns a recommendation derived from the calculation helpers (which provide predefined "insufficient history" values).
+    /// </remarks>
+    /// <param name="entraId">The user's Entra identifier; must not be null, empty or whitespace.</param>
+    /// <returns>A <see cref="RunRecommendation"/> populated with the current date and calculated Distance, Effort and Duration values.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="entraId"/> is null, empty or consists only of whitespace.</exception>
     public async Task<RunRecommendation> GetRecommendationAsync(string entraId)
     {
         _logger.LogInformation(LogMessageCalled);
@@ -68,7 +77,13 @@ public class RecommendationService(
     /// User-configurable rule to calculate run duration based on run history.
     /// </summary>
     /// <param name="runEvents">The users past completed run events</param>
-    /// <returns>A target duration for the recommended run</returns>
+    /// <summary>
+    /// Determines the recommended run duration based on recent run history.
+    /// </summary>
+    /// <param name="runEvents">Recent run events to base the recommendation on; may be null or empty.</param>
+    /// <returns>
+    /// A TimeSpan representing the target duration. Returns the predefined "insufficient history" duration when no run history is available; otherwise returns a 30-minute duration.
+    /// </returns>
     internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents)
     {
         if (IsEmptyRunHistory(runEvents))
@@ -84,7 +99,21 @@ public class RecommendationService(
     /// </summary>
     /// <param name="runEvents">The users passed completed run events</param>
     /// <param name="highEffortPercentage">The target weekly percentage of runs that should be high effort</param>
-    /// <returns>a rough target effort level to apply during the run</returns>
+    /// <summary>
+    /// Determines a recommended effort level for the next run based on recent run history.
+    /// </summary>
+    /// <param name="runEvents">Recent run events to consider; may be null. Only runs within the last seven days are used for the high-effort comparison.</param>
+    /// <param name="highEffortPercentage">
+    /// Target percentage of high-effort runs to aim for in the current week.
+    /// Defaults to <c>RuleConfig.Default.SafeHighEffortTargetPercentage</c>.
+    /// </param>
+    /// <returns>
+    /// A byte code corresponding to a Run effort level:
+    /// - <c>Runs.InsufficientHistory.RunEffort</c> when there is no history;
+    /// - <c>Runs.EffortLevel.Recovery</c> if high-effort runs exceed the target;
+    /// - <c>Runs.EffortLevel.Easy</c> if high-effort runs meet the target;
+    /// - <c>Runs.EffortLevel.Strong</c> if high-effort runs are below the target.
+    /// </returns>
     internal byte CalculateEffort(IEnumerable<RunEvent>? runEvents,
         int highEffortPercentage = RuleConfig.Default.SafeHighEffortTargetPercentage)
     {
@@ -149,7 +178,18 @@ public class RecommendationService(
     /// </summary>
     /// <param name="runEvents">The users passed completed run events</param>
     /// <param name="progressionPercent">The target weekly progression.</param>
-    /// <returns>A rounded target distance based on the users history and target progression</returns>
+    /// <summary>
+    /// Calculates the recommended additional distance (metres) to reach a weekly target based on recent run history and a progression percentage.
+    /// </summary>
+    /// <param name="runEvents">Recent run events to base the calculation on; may be null or empty.</param>
+    /// <param name="progressionPercent">
+    /// Desired progression as a percentage (applied to the historic weekly average to form the target load).
+    /// The value is validated by <see cref="CalculateProgressionRatio"/> and must be within the configured progression bounds.
+    /// </param>
+    /// <returns>
+    /// The rounded difference between the target weekly load and the current weekly load (in metres).
+    /// If the provided history is null or empty, returns <see cref="Runs.InsufficientHistory.RunDistanceMetres"/>.
+    /// </returns>
     internal int CalculateDistance(IEnumerable<RunEvent>? runEvents,
         int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
     {
