@@ -21,6 +21,20 @@ public class RecommendationServiceCalculateEffortTests
         _sut = new RecommendationService(_mockLogger.Object, _mockRepository.Object, _currentDate);
     }
 
+    [Fact]
+    public void CalculateEffort_WithEmptyRunHistory_ReturnsDefaultEffort()
+    {
+        // Arrange
+        int expectedDistance = Runs.InsufficientHistory.RunEffort;
+        IEnumerable<RunEvent> runEvents = [];
+
+        // Act
+        int result = _sut.CalculateEffort(runEvents, Any.Integer);
+
+        // Assert
+        result.ShouldBe(expectedDistance);
+    }
+
     [Theory]
     [InlineData(new[] { Recovery, Recovery, Recovery, Recovery }, 20)]
     [InlineData(new[] { Recovery, Recovery, Recovery }, 25)]
