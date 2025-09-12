@@ -40,7 +40,7 @@ public class RecommendationService : IRecommendationService
             RunRecommendationId = 1,
             Date = _currentDate.Date,
             Distance = CalculateDistance(userData.RunHistory),
-            Effort = Runs.RunEffortBase,
+            Effort = CalculateEffort(userData.RunHistory),
             Duration = Runs.RunDistanceBaseDurationTimeSpan
         };
     }
@@ -53,6 +53,20 @@ public class RecommendationService : IRecommendationService
         Effort = Runs.RunEffortBase,
         Duration = Runs.RunDistanceBaseDurationTimeSpan
     };
+
+    /// <summary>
+    /// User configurable rule to calculate run effort based on a flexible low effort/high effort ratio.
+    /// </summary>
+    /// <param name="runEvents">The users passed completed run events</param>
+    /// <param name="highEffortPercentage">The target weekly percentage of runs that should be high intensity</param>
+    /// <returns>a rough target effort level to apply during the run</returns>
+    internal byte CalculateEffort(IEnumerable<RunEvent> runEvents,
+        int highEffortPercentage = RuleConfig.Default.SafeHighEffortTargetPercentage)
+    {
+        double highEffortTargetRatio = (double)highEffortPercentage / 100;
+        byte calculatedEffort = Runs.RunEffortBase;
+        return calculatedEffort;
+    }
 
     /// <summary>
     /// User configuarble rule to calculate distance based on weekly average. 
