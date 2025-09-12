@@ -8,5 +8,6 @@ public static class RuleConfig
     public static class Default
     {
         public const int SafeProgressionPercent = 5;
+        public const int SafeHighEffortTargetPercentage = 20;
     }
 }
