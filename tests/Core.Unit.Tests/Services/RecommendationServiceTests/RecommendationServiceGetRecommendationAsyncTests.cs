@@ -28,9 +28,9 @@ public class RecommendationServiceGetRecommendationAsyncTests
     /// <param name="runRecommendation">The recommendation to compare against the base recommendation</param>
     /// <returns>true if the provided RunRecommendation is the base recommendation</returns>
     private static bool IsBaseRunRecommendation(RunRecommendation runRecommendation) =>
-        runRecommendation.Distance == Runs.RunDistanceBaseMetres &&
+        runRecommendation.Distance == Runs.InsufficientHistory.RunDistanceMetres &&
         runRecommendation.Effort == Runs.EffortLevel.Easy &&
-        runRecommendation.Duration == Runs.RunDistanceBaseDurationTimeSpan;
+        runRecommendation.Duration == Runs.InsufficientHistory.RunDurationTimeSpan;
 
     [Theory]
     [MemberData(nameof(TestData.NullOrWhitespace), MemberType = typeof(TestData))]
