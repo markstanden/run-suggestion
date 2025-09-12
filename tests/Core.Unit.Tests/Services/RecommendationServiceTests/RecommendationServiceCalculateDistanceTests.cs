@@ -1,6 +1,9 @@
+using System.Data;
+using System.Formats.Asn1;
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Services;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.TestHelpers.Creators;
 
@@ -17,6 +20,20 @@ public class RecommendationServiceCalculateDistanceTests
     public RecommendationServiceCalculateDistanceTests()
     {
         _sut = new RecommendationService(_mockLogger.Object, _mockRepository.Object, _currentDate);
+    }
+
+    [Fact]
+    public void CalculateDistance_WithEmptyRunHistory_ReturnsDefaultDistance()
+    {
+        // Arrange
+        int expectedDistance = Runs.InsufficientHistory.RunDistanceMetres;
+        IEnumerable<RunEvent> runEvents = [];
+
+        // Act
+        int result = _sut.CalculateDistance(runEvents, Any.Integer);
+
+        // Assert
+        result.ShouldBe(expectedDistance);
     }
 
     [Theory]
