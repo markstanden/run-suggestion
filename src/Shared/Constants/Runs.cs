@@ -28,6 +28,7 @@ public static class Runs
     /// </summary>
     public static class EffortLevel
     {
+        public const byte Rest = 0;
         public const byte Recovery = 1;
         public const byte Easy = 3;
         public const byte Medium = 5;
