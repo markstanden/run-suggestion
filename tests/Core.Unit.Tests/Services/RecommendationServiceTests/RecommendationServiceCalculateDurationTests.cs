@@ -62,6 +62,39 @@ public class RecommendationServiceCalculateDurationTests
     }
 
     [Theory]
+    [InlineData(5, 30)]
+    [InlineData(10, 60)]
+    [InlineData(15, 90)]
+    [InlineData(20, 120)]
+    public void CalculateDuration_WithZeroDurationHistoricRuns_CalculatesPaceWithInvalidRunsExcluded(
+        int recommendedDistanceKm, int expectedDurationMins)
+    {
+        // Arrange
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-1),
+                                        distanceMetres: 10000,
+                                        duration: TimeSpan.Zero,
+                                        effort: Easy),
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-2),
+                                        distanceMetres: 10000,
+                                        duration: TimeSpan.FromMinutes(60),
+                                        effort: Easy),
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-3),
+                                        distanceMetres: 10000,
+                                        duration: TimeSpan.FromMinutes(60),
+                                        effort: Easy)
+        ];
+        TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+
+        // Assert
+        result.ShouldBe(expectedDuration);
+    }
+
+    [Theory]
     [InlineData(new[] { 5, 6, 7, 8, 9 }, 10, 70)]
     [InlineData(new[] { 6, 7, 8, 9, 10 }, 10, 80)]
     [InlineData(new[] { 7, 8, 9, 10, 11 }, 10, 90)]
