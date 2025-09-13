@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using RunSuggestion.Shared.Constants;
+using RunSuggestion.TestHelpers;
 using Shouldly;
 
 namespace RunSuggestion.Shared.Unit.Tests.Constants;
@@ -47,12 +48,28 @@ public class RunsInsufficientHistoryTests
     public void RunDurationTimeSpan_WithNegativeDistance_ThrowsArgumentOutOfRangeException(int negativeDistance)
     {
         // Act
-        Action actionWithNegativeDistance = () => Runs.InsufficientHistory.RunDurationTimeSpan(negativeDistance);
+        Action withNegativeDistance = () => Runs.InsufficientHistory.RunDurationTimeSpan(negativeDistance);
 
         // Assert
-        ArgumentOutOfRangeException ex = actionWithNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
+        ArgumentOutOfRangeException ex = withNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
         ex.ParamName.ShouldBe("distanceMetres");
         ex.Message.ShouldContain("Distance must be a positive integer");
         ex.Message.ShouldContain("cannot be negative");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-10000)]
+    public void RunDurationTimeSpan_WithZeroOrNegativePace_ThrowsArgumentOutOfRangeException(int zeroOrNegativePace)
+    {
+        // Act
+        Action withZeroOrNegativePace =
+            () => Runs.InsufficientHistory.RunDurationTimeSpan(Any.Integer, zeroOrNegativePace);
+
+        // Assert
+        ArgumentOutOfRangeException ex = withZeroOrNegativePace.ShouldThrow<ArgumentOutOfRangeException>();
+        ex.ParamName.ShouldBe("runPaceMinsPerKm");
+        ex.Message.ShouldContain("Pace (mins/km) must be greater than zero.");
     }
 }
