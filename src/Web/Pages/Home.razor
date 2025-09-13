@@ -64,7 +64,7 @@
         using StreamReader reader = new(memoryStream);
         string csvContent = await reader.ReadToEndAsync();
 
-        await CsvUploadService.Upload(csvContent);
+        await CsvUploadService.UploadAsync(csvContent);
     }
 
     private void GetRecommendation()

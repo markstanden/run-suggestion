@@ -76,7 +76,7 @@ public class CsvUploadServiceTest
         CsvUploadService sut = CreateSut();
 
         // Act
-        Func<Task> withEmptyCsvContent = async () => await sut.Upload(csvContent!);
+        Func<Task> withEmptyCsvContent = async () => await sut.UploadAsync(csvContent!);
 
         // Assert
         ArgumentException ex = withEmptyCsvContent.ShouldThrow<ArgumentException>();
@@ -93,7 +93,7 @@ public class CsvUploadServiceTest
         CsvUploadService sut = CreateSut();
 
         // Act
-        await sut.Upload(csvContent);
+        await sut.UploadAsync(csvContent);
 
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLog);
@@ -108,7 +108,7 @@ public class CsvUploadServiceTest
         (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
 
         // Act
-        await sut.Upload(csvContent);
+        await sut.UploadAsync(csvContent);
 
         // Assert
         mockHttpMessageHandler
@@ -131,7 +131,7 @@ public class CsvUploadServiceTest
         (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
 
         // Act
-        await sut.Upload(csvContent);
+        await sut.UploadAsync(csvContent);
 
         // Assert
         mockHttpMessageHandler
@@ -146,16 +146,16 @@ public class CsvUploadServiceTest
     }
 
     [Fact]
-    public async Task Upload_WithInvalidCsvContent_ReturnsFalse()
+    public async Task Upload_WithInvalidCsvContent_ReturnsZeroRowsAdded()
     {
         // Arrange
         const string csvContent = Any.String;
         CsvUploadService sut = CreateSut(0, HttpStatusCode.BadRequest);
 
         // Act
-        bool result = await sut.Upload(csvContent);
+        int result = await sut.UploadAsync(csvContent);
 
         // Assert
-        result.ShouldBeFalse();
+        result.ShouldBe(0);
     }
 }

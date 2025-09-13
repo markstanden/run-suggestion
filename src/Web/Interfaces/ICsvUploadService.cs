@@ -1,12 +1,18 @@
+using RunSuggestion.Shared.Models.Runs;
+
 namespace RunSuggestion.Web.Interfaces;
 
 public interface ICsvUploadService
 {
     /// <summary>
     /// Service to upload a csv file to the backend API,
-    /// Returns true if the upload was successful, false otherwise.
+    /// Returns The number of <see cref="RunEvent"/>s added to the user's account
     /// </summary>
-    /// <param name="csvContent">The CSV to upload</param>
-    /// <returns>True if the CSV uploads successfully, false otherwise</returns>
-    public Task<bool> Upload(string csvContent);
+    /// <param name="csvContent">
+    /// The CSV file content to upload
+    /// </param>
+    /// <returns>
+    /// An <see cref="Int32"/> representing the number of <see cref="RunEvent"/>s added to the user's account
+    /// </returns>
+    public Task<int> UploadAsync(string csvContent);
 }
