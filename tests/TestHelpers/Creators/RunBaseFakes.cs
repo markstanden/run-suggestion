@@ -91,8 +91,8 @@ public static class RunBaseFakes
                        effort: effort,
                        dateTime: date);
 
-    public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate) =>
-        Enumerable.Range(1, 35)
+    public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate, int sampleSize = 35) =>
+        Enumerable.Range(1, sampleSize)
             .Select(index => index * -2)
             .SelectMany<int, RunEvent>(negEvens =>
             [

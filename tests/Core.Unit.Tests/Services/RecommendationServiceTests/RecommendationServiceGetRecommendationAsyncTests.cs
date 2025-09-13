@@ -148,4 +148,29 @@ public class RecommendationServiceGetRecommendationAsyncTests
         result.ShouldNotBe(null);
         IsBaseRunRecommendation(result).ShouldBeFalse();
     }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(7)]
+    [InlineData(14)]
+    [InlineData(21)]
+    [InlineData(28)]
+    [InlineData(35)]
+    public async Task GetRecommendationAsync_WithSomeFormOfRunHistory_ReturnsACustomRunRecommendation(int sampleSize)
+    {
+        // Arrange
+        UserData lowIntensityRunHistory = new()
+        {
+            RunHistory = RunBaseFakes.LowIntensityRunHistory(_currentDate, sampleSize)
+        };
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(lowIntensityRunHistory);
+
+        // Act
+        RunRecommendation result = await _sut.GetRecommendationAsync(Any.LongAlphanumericString);
+
+        // Assert
+        result.ShouldNotBe(null);
+        IsBaseRunRecommendation(result).ShouldBeFalse();
+    }
 }
