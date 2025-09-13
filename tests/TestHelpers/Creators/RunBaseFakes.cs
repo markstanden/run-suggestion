@@ -21,13 +21,13 @@ public static class RunBaseFakes
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-        {
-            RunEventId = id ?? Defaults.UserId,
-            Date = dateTime ?? Defaults.DateTime,
-            Distance = distanceMetres ?? Defaults.DistanceMetres,
-            Effort = effort ?? Defaults.Effort,
-            Duration = duration ?? Defaults.Duration
-        };
+    {
+        RunEventId = id ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
 
     /// <summary>
     /// Test helper to create a fake run recommendation.
@@ -44,13 +44,13 @@ public static class RunBaseFakes
         int? distanceMetres = null,
         byte? effort = null,
         TimeSpan? duration = null) => new()
-        {
-            RunRecommendationId = id ?? Defaults.UserId,
-            Date = dateTime ?? Defaults.DateTime,
-            Distance = distanceMetres ?? Defaults.DistanceMetres,
-            Effort = effort ?? Defaults.Effort,
-            Duration = duration ?? Defaults.Duration
-        };
+    {
+        RunRecommendationId = id ?? Defaults.UserId,
+        Date = dateTime ?? Defaults.DateTime,
+        Distance = distanceMetres ?? Defaults.DistanceMetres,
+        Effort = effort ?? Defaults.Effort,
+        Duration = duration ?? Defaults.Duration
+    };
 
     /// <summary>
     /// Convenience method to create multiple default run events in a single call
@@ -80,6 +80,13 @@ public static class RunBaseFakes
             .Select(runNumber => CreateRunEvent(distanceMetres: runDistance,
                                                 dateTime: weekEndingDate.AddDays(-runNumber * runSpacing)));
     }
+
+    public static RunEvent
+        CreateRunEventWithPace(int distanceKm, int paceMinsPerKm, byte effort, DateTime? date = null) =>
+        CreateRunEvent(distanceMetres: 1000 * distanceKm,
+                       duration: TimeSpan.FromMinutes(distanceKm * paceMinsPerKm),
+                       effort: effort,
+                       dateTime: date);
 
     public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate) =>
     [

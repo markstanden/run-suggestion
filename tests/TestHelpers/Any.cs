@@ -15,6 +15,7 @@ public static class Any
     public const string OtherUrlString = "https://www.anotherdomain.com";
 
     // Numbers
+    public const byte Byte = 8;
     public const int Integer = 1;
 
     // URIs

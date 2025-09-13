@@ -55,12 +55,15 @@ public class RecommendationService(
             _logger.LogInformation(LogMessageInsufficientHistory);
         }
 
+        int distance = CalculateDistance(recentRunHistory);
+        byte effort = CalculateEffort(recentRunHistory);
+
         return new RunRecommendation
         {
             Date = _currentDate.Date,
-            Distance = CalculateDistance(recentRunHistory),
-            Effort = CalculateEffort(recentRunHistory),
-            Duration = CalculateDuration(recentRunHistory)
+            Distance = distance,
+            Effort = effort,
+            Duration = CalculateDuration(recentRunHistory, distance, effort)
         };
     }
 
@@ -69,7 +72,7 @@ public class RecommendationService(
     /// </summary>
     /// <param name="runEvents">The users past completed run events</param>
     /// <returns>A target duration for the recommended run</returns>
-    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents)
+    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distance, byte effort)
     {
         if (IsEmptyRunHistory(runEvents))
         {
