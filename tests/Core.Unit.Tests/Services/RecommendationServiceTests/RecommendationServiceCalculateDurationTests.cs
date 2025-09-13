@@ -257,11 +257,12 @@ public class RecommendationServiceCalculateDurationTests
     }
 
     [Fact]
-    public void CalculateDuration_WithZeroDistanceRuns_ShouldNotThrow()
+    public void CalculateDuration_WithOnlyZeroDistanceRuns_ReturnsInsufficientHistoryDuration()
     {
         // Arrange
         const int zeroDistance = 0;
         const int recommendedDistanceKm = 5;
+        const int expectedDurationMinutes = recommendedDistanceKm * Runs.InsufficientHistory.RunPaceMinsPerKm;
         IEnumerable<RunEvent> runEvents =
         [
             RunBaseFakes.CreateRunEventWithPace(
@@ -272,11 +273,10 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        Action withZeroDistanceRun = () =>
-            RecommendationService.CalculateDuration(runEvents, KmToMetres(recommendedDistanceKm), Easy);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, KmToMetres(recommendedDistanceKm), Easy);
 
         // Assert
-        withZeroDistanceRun.ShouldNotThrow();
+        result.TotalMinutes.ShouldBe(expectedDurationMinutes);
     }
 
     [Fact]
