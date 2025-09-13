@@ -102,11 +102,12 @@ public class RecommendationService(
     {
         if (effort < 1)
         {
-            return Runs.InsufficientHistory.RunPaceMinsPerKm;
+            return Runs.InsufficientHistory.RunPaceMinsPerKm / 1000D;
         }
 
         List<RunEvent> runsAtEffortLevel = runEvents
             .Where(re => re.Effort == effort)
+            .Where(re => re.Distance > 0)
             .ToList();
 
         if (runsAtEffortLevel.Count == 0)
