@@ -279,6 +279,6 @@ public class RecommendationServiceCalculateDurationTests
         TimeSpan result = _sut.CalculateDuration(runEvents, restDayDistance, Any.Byte);
 
         // Assert
-        result.ShouldBe(TimeSpan.Zero);
+        result.ShouldBe(Runs.RestDuration);
     }
 }

@@ -6,6 +6,8 @@ namespace RunSuggestion.Shared.Constants;
 /// </summary>
 public static class Runs
 {
+    public static readonly TimeSpan RestDuration = TimeSpan.Zero;
+
     /// <summary>
     /// Defaults provided for run recommendations where insufficient
     /// run history has been provided
@@ -19,7 +21,6 @@ public static class Runs
         public static TimeSpan RunDurationTimeSpan(int distanceMetres)
             => TimeSpan.FromMinutes(distanceMetres / 1000D * RunPaceMinsPerKm);
     }
-
 
     /// <summary>
     /// Verbalised effort levels used within Garmin's `Perceived Effort`

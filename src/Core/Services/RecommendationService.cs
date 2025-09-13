@@ -62,7 +62,7 @@ public class RecommendationService(
             ? Runs.EffortLevel.Rest
             : CalculateEffort(recentRunHistory);
         TimeSpan duration = distance == 0
-            ? TimeSpan.Zero
+            ? Runs.RestDuration
             : CalculateDuration(recentRunHistory, distance, effort);
 
         return new RunRecommendation
@@ -91,7 +91,7 @@ public class RecommendationService(
         if (distanceMetres == 0 || effort == Runs.EffortLevel.Rest)
         {
             // Rest day recommendation - no running!
-            return TimeSpan.Zero;
+            return Runs.RestDuration;
         }
 
         List<RunEvent> recentRuns = runEvents?.ToList() ?? [];

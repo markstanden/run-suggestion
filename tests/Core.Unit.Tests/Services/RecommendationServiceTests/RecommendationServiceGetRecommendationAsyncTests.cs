@@ -219,7 +219,7 @@ public class RecommendationServiceGetRecommendationAsyncTests
         result.ShouldNotBe(null);
         result.Distance.ShouldBe(0);
         result.Effort.ShouldBe(EffortLevel.Rest);
-        result.Duration.ShouldBe(TimeSpan.Zero);
+        result.Duration.ShouldBe(RestDuration);
     }
 
     [Theory]
@@ -272,6 +272,6 @@ public class RecommendationServiceGetRecommendationAsyncTests
         result.ShouldNotBe(null);
         result.Distance.ShouldBe(0);
         result.Effort.ShouldBe(EffortLevel.Rest);
-        result.Duration.ShouldBe(TimeSpan.Zero);
+        result.Duration.ShouldBe(RestDuration);
     }
 }
