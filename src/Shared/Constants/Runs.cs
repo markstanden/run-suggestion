@@ -6,6 +6,7 @@ namespace RunSuggestion.Shared.Constants;
 /// </summary>
 public static class Runs
 {
+    public const int RestDistance = 0;
     public static readonly TimeSpan RestDuration = TimeSpan.Zero;
 
     /// <summary>

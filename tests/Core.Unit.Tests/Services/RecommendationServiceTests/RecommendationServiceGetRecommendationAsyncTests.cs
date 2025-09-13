@@ -29,10 +29,23 @@ public class RecommendationServiceGetRecommendationAsyncTests
     /// </summary>
     /// <param name="runRec">The recommendation to compare against the base recommendation</param>
     /// <returns>true if the provided RunRecommendation is the base recommendation</returns>
-    private static bool IsBaseRunRecommendation(RunRecommendation runRec) =>
+    private static bool IsBaseRunRecommendation(RunRecommendation? runRec) =>
+        runRec is not null &&
         runRec.Distance == InsufficientHistory.RunDistanceMetres &&
         runRec.Effort == InsufficientHistory.RunEffort &&
         runRec.Duration == InsufficientHistory.RunDurationTimeSpan(InsufficientHistory.RunDistanceMetres);
+
+    /// <summary>
+    /// Helper method to help assert whether a <see cref="RunRecommendation"/>
+    /// is a rest day recommendation to overtraining users.
+    /// </summary>
+    /// <param name="runRec">The recommendation to compare against a rest recommendation</param>
+    /// <returns>true if the provided RunRecommendation is a rest recommendation</returns>
+    private static bool IsRestDayRecommendation(RunRecommendation? runRec) =>
+        runRec is not null &&
+        runRec.Distance == RestDistance &&
+        runRec.Effort == EffortLevel.Rest &&
+        runRec.Duration == RestDuration;
 
     [Fact]
     public async Task GetRecommendationAsync_WhenCalled_LogsRecommendationRequest()
@@ -217,9 +230,7 @@ public class RecommendationServiceGetRecommendationAsyncTests
 
         // Assert
         result.ShouldNotBe(null);
-        result.Distance.ShouldBe(0);
-        result.Effort.ShouldBe(EffortLevel.Rest);
-        result.Duration.ShouldBe(RestDuration);
+        IsRestDayRecommendation(result).ShouldBeTrue();
     }
 
     [Theory]
@@ -270,8 +281,6 @@ public class RecommendationServiceGetRecommendationAsyncTests
 
         // Assert
         result.ShouldNotBe(null);
-        result.Distance.ShouldBe(0);
-        result.Effort.ShouldBe(EffortLevel.Rest);
-        result.Duration.ShouldBe(RestDuration);
+        IsRestDayRecommendation(result).ShouldBeTrue();
     }
 }

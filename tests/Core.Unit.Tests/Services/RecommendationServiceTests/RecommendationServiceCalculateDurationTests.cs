@@ -146,20 +146,18 @@ public class RecommendationServiceCalculateDurationTests
     }
 
     [Fact]
-    public void CalculateDuration_WithEffortLevelZero_ReturnsBasePace()
+    public void CalculateDuration_WithRestEffortLevel_ReturnsRestDayDuration()
     {
         // Arrange
-        const byte effortLevelZero = 0;
-        const int expectedBasePace = Runs.InsufficientHistory.RunPaceMinsPerKm;
         const int recommendedDistanceKm = 10;
-        const int expectedDurationMinutes = recommendedDistanceKm * expectedBasePace;
+        TimeSpan expectedDuration = Runs.RestDuration;
         IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateDefaultRunEvents();
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, effortLevelZero);
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Rest);
 
         // Assert
-        result.TotalMinutes.ShouldBe(expectedDurationMinutes);
+        result.ShouldBe(expectedDuration);
     }
 
     [Theory]

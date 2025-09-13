@@ -74,7 +74,7 @@ public static class RunBaseFakes
     /// <param name="weekEndingDate">The final day of the week (inclusive)</param>
     /// <param name="runsPerWeek">Number of runs to create for the week</param>
     /// <returns>Collection of run events for the week</returns>
-    public static IEnumerable<RunEvent> CreateWeekOfRuns(int runDistance, DateTime weekEndingDate, int runsPerWeek = 3)
+    public static IEnumerable<RunEvent> CreateWeekOfRuns(int runDistance, DateTime weekEndingDate, int runsPerWeek)
     {
         const double weekLength = 7D;
         int runSpacing = (int)Math.Floor(weekLength / runsPerWeek);
