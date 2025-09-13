@@ -212,10 +212,10 @@ public class RecommendationServiceGetRecommendationAsyncTests
                                         distanceMetres: progressionDistanceMetres,
                                         effort: EffortLevel.Recovery),
 
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-7), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-14), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-21), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-28), 3)
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-7), 3),
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-14), 3),
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-21), 3),
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-28), 3)
         ];
 
         UserData userData = new()
@@ -263,10 +263,10 @@ public class RecommendationServiceGetRecommendationAsyncTests
                                         distanceMetres: progressionDistanceMetres,
                                         effort: EffortLevel.Recovery),
 
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-7), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-14), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-21), 3),
-            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-28), 3)
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-7), 3),
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-14), 3),
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-21), 3),
+            .. RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-28), 3)
         ];
 
         UserData userData = new()
