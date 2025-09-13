@@ -81,7 +81,7 @@ public class RecommendationService(
     /// <param name="distanceMetres">Recommended distance in metres</param>
     /// <param name="effort">Recommended effort level</param>
     /// <returns>A target duration for the recommended run</returns>
-    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distanceMetres, byte effort)
+    internal static TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distanceMetres, byte effort)
     {
         if (distanceMetres < 0)
         {
@@ -116,7 +116,7 @@ public class RecommendationService(
     /// <param name="runEvents">Completed run events to filter</param>
     /// <param name="effort">The effort level to calculate pace for</param>
     /// <returns>Average pace in minutes per metre for the recommended effort level</returns>
-    internal static double CalculateAveragePaceForEffort(IEnumerable<RunEvent> runEvents, byte effort)
+    private static double CalculateAveragePaceForEffort(IEnumerable<RunEvent> runEvents, byte effort)
     {
         if (effort < 1)
         {
@@ -182,7 +182,7 @@ public class RecommendationService(
     /// <summary>
     /// Calculates the quantity of high-effort run events from the provided collection of run events.
     /// The threshold (exclusive) of what constitutes a high-effort run can be set
-    /// (defaults to anything above an <see cref="Runs.EffortLevel.Easy">easy</see> run.
+    /// defaults to anything above an <see cref="Runs.EffortLevel.Easy">easy</see> run.
     /// </summary>
     /// <param name="runEvents">The collection of run events to evaluate.</param>
     /// <param name="highEffortThreshold">
@@ -190,7 +190,7 @@ public class RecommendationService(
     /// Defaults to <see cref="Runs.EffortLevel.Easy"/>.\
     /// </param>
     /// <returns>The number of high-effort run events exceeding the provided threshold.</returns>
-    internal static int CalculateHighEffortCount(IEnumerable<RunEvent> runEvents,
+    private static int CalculateHighEffortCount(IEnumerable<RunEvent> runEvents,
         byte highEffortThreshold = Runs.EffortLevel.Easy) =>
         runEvents.Count(re => re.Effort > highEffortThreshold);
 
@@ -200,7 +200,7 @@ public class RecommendationService(
     /// <param name="recentRunCount">The number of runs conducted within the last training period</param>
     /// <param name="highEffortPercentage">The percentage of runs within the training period that should be high effort</param>
     /// <returns>The quantity of runs that should be completed using high effort</returns>
-    internal static int CalculateTargetHighEffortRunQuantity(int recentRunCount, int highEffortPercentage)
+    private static int CalculateTargetHighEffortRunQuantity(int recentRunCount, int highEffortPercentage)
     {
         int totalRunCount = recentRunCount + 1;
         return (int)Math.Floor(totalRunCount * (highEffortPercentage / 100.0));
@@ -257,10 +257,10 @@ public class RecommendationService(
     /// <param name="endDate">The (inclusive) end date of run events to be included in the calculation</param>
     /// <param name="dayCount">The number of days before the end date to include in the calculation. Default is 7 days.</param>
     /// <returns>The total distance of completed runs within the time period.</returns>
-    internal static double CalculateRollingTotalLoad(
+    private static double CalculateRollingTotalLoad(
         IEnumerable<RunEvent> runEvents,
         DateTime endDate,
-        int dayCount = 7)
+        int dayCount)
     {
         return runEvents
             .Where(re => re.Date <= endDate)
@@ -277,13 +277,13 @@ public class RecommendationService(
     /// <param name="currentDate">The current date, from which the history range is calculated</param>
     /// <param name="weeks">The number of weeks to include in the averaging. Defaults to 4 weeks.</param>
     /// <returns>The calculated average weekly distance over the specified duration, excluding the most recent week</returns>
-    internal static double CalculateHistoricWeeklyAverageDistance(
+    private static double CalculateHistoricWeeklyAverageDistance(
         IEnumerable<RunEvent> runEvents,
         DateTime currentDate,
         int weeks = 4)
     {
         return Enumerable.Range(1, weeks)
-            .Select(weekNumber => CalculateRollingTotalLoad(runEvents, currentDate.AddDays(PrevWeek * weekNumber)))
+            .Select(weekNumber => CalculateRollingTotalLoad(runEvents, currentDate.AddDays(PrevWeek * weekNumber), 7))
             .Average(x => x);
     }
 
@@ -292,6 +292,6 @@ public class RecommendationService(
     /// </summary>
     /// <param name="runEvents">The nullable RunEvent collection</param>
     /// <returns>true if the run history is empty</returns>
-    internal static bool IsEmptyRunHistory(IEnumerable<RunEvent>? runEvents) =>
+    private static bool IsEmptyRunHistory(IEnumerable<RunEvent>? runEvents) =>
         runEvents is null || !runEvents.Any();
 }

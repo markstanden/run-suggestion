@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Services;
 using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
@@ -12,14 +10,6 @@ namespace RunSuggestion.Core.Unit.Tests.Services.RecommendationServiceTests;
 public class RecommendationServiceCalculateDurationTests
 {
     private readonly DateTime _currentDate = new(2025, 8, 28, 0, 0, 0, DateTimeKind.Utc);
-    private readonly Mock<ILogger<RecommendationService>> _mockLogger = new();
-    private readonly Mock<IUserRepository> _mockRepository = new();
-    private readonly RecommendationService _sut;
-
-    public RecommendationServiceCalculateDurationTests()
-    {
-        _sut = new RecommendationService(_mockLogger.Object, _mockRepository.Object, _currentDate);
-    }
 
     [Fact]
     public void CalculateDuration_WithEmptyRunHistory_ReturnsDefaultDuration()
@@ -30,7 +20,7 @@ public class RecommendationServiceCalculateDurationTests
         IEnumerable<RunEvent> runEvents = [];
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, distanceMetres, Any.EffortLevel);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, distanceMetres, Any.EffortLevel);
 
         // Assert
         result.ShouldBe(expectedTimeSpan);
@@ -55,7 +45,7 @@ public class RecommendationServiceCalculateDurationTests
         TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -88,7 +78,7 @@ public class RecommendationServiceCalculateDurationTests
         TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -114,7 +104,7 @@ public class RecommendationServiceCalculateDurationTests
         TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -146,7 +136,7 @@ public class RecommendationServiceCalculateDurationTests
         TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, distanceKm * 1000, consistentEffortLevel);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, distanceKm * 1000, consistentEffortLevel);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -172,7 +162,8 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, requestedEffort);
+        TimeSpan result =
+            RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, requestedEffort);
 
         // Assert
         result.TotalMinutes.ShouldBe(expectedDurationMinutes);
@@ -187,7 +178,7 @@ public class RecommendationServiceCalculateDurationTests
         IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateDefaultRunEvents();
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Rest);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Rest);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -212,7 +203,7 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, effortLevel);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, effortLevel);
 
         // Assert
         result.TotalMinutes.ShouldBe(expectedDurationMinutes);
@@ -234,7 +225,8 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        Action withZeroDistanceRun = () => _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+        Action withZeroDistanceRun = () =>
+            RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         withZeroDistanceRun.ShouldNotThrow();
@@ -255,7 +247,7 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.TotalMinutes.ShouldBe(expectedDurationMins);
@@ -276,7 +268,7 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.TotalMinutes.ShouldBe(expectedDurationMins);
@@ -297,7 +289,8 @@ public class RecommendationServiceCalculateDurationTests
         ];
 
         // Act
-        Action withNegativeDistance = () => _sut.CalculateDuration(runEvents, negativeDistanceKm * 1000, Easy);
+        Action withNegativeDistance = () =>
+            RecommendationService.CalculateDuration(runEvents, negativeDistanceKm * 1000, Easy);
 
         // Assert
         Exception ex = withNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
@@ -312,7 +305,7 @@ public class RecommendationServiceCalculateDurationTests
         IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateDefaultRunEvents();
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, restDayDistance, Any.EffortLevel);
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, restDayDistance, Any.EffortLevel);
 
         // Assert
         result.ShouldBe(Runs.RestDuration);
