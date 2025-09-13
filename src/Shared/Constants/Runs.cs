@@ -19,8 +19,30 @@ public static class Runs
         public const byte RunEffort = EffortLevel.Easy;
         public const int RunPaceMinsPerKm = 15;
 
+        /// <summary>
+        /// Calculates the estimated duration for a run based on the provided distance in metres,
+        /// where insufficient run history has been provided.
+        /// Returns a rest day duration if the provided distanceMetres is 0.
+        /// </summary>
+        /// <param name="distanceMetres">The distance of the run in metres. Must be a non-negative integer.</param>
+        /// <returns>
+        /// A <see cref="TimeSpan"/> representing the duration of the run.
+        /// Returns zero duration if the distance is zero.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided distanceMetres is a negative value.
+        /// </exception>
         public static TimeSpan RunDurationTimeSpan(int distanceMetres)
-            => TimeSpan.FromMinutes(distanceMetres / 1000D * RunPaceMinsPerKm);
+        {
+            if (distanceMetres < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(distanceMetres),
+                                                      "Distance must be a positive integer - cannot be negative.");
+            }
+            return distanceMetres == 0
+                ? RestDuration
+                : TimeSpan.FromMinutes(distanceMetres / 1000D * RunPaceMinsPerKm);
+        }
     }
 
     /// <summary>
