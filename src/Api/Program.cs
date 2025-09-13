@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using RunSuggestion.Core.Interfaces;
+﻿using RunSuggestion.Core.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using RunSuggestion.Core.Constants;
@@ -32,13 +31,9 @@ builder.Services.AddScoped<IRecommendationService>(serviceProvider =>
 {
     ILogger<RecommendationService> logger = serviceProvider.GetRequiredService<ILogger<RecommendationService>>();
     IUserRepository userRepository = serviceProvider.GetRequiredService<IUserRepository>();
-    string? configDateOverride = builder.Configuration["TestCurrentDate"] ?? string.Empty;
+    string configDateOverride = builder.Configuration["TestCurrentDate"] ?? string.Empty;
 
-    return DateTime.TryParseExact(configDateOverride,
-                                  "o",
-                                  CultureInfo.InvariantCulture,
-                                  DateTimeStyles.None,
-                                  out DateTime parsedDate)
+    return DateTime.TryParse(configDateOverride, out DateTime parsedDate)
         ? new RecommendationService(logger, userRepository, parsedDate)
         : new RecommendationService(logger, userRepository);
 });
