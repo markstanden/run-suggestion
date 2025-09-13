@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Services;
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Assertions;
@@ -172,5 +173,105 @@ public class RecommendationServiceGetRecommendationAsyncTests
         // Assert
         result.ShouldNotBe(null);
         IsBaseRunRecommendation(result).ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(5000)]
+    [InlineData(10000)]
+    [InlineData(15000)]
+    public async Task GetRecommendationAsync_WithCurrentWeeksRunningAtLimit_ReturnsRestDayRecommendation(
+        int baseDistanceMetres
+    )
+    {
+        // Arrange
+        int progressionPercent = RuleConfig.Default.SafeProgressionPercent;
+        double progressionRatio = RecommendationService.CalculateProgressionRatio(progressionPercent);
+        int progressionDistanceMetres = (int)Math.Round(baseDistanceMetres * progressionRatio);
+        IEnumerable<RunEvent> currentWeekAtHistoricAverage =
+        [
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-1),
+                                        distanceMetres: progressionDistanceMetres,
+                                        effort: EffortLevel.Easy),
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-2),
+                                        distanceMetres: progressionDistanceMetres,
+                                        effort: EffortLevel.Easy),
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-3),
+                                        distanceMetres: progressionDistanceMetres,
+                                        effort: EffortLevel.Recovery),
+
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-7), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-14), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-21), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-28), 3)
+        ];
+
+        UserData userData = new()
+        {
+            RunHistory = currentWeekAtHistoricAverage
+        };
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(userData);
+
+        // Act
+        RunRecommendation result = await _sut.GetRecommendationAsync(Any.LongAlphanumericString);
+
+        // Assert
+        result.ShouldNotBe(null);
+        result.Distance.ShouldBe(0);
+        result.Effort.ShouldBe(EffortLevel.Rest);
+        result.Duration.ShouldBe(TimeSpan.Zero);
+    }
+
+    [Theory]
+    [InlineData(5000, 1)]
+    [InlineData(10000, 1)]
+    [InlineData(15000, 1)]
+    [InlineData(5000, 1000)]
+    [InlineData(10000, 1000)]
+    [InlineData(15000, 1000)]
+    [InlineData(5000, 10000)]
+    [InlineData(10000, 10000)]
+    [InlineData(15000, 10000)]
+    public async Task GetRecommendationAsync_WithCurrentWeeksRunningOverLimit_ReturnsRestDayRecommendation(
+        int baseDistanceMetres, int overtrainingMetres
+    )
+    {
+        // Arrange
+        int progressionPercent = RuleConfig.Default.SafeProgressionPercent;
+        double progressionRatio = RecommendationService.CalculateProgressionRatio(progressionPercent);
+        int progressionDistanceMetres = (int)Math.Round(baseDistanceMetres * progressionRatio);
+        IEnumerable<RunEvent> currentWeekAtHistoricAverage =
+        [
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-1),
+                                        distanceMetres: progressionDistanceMetres + overtrainingMetres,
+                                        effort: EffortLevel.Easy),
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-2),
+                                        distanceMetres: progressionDistanceMetres,
+                                        effort: EffortLevel.Easy),
+            RunBaseFakes.CreateRunEvent(dateTime: _currentDate.AddDays(-3),
+                                        distanceMetres: progressionDistanceMetres,
+                                        effort: EffortLevel.Recovery),
+
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-7), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-14), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-21), 3),
+            ..RunBaseFakes.CreateWeekOfRuns(baseDistanceMetres, _currentDate.AddDays(-28), 3)
+        ];
+
+        UserData userData = new()
+        {
+            RunHistory = currentWeekAtHistoricAverage
+        };
+        _mockRepository.Setup(x => x.GetUserDataByEntraIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(userData);
+
+        // Act
+        RunRecommendation result = await _sut.GetRecommendationAsync(Any.LongAlphanumericString);
+
+        // Assert
+        result.ShouldNotBe(null);
+        result.Distance.ShouldBe(0);
+        result.Effort.ShouldBe(EffortLevel.Rest);
+        result.Duration.ShouldBe(TimeSpan.Zero);
     }
 }
