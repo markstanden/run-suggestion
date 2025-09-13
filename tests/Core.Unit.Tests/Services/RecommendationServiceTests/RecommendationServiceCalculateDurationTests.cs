@@ -38,7 +38,7 @@ public class RecommendationServiceCalculateDurationTests
     [Theory]
     [InlineData(5, 25)]
     [InlineData(10, 50)]
-    [InlineData(15, 45)]
+    [InlineData(15, 75)]
     [InlineData(20, 100)]
     public void CalculateDuration_WithSingleEffortLevelAndConsistentPace_CalculatesTimeFromRecommendedDistance(
         int recommendedDistanceKm, int expectedDurationMins)
@@ -89,7 +89,7 @@ public class RecommendationServiceCalculateDurationTests
 
     [Theory]
     [InlineData(Recovery, 10, 120)]
-    [InlineData(Recovery, 20, 200)]
+    [InlineData(Recovery, 20, 240)]
     [InlineData(Easy, 10, 100)]
     [InlineData(Easy, 15, 150)]
     [InlineData(Strong, 5, 30)]
