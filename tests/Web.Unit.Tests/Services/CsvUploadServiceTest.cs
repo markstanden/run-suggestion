@@ -23,7 +23,7 @@ public class CsvUploadServiceTest
         CreateSutWithMockHttpMessageHandler(int response = Any.Integer, HttpStatusCode status = HttpStatusCode.OK)
     {
         Mock<HttpMessageHandler> mockHttpMessageHandler =
-            CreateMockHttpMessageHandler(CreateResponse(response, status));
+            CreateMockHttpMessageHandler(CreateUploadResponse(response, status));
         HttpClient testHttpClient = new(mockHttpMessageHandler.Object) { BaseAddress = Any.Url };
         CsvUploadService sut = new(_mockLogger.Object, testHttpClient);
         return (sut, mockHttpMessageHandler);
@@ -114,7 +114,7 @@ public class CsvUploadServiceTest
         mockHttpMessageHandler
             .Protected()
             .Verify(
-                SendAsync,
+                SendAsyncMethodName,
                 Times.Once(),
                 ItExpr.Is<HttpRequestMessage>(req =>
                                                   req.Method == HttpMethod.Post &&
@@ -137,7 +137,7 @@ public class CsvUploadServiceTest
         mockHttpMessageHandler
             .Protected()
             .Verify(
-                SendAsync,
+                SendAsyncMethodName,
                 Times.Once(),
                 ItExpr.Is<HttpRequestMessage>(req =>
                                                   req.Content != null &&
