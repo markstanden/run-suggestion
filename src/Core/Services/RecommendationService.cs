@@ -88,9 +88,9 @@ public class RecommendationService(
             throw new ArgumentOutOfRangeException(nameof(distanceMetres), LogMessageNegativeRunDistance);
         }
 
-        if (distanceMetres == 0 || effort == Runs.EffortLevel.Rest)
+        if (distanceMetres == Runs.RestDistance || effort == Runs.EffortLevel.Rest)
         {
-            // Rest day recommendation - no running!
+            // Rest day recommendation
             return Runs.RestDuration;
         }
 
@@ -226,7 +226,7 @@ public class RecommendationService(
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
 
         int calculatedDistance = (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
-        return Math.Max(calculatedDistance, 0);
+        return Math.Max(calculatedDistance, Runs.RestDistance);
     }
 
     /// <summary>
