@@ -116,14 +116,15 @@ public class RecommendationService(
     /// <param name="runEvents">Completed run events to filter</param>
     /// <param name="effort">The effort level to calculate pace for</param>
     /// <returns>Average pace in minutes per metre for the recommended effort level</returns>
-    internal static double CalculateAveragePaceForEffort(List<RunEvent> runEvents, byte effort)
+    internal static double CalculateAveragePaceForEffort(IEnumerable<RunEvent> runEvents, byte effort)
     {
         if (effort < 1)
         {
             return Runs.InsufficientHistory.RunPaceMinsPerKm / 1000D;
         }
 
-        List<RunEvent> runsAtEffortLevel = runEvents
+        List<RunEvent> recentRunList = runEvents.ToList();
+        List<RunEvent> runsAtEffortLevel = recentRunList
             .Where(re => re.Effort == effort)
             .Where(re => re.Distance > 0)
             .Where(re => re.Duration > TimeSpan.Zero)
@@ -132,7 +133,7 @@ public class RecommendationService(
         if (runsAtEffortLevel.Count == 0)
         {
             byte previousEffort = (byte)Math.Max(effort - 1, Runs.EffortLevel.Rest);
-            return CalculateAveragePaceForEffort(runEvents, previousEffort);
+            return CalculateAveragePaceForEffort(recentRunList, previousEffort);
         }
 
         double totalMinutes = runsAtEffortLevel.Sum(re => re.Duration.TotalMinutes);
