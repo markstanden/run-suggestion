@@ -22,7 +22,7 @@ public static class Runs
         /// <summary>
         /// Calculates the estimated duration for a run based on the provided distance in metres,
         /// where insufficient run history has been provided.
-        /// Returns a rest day duration if the provided distanceMetres is 0.
+        /// Returns a rest day duration if the provided distanceMetres is <see cref="Runs.RestDistance"/>.
         /// </summary>
         /// <param name="distanceMetres">
         /// The distance of the run in metres. Must be a non-negative integer.
@@ -45,7 +45,7 @@ public static class Runs
                 throw new ArgumentOutOfRangeException(nameof(distanceMetres),
                                                       "Distance must be a positive integer - cannot be negative.");
             }
-            return distanceMetres == 0
+            return distanceMetres == RestDistance
                 ? RestDuration
                 : TimeSpan.FromMinutes(Math.Round(distanceMetres / 1000D * runPaceMinsPerKm));
         }
