@@ -71,19 +71,19 @@ public class RecommendationService(
     /// User-configurable rule to calculate run duration based on run history.
     /// </summary>
     /// <param name="runEvents">The users past completed run events</param>
-    /// <param name="distance">Recommended distance in metres</param>
+    /// <param name="distanceMetres">Recommended distance in metres</param>
     /// <param name="effort">Recommended effort level</param>
     /// <returns>A target duration for the recommended run</returns>
-    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distance, byte effort)
+    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distanceMetres, byte effort)
     {
         List<RunEvent> recentRuns = runEvents?.ToList() ?? [];
         if (IsEmptyRunHistory(recentRuns))
         {
-            return Runs.InsufficientHistory.RunDurationTimeSpan(distance);
+            return Runs.InsufficientHistory.RunDurationTimeSpan(distanceMetres);
         }
 
         double averageMinsPerMetre = CalculateAveragePaceForEffort(recentRuns, effort);
-        double totalMinutes = distance * averageMinsPerMetre;
+        double totalMinutes = distanceMetres * averageMinsPerMetre;
 
         return TimeSpan.FromMinutes(Math.Round(totalMinutes));
     }
