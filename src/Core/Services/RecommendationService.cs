@@ -103,7 +103,7 @@ public class RecommendationService(
         double averageMinsPerMetre = CalculateAveragePaceForEffort(recentRuns, effort);
         double totalMinutes = distanceMetres * averageMinsPerMetre;
 
-        return TimeSpan.FromMinutes(Math.Round(totalMinutes));
+        return TimeSpan.FromMinutes(Math.Round(totalMinutes, MidpointRounding.AwayFromZero));
     }
 
     /// <summary>

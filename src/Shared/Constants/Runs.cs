@@ -53,7 +53,8 @@ public static class Runs
             }
             return distanceMetres == RestDistance
                 ? RestDuration
-                : TimeSpan.FromMinutes(Math.Round(distanceMetres / 1000D * runPaceMinsPerKm));
+                : TimeSpan.FromMinutes(Math.Round(distanceMetres / 1000D * runPaceMinsPerKm,
+                                                  MidpointRounding.AwayFromZero));
         }
     }
 
