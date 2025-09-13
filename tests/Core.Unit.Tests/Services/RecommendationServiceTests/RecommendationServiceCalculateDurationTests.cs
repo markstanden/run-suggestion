@@ -52,6 +52,29 @@ public class RecommendationServiceCalculateDurationTests
     }
 
     [Theory]
+    [InlineData(1)]
+    [InlineData(5)]
+    [InlineData(10)]
+    public void CalculateDuration_WithHalfMinuteAverage_RoundsAwayFromZero(int lowerRunDurationMins)
+    {
+        // Arrange
+        int upperRunDurationMins = lowerRunDurationMins + 1;
+        int expectedRoundingAwayFromZero = upperRunDurationMins;
+        const int runDistanceKm = 1;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(runDistanceKm, lowerRunDurationMins, Easy, _currentDate.AddDays(-1)),
+            RunBaseFakes.CreateRunEventWithPace(runDistanceKm, upperRunDurationMins, Easy, _currentDate.AddDays(-2))
+        ];
+
+        // Act
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, runDistanceKm * 1000, Easy);
+
+        // Assert
+        result.TotalMinutes.ShouldBe(expectedRoundingAwayFromZero);
+    }
+
+    [Theory]
     [InlineData(5, 30)]
     [InlineData(10, 60)]
     [InlineData(15, 90)]
