@@ -215,7 +215,8 @@ public class RecommendationService(
         double previousWeeklyLoad = CalculateHistoricWeeklyAverageDistance(recentRunEvents, _currentDate);
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
 
-        return (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
+        int calculatedDistance = (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
+        return Math.Max(calculatedDistance, 0);
     }
 
     /// <summary>
