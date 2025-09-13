@@ -247,7 +247,6 @@ public class RecommendationServiceCalculateDurationTests
     }
 
     [Theory]
-    [InlineData(0)]
     [InlineData(-1)]
     [InlineData(-10)]
     [InlineData(-100)]
@@ -267,5 +266,19 @@ public class RecommendationServiceCalculateDurationTests
         // Assert
         Exception ex = withNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
         ex.Message.ShouldContain(expectedMessage);
+    }
+
+    [Fact]
+    public void CalculateDuration_WithZeroDistance_ReturnsRestDayDuration()
+    {
+        // Arrange
+        const int restDayDistance = 0;
+        IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateDefaultRunEvents();
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, restDayDistance, Any.Byte);
+
+        // Assert
+        result.ShouldBe(TimeSpan.Zero);
     }
 }
