@@ -55,6 +55,7 @@
     {
         Logger.LogInformation(Logs.Upload.Start);
         Status = Constants.Status.Uploading;
+        StateHasChanged();
 
         try
         {
@@ -66,7 +67,6 @@
             using StreamReader reader = new(memoryStream);
             string csvContent = await reader.ReadToEndAsync();
 
-        await CsvUploadService.UploadAsync(csvContent);
             int rowsAdded = await CsvUploadService.UploadAsync(csvContent);
             Status = Constants.Status.UploadCompleted(rowsAdded);
             Logger.LogInformation(Logs.Upload.Success);
@@ -75,6 +75,10 @@
         {
             Status = Constants.Status.UploadFailed;
             Logger.LogError(ex, Logs.Upload.Failure);
+        }
+        finally
+        {
+            StateHasChanged();
         }
     }
 
