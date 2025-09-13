@@ -9,7 +9,7 @@ namespace RunSuggestion.Core.Unit.Tests.Services.RecommendationServiceTests;
 [TestSubject(typeof(RecommendationService))]
 public class RecommendationServiceCalculateDurationTests
 {
-    private readonly DateTime _currentDate = new(2025, 8, 28, 0, 0, 0, DateTimeKind.Utc);
+    private readonly DateTime _currentDate = Any.UtcDate;
 
     [Fact]
     public void CalculateDuration_WithEmptyRunHistory_ReturnsDefaultDuration()
