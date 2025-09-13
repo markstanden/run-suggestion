@@ -58,10 +58,10 @@ public class RecommendationService(
         }
 
         int distance = CalculateDistance(recentRunHistory);
-        byte effort = distance == 0
+        byte effort = distance == Runs.RestDistance
             ? Runs.EffortLevel.Rest
             : CalculateEffort(recentRunHistory);
-        TimeSpan duration = distance == 0
+        TimeSpan duration = distance == Runs.RestDistance
             ? Runs.RestDuration
             : CalculateDuration(recentRunHistory, distance, effort);
 
