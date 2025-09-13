@@ -25,7 +25,7 @@ public class RecommendationServiceCalculateDurationTests
     public void CalculateDuration_WithEmptyRunHistory_ReturnsDefaultDuration()
     {
         // Arrange
-        int distanceMetres = Runs.InsufficientHistory.RunDistanceMetres;
+        const int distanceMetres = Runs.InsufficientHistory.RunDistanceMetres;
         TimeSpan expectedTimeSpan = Runs.InsufficientHistory.RunDurationTimeSpan(distanceMetres);
         IEnumerable<RunEvent> runEvents = [];
 
@@ -45,18 +45,17 @@ public class RecommendationServiceCalculateDurationTests
         int recommendedDistanceKm, int expectedDurationMins)
     {
         // Arrange
-        byte consistentEffortLevel = Easy;
-        int paceMinsPerKm = 5;
-        int historicDistances = Any.Integer;
+        const int paceMinsPerKm = 5;
+        const int historicDistances = Any.Integer;
         IEnumerable<RunEvent> runEvents = Enumerable.Range(1, 28)
             .Select(day => RunBaseFakes.CreateRunEventWithPace(historicDistances,
                                                                paceMinsPerKm,
-                                                               consistentEffortLevel,
+                                                               Easy,
                                                                _currentDate.AddDays(-day)));
         TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, consistentEffortLevel);
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -72,17 +71,17 @@ public class RecommendationServiceCalculateDurationTests
         int[] paceMinsPerKm, int recommendedDistanceKm, int expectedDurationMins)
     {
         // Arrange
-        byte consistentEffortLevel = Easy;
-        int historicDistances = Any.Integer;
+        const int historicDistances = Any.Integer;
         IEnumerable<RunEvent> runEvents = paceMinsPerKm
-            .Select((pace, index) => RunBaseFakes.CreateRunEventWithPace(historicDistances,
-                                                                         pace,
-                                                                         consistentEffortLevel,
-                                                                         _currentDate.AddDays(-(index + 1))));
+            .Select((pace, index) =>
+                        RunBaseFakes.CreateRunEventWithPace(historicDistances,
+                                                            pace,
+                                                            Easy,
+                                                            _currentDate.AddDays(-(index + 1))));
         TimeSpan expectedDuration = TimeSpan.FromMinutes(expectedDurationMins);
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, consistentEffortLevel);
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
 
         // Assert
         result.ShouldBe(expectedDuration);
@@ -118,5 +117,154 @@ public class RecommendationServiceCalculateDurationTests
 
         // Assert
         result.ShouldBe(expectedDuration);
+    }
+
+    [Theory]
+    [InlineData(Easy, 15)]
+    [InlineData(Strong, 15)]
+    [InlineData(Hard, 15)]
+    [InlineData(Easy, 10)]
+    [InlineData(Strong, 10)]
+    [InlineData(Hard, 10)]
+    public void CalculateDuration_WithMissingEffortLevel_FallsBackToLowerEffortLevel(byte requestedEffort,
+        int prevRecoveryPace)
+    {
+        // Arrange
+        const int recommendedDistanceKm = 10;
+        int expectedDurationMinutes = recommendedDistanceKm * prevRecoveryPace;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(Any.Integer, prevRecoveryPace, Recovery, _currentDate.AddDays(-1)),
+            RunBaseFakes.CreateRunEventWithPace(Any.Integer, prevRecoveryPace, Recovery, _currentDate.AddDays(-2))
+        ];
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, requestedEffort);
+
+        // Assert
+        result.TotalMinutes.ShouldBe(expectedDurationMinutes);
+    }
+
+    [Fact]
+    public void CalculateDuration_WithEffortLevelZero_ReturnsBasePace()
+    {
+        // Arrange
+        const byte effortLevelZero = 0;
+        const int expectedBasePace = Runs.InsufficientHistory.RunPaceMinsPerKm;
+        const int recommendedDistanceKm = 10;
+        const int expectedDurationMinutes = recommendedDistanceKm * expectedBasePace;
+        IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateDefaultRunEvents();
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, effortLevelZero);
+
+        // Assert
+        result.TotalMinutes.ShouldBe(expectedDurationMinutes);
+    }
+
+    [Theory]
+    [InlineData(Recovery)]
+    [InlineData(Easy)]
+    [InlineData(Strong)]
+    [InlineData(Hard)]
+    public void CalculateDuration_WithNoMatchingOrLowerEffortLevels_UltimatelyReturnsBasePace(byte effortLevel)
+    {
+        // Arrange
+        const int expectedBasePace = Runs.InsufficientHistory.RunPaceMinsPerKm;
+        const int recommendedDistanceKm = 10;
+        const int expectedDurationMinutes = recommendedDistanceKm * expectedBasePace;
+        const byte beyondHard = Hard + 1;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(Any.Integer, Any.Integer, beyondHard, _currentDate.AddDays(-1)),
+            RunBaseFakes.CreateRunEventWithPace(Any.Integer, Any.Integer, beyondHard, _currentDate.AddDays(-2))
+        ];
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, effortLevel);
+
+        // Assert
+        result.TotalMinutes.ShouldBe(expectedDurationMinutes);
+    }
+
+    [Fact]
+    public void CalculateDuration_WithZeroDistanceRuns_ShouldNotThrow()
+    {
+        // Arrange
+        const int recommendedDistanceKm = 5;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(Any.Integer, 0, Easy, _currentDate.AddDays(-1))
+        ];
+
+        // Act
+        Action withZeroDistanceRun = () => _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+
+        // Assert
+        withZeroDistanceRun.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void CalculateDuration_WithZeroDistanceRuns_ShouldGracefullyIgnore()
+    {
+        // Arrange
+        const int paceMinsPerKm = 10;
+        const int recommendedDistanceKm = 5;
+        const int expectedDurationMins = recommendedDistanceKm * paceMinsPerKm;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(0, paceMinsPerKm, Easy, _currentDate.AddDays(-1)),
+            RunBaseFakes.CreateRunEventWithPace(10, paceMinsPerKm, Easy, _currentDate.AddDays(-2)),
+            RunBaseFakes.CreateRunEventWithPace(0, paceMinsPerKm, Easy, _currentDate.AddDays(-3))
+        ];
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+
+        // Assert
+        result.TotalMinutes.ShouldBe(expectedDurationMins);
+    }
+
+    [Fact]
+    public void CalculateDuration_WithNegativeDistanceRuns_ShouldGracefullyIgnore()
+    {
+        // Arrange
+        const int paceMinsPerKm = 10;
+        const int recommendedDistanceKm = 5;
+        const int expectedDurationMins = recommendedDistanceKm * paceMinsPerKm;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(-10, paceMinsPerKm, Easy, _currentDate.AddDays(-1)),
+            RunBaseFakes.CreateRunEventWithPace(10, paceMinsPerKm, Easy, _currentDate.AddDays(-2)),
+            RunBaseFakes.CreateRunEventWithPace(-10, paceMinsPerKm, Easy, _currentDate.AddDays(-3))
+        ];
+
+        // Act
+        TimeSpan result = _sut.CalculateDuration(runEvents, recommendedDistanceKm * 1000, Easy);
+
+        // Assert
+        result.TotalMinutes.ShouldBe(expectedDurationMins);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-10)]
+    [InlineData(-100)]
+    public void CalculateDuration_WithInvalidDistanceParameter_ThrowsArgumentOutOfRangeException(int negativeDistanceKm)
+    {
+        // Arrange
+        const int paceMinsPerKm = 10;
+        IEnumerable<RunEvent> runEvents =
+        [
+            RunBaseFakes.CreateRunEventWithPace(10, paceMinsPerKm, Easy, _currentDate.AddDays(-2))
+        ];
+
+        // Act
+        Action withNegativeDistance = () => _sut.CalculateDuration(runEvents, negativeDistanceKm * 1000, Easy);
+
+        // Assert
+        Exception ex = withNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
+        ex.Message.ShouldContain("Zero or Negative distance");
     }
 }
