@@ -207,11 +207,11 @@ public class RecommendationService(
     }
 
     /// <summary>
-    /// User configuarble rule to calculate distance based on weekly average. 
+    /// User configurable rule to calculate distance based on the weekly average. 
     /// </summary>
     /// <param name="runEvents">The users passed completed run events</param>
     /// <param name="progressionPercent">The target weekly progression.</param>
-    /// <returns>A rounded target distance based on the users history and target progression</returns>
+    /// <returns>A rounded target distance based on the user's history and target progression</returns>
     internal int CalculateDistance(IEnumerable<RunEvent>? runEvents,
         int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
     {
@@ -235,7 +235,7 @@ public class RecommendationService(
     /// </summary>
     /// <param name="progressionPercent">Percentage increase to convert - must be between <see cref="RuleConfig.MinProgressionPercent"/> and <see cref="RuleConfig.MaxProgressionPercent"/></param>
     /// <returns>multiplier to apply</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if progressionPercent is outside of permitted range</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if progressionPercent is outside the permitted range</exception>
     internal static double CalculateProgressionRatio(int progressionPercent)
     {
         if (progressionPercent < RuleConfig.MinProgressionPercent ||
