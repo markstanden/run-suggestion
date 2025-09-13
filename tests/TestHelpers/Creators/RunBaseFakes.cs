@@ -73,11 +73,16 @@ public static class RunBaseFakes
     /// <param name="runDistance">Distance for each run in metres</param>
     /// <param name="weekEndingDate">The final day of the week (inclusive)</param>
     /// <param name="runsPerWeek">Number of runs to create for the week</param>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if runsPerWeek is less than 1</exception>
     /// <returns>Collection of run events for the week</returns>
     public static IEnumerable<RunEvent> CreateWeekOfRuns(int runDistance, DateTime weekEndingDate, int runsPerWeek)
     {
         const double weekLength = 7D;
-        int runSpacing = (int)Math.Floor(weekLength / runsPerWeek);
+        if (runsPerWeek <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(runsPerWeek), "runsPerWeek must be at least 1.");
+        }
+        int runSpacing = Math.Max(1, (int)Math.Floor(weekLength / runsPerWeek));
 
         return Enumerable.Range(0, runsPerWeek)
             .Select(runNumber => CreateRunEvent(distanceMetres: runDistance,
