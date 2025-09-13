@@ -26,6 +26,21 @@ public class RecommendationServiceCalculateDurationTests
         result.ShouldBe(expectedTimeSpan);
     }
 
+    [Fact]
+    public void CalculateDuration_WithNullRunHistory_ReturnsDefaultDuration()
+    {
+        // Arrange
+        const int distanceMetres = Runs.InsufficientHistory.RunDistanceMetres;
+        TimeSpan expectedTimeSpan = Runs.InsufficientHistory.RunDurationTimeSpan(distanceMetres);
+        IEnumerable<RunEvent> runEvents = null!;
+
+        // Act
+        TimeSpan result = RecommendationService.CalculateDuration(runEvents, distanceMetres, Any.EffortLevel);
+
+        // Assert
+        result.ShouldBe(expectedTimeSpan);
+    }
+
     [Theory]
     [InlineData(5, 25)]
     [InlineData(10, 50)]
