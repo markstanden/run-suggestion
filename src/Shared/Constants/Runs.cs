@@ -36,7 +36,8 @@ public static class Runs
         /// Returns zero duration if the distance is zero.
         /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided distanceMetres is a negative value.
+        /// Thrown when the provided distanceMetres is a negative value,
+        /// or if the provided runPaceMinsPerKm is a zero or negative value
         /// </exception>
         public static TimeSpan RunDurationTimeSpan(int distanceMetres, int runPaceMinsPerKm = RunPaceMinsPerKm)
         {
@@ -44,6 +45,11 @@ public static class Runs
             {
                 throw new ArgumentOutOfRangeException(nameof(distanceMetres),
                                                       "Distance must be a positive integer - cannot be negative.");
+            }
+            if (runPaceMinsPerKm <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(runPaceMinsPerKm),
+                                                      "Pace (mins/km) must be greater than zero.");
             }
             return distanceMetres == RestDistance
                 ? RestDuration
