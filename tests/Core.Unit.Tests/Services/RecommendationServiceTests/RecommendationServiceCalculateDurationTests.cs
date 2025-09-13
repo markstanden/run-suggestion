@@ -234,9 +234,9 @@ public class RecommendationServiceCalculateDurationTests
         const int expectedDurationMins = recommendedDistanceKm * paceMinsPerKm;
         IEnumerable<RunEvent> runEvents =
         [
-            RunBaseFakes.CreateRunEventWithPace(-10, paceMinsPerKm, Easy, _currentDate.AddDays(-1)),
+            RunBaseFakes.CreateRunEventWithPace(-10, 0, Easy, _currentDate.AddDays(-1)),
             RunBaseFakes.CreateRunEventWithPace(10, paceMinsPerKm, Easy, _currentDate.AddDays(-2)),
-            RunBaseFakes.CreateRunEventWithPace(-10, paceMinsPerKm, Easy, _currentDate.AddDays(-3))
+            RunBaseFakes.CreateRunEventWithPace(-10, 0, Easy, _currentDate.AddDays(-3))
         ];
 
         // Act
