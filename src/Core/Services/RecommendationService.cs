@@ -58,14 +58,19 @@ public class RecommendationService(
         }
 
         int distance = CalculateDistance(recentRunHistory);
-        byte effort = CalculateEffort(recentRunHistory);
+        byte effort = distance == 0
+            ? Runs.EffortLevel.Rest
+            : CalculateEffort(recentRunHistory);
+        TimeSpan duration = distance == 0
+            ? TimeSpan.Zero
+            : CalculateDuration(recentRunHistory, distance, effort);
 
         return new RunRecommendation
         {
             Date = _currentDate.Date,
             Distance = distance,
             Effort = effort,
-            Duration = CalculateDuration(recentRunHistory, distance, effort)
+            Duration = duration
         };
     }
 
@@ -83,9 +88,9 @@ public class RecommendationService(
             throw new ArgumentOutOfRangeException(nameof(distanceMetres), LogMessageNegativeRunDistance);
         }
 
-        // Rest day recommendation - no running required
-        if (distanceMetres == 0)
+        if (distanceMetres == 0 || effort == Runs.EffortLevel.Rest)
         {
+            // Rest day recommendation - no running!
             return TimeSpan.Zero;
         }
 
