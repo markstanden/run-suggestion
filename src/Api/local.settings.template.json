@@ -4,6 +4,6 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "DatabaseConnectionString": "Data Source=test.db",
-    "TestCurrentDate": "2025-08-02T10:00:00.0000000Z"
+    "TestCurrentDate": "2025-08-02"
   }
 }
