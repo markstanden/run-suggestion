@@ -2,7 +2,7 @@ using RunSuggestion.Shared.Models.Runs;
 
 namespace RunSuggestion.Web.Interfaces;
 
-public interface ICsvUploadService
+public interface ICsvUploadApiService
 {
     /// <summary>
     /// Service to upload a csv file to the backend API,

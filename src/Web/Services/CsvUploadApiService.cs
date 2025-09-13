@@ -6,10 +6,10 @@ using RunSuggestion.Web.Interfaces;
 
 namespace RunSuggestion.Web.Services;
 
-public class CsvUploadService(ILogger<CsvUploadService> logger, HttpClient httpClient) : ICsvUploadService
+public class CsvUploadApiService(ILogger<CsvUploadApiService> logger, HttpClient httpClient) : ICsvUploadApiService
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    private readonly ILogger<CsvUploadService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly ILogger<CsvUploadApiService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<int> UploadAsync(string csvContent)
     {

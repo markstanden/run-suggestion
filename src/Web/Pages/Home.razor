@@ -2,7 +2,7 @@
 @using RunSuggestion.Web.Constants
 @using RunSuggestion.Web.Interfaces
 @inject ILogger<Home> Logger
-@inject ICsvUploadService CsvUploadService
+@inject ICsvUploadApiService CsvUploadApiService
 
 <PageTitle>@Site.HomePage.Title</PageTitle>
 
@@ -67,7 +67,7 @@
             using StreamReader reader = new(memoryStream);
             string csvContent = await reader.ReadToEndAsync();
 
-            int rowsAdded = await CsvUploadService.UploadAsync(csvContent);
+            int rowsAdded = await CsvUploadApiService.UploadAsync(csvContent);
             Status = Constants.Status.UploadCompleted(rowsAdded);
             Logger.LogInformation(Logs.Upload.Success);
         }
