@@ -76,12 +76,45 @@ public class RecommendationService(
     /// <returns>A target duration for the recommended run</returns>
     internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distance, byte effort)
     {
-        if (IsEmptyRunHistory(runEvents))
+        List<RunEvent> recentRuns = runEvents?.ToList() ?? [];
+        if (IsEmptyRunHistory(recentRuns))
         {
-            return Runs.InsufficientHistory.RunDurationTimeSpan;
+            return Runs.InsufficientHistory.RunDurationTimeSpan(distance);
         }
 
-        return TimeSpan.FromMinutes(30);
+        double averageMinsPerMetre = CalculateAveragePaceForEffort(recentRuns, effort);
+        double totalMinutes = distance * averageMinsPerMetre;
+
+        return TimeSpan.FromMinutes(Math.Round(totalMinutes));
+    }
+
+    /// <summary>
+    /// Calculates the average pace in mins/metre for a specific effort level based on
+    /// recent runs at the same effort level within the provided recent run history.
+    /// If an existing run does not yet exist at the required effort level (no average),
+    /// the function recursively calls itself with the next effort level down until a match is made.
+    /// If no match can be found, the base run pace is returned.
+    /// </summary>
+    /// <param name="runEvents">Completed run events to filter</param>
+    /// <param name="effort">The effort level to calculate pace for</param>
+    /// <returns>Average pace in minutes per metre for the recommended effort level</returns>
+    internal static double CalculateAveragePaceForEffort(List<RunEvent> runEvents, byte effort)
+    {
+        if (effort < 1)
+        {
+            return Runs.InsufficientHistory.RunPaceMinsPerKm;
+        }
+
+        List<RunEvent> runsAtEffortLevel = runEvents
+            .Where(re => re.Effort == effort)
+            .ToList();
+
+        if (runsAtEffortLevel.Count == 0)
+        {
+            return CalculateAveragePaceForEffort(runEvents, (byte)(effort - 1));
+        }
+
+        return runsAtEffortLevel.Average(re => re.Duration.TotalMinutes / re.Distance);
     }
 
     /// <summary>
