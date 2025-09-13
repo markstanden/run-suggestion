@@ -71,6 +71,8 @@ public class RecommendationService(
     /// User-configurable rule to calculate run duration based on run history.
     /// </summary>
     /// <param name="runEvents">The users past completed run events</param>
+    /// <param name="distance">Recommended distance in metres</param>
+    /// <param name="effort">Recommended effort level</param>
     /// <returns>A target duration for the recommended run</returns>
     internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distance, byte effort)
     {
