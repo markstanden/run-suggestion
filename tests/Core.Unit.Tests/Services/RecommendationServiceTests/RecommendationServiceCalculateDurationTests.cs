@@ -255,6 +255,7 @@ public class RecommendationServiceCalculateDurationTests
     {
         // Arrange
         const int paceMinsPerKm = 10;
+        const string expectedMessage = RecommendationService.LogMessageZeroOrNegativeRunDistance;
         IEnumerable<RunEvent> runEvents =
         [
             RunBaseFakes.CreateRunEventWithPace(10, paceMinsPerKm, Easy, _currentDate.AddDays(-2))
@@ -265,6 +266,6 @@ public class RecommendationServiceCalculateDurationTests
 
         // Assert
         Exception ex = withNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
-        ex.Message.ShouldContain("Zero or Negative distance");
+        ex.Message.ShouldContain(expectedMessage);
     }
 }
