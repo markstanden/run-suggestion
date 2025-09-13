@@ -126,6 +126,7 @@ public class RecommendationService(
         List<RunEvent> runsAtEffortLevel = runEvents
             .Where(re => re.Effort == effort)
             .Where(re => re.Distance > 0)
+            .Where(re => re.Duration > TimeSpan.Zero)
             .ToList();
 
         if (runsAtEffortLevel.Count == 0)
