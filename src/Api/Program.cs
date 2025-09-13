@@ -26,6 +26,7 @@ builder.Services.AddScoped<IAuthenticator, SwaAuthenticationService>();
 builder.Services.AddScoped<ICsvParser, CsvParser>();
 builder.Services.AddScoped<IRunHistoryTransformer, CsvToRunHistoryTransformer>();
 builder.Services.AddScoped<IRunHistoryAdder, TrainingPeaksHistoryService>();
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 builder.Services.AddScoped<IValidator<RunEvent>>(_ => new RunEventValidator(DateTime.UtcNow));
 
 await builder

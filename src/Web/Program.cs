@@ -32,5 +32,6 @@ builder.Services
 // Register Azure StaticWebApp specific authentication
 builder.Services.AddScoped<AuthenticationStateProvider, StaticWebAppsAuthStateProvider>();
 builder.Services.AddScoped<ICsvUploadApiService, CsvUploadApiService>();
+builder.Services.AddScoped<IRecommendationApiService, RecommendationApiService>();
 builder.Services.AddAuthorizationCore();
 await builder.Build().RunAsync();
