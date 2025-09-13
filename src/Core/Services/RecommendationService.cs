@@ -130,10 +130,13 @@ public class RecommendationService(
 
         if (runsAtEffortLevel.Count == 0)
         {
-            return CalculateAveragePaceForEffort(runEvents, (byte)(effort - 1));
+            byte previousEffort = (byte)Math.Max(effort - 1, Runs.EffortLevel.Rest);
+            return CalculateAveragePaceForEffort(runEvents, previousEffort);
         }
 
-        return runsAtEffortLevel.Average(re => re.Duration.TotalMinutes / re.Distance);
+        double totalMinutes = runsAtEffortLevel.Sum(re => re.Duration.TotalMinutes);
+        double totalDistance = runsAtEffortLevel.Sum(re => re.Distance);
+        return totalMinutes / totalDistance;
     }
 
     /// <summary>
