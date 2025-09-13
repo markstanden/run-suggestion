@@ -44,7 +44,7 @@ public static class Runs
             if (distanceMetres < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(distanceMetres),
-                                                      "Distance must be a positive integer - cannot be negative.");
+                                                      "Distance must be greater or equal to zero - cannot be negative.");
             }
             if (runPaceMinsPerKm <= 0)
             {

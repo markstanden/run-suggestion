@@ -53,7 +53,7 @@ public class RunsInsufficientHistoryTests
         // Assert
         ArgumentOutOfRangeException ex = withNegativeDistance.ShouldThrow<ArgumentOutOfRangeException>();
         ex.ParamName.ShouldBe("distanceMetres");
-        ex.Message.ShouldContain("Distance must be a positive integer");
+        ex.Message.ShouldContain("Distance must be greater or equal to zero");
         ex.Message.ShouldContain("cannot be negative");
     }
 
