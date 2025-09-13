@@ -1,3 +1,4 @@
+using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
 
 namespace RunSuggestion.TestHelpers.Creators;
@@ -20,7 +21,8 @@ public static class RunBaseFakes
         DateTime? dateTime = null,
         int? distanceMetres = null,
         byte? effort = null,
-        TimeSpan? duration = null) => new()
+        TimeSpan? duration = null) =>
+        new()
         {
             RunEventId = id ?? Defaults.UserId,
             Date = dateTime ?? Defaults.DateTime,
@@ -43,7 +45,8 @@ public static class RunBaseFakes
         DateTime? dateTime = null,
         int? distanceMetres = null,
         byte? effort = null,
-        TimeSpan? duration = null) => new()
+        TimeSpan? duration = null) =>
+        new()
         {
             RunRecommendationId = id ?? Defaults.UserId,
             Date = dateTime ?? Defaults.DateTime,
@@ -70,30 +73,43 @@ public static class RunBaseFakes
     /// <param name="runDistance">Distance for each run in metres</param>
     /// <param name="weekEndingDate">The final day of the week (inclusive)</param>
     /// <param name="runsPerWeek">Number of runs to create for the week</param>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if runsPerWeek is less than 1</exception>
     /// <returns>Collection of run events for the week</returns>
-    public static IEnumerable<RunEvent> CreateWeekOfRuns(int runDistance, DateTime weekEndingDate, int runsPerWeek = 3)
+    public static IEnumerable<RunEvent> CreateWeekOfRuns(int runDistance, DateTime weekEndingDate, int runsPerWeek)
     {
         const double weekLength = 7D;
-        int runSpacing = (int)Math.Floor(weekLength / runsPerWeek);
+        if (runsPerWeek <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(runsPerWeek), "runsPerWeek must be at least 1.");
+        }
+        int runSpacing = Math.Max(1, (int)Math.Floor(weekLength / runsPerWeek));
 
         return Enumerable.Range(0, runsPerWeek)
             .Select(runNumber => CreateRunEvent(distanceMetres: runDistance,
                                                 dateTime: weekEndingDate.AddDays(-runNumber * runSpacing)));
     }
 
-    public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate) =>
-    [
-        CreateRunEvent(1, todayDate.AddDays(-20), 1000, 1),
-        CreateRunEvent(2, todayDate.AddDays(-18), 1100, 2),
-        CreateRunEvent(3, todayDate.AddDays(-16), 1200, 1),
-        CreateRunEvent(4, todayDate.AddDays(-14), 1300, 2),
-        CreateRunEvent(5, todayDate.AddDays(-12), 1400, 1),
-        CreateRunEvent(6, todayDate.AddDays(-10), 1500, 2),
-        CreateRunEvent(7, todayDate.AddDays(-8), 1600, 1),
-        CreateRunEvent(8, todayDate.AddDays(-6), 1700, 2),
-        CreateRunEvent(9, todayDate.AddDays(-4), 1800, 1),
-        CreateRunEvent(10, todayDate.AddDays(-2), 1900, 2)
-    ];
+    public static RunEvent
+        CreateRunEventWithPace(int distanceKm, int paceMinsPerKm, byte effort, DateTime? date = null) =>
+        CreateRunEvent(distanceMetres: 1000 * distanceKm,
+                       duration: TimeSpan.FromMinutes(distanceKm * paceMinsPerKm),
+                       effort: effort,
+                       dateTime: date);
+
+    public static IEnumerable<RunEvent> LowIntensityRunHistory(DateTime todayDate, int sampleSize = 35) =>
+        Enumerable.Range(1, sampleSize)
+            .Select(index => index * -2)
+            .SelectMany<int, RunEvent>(negEvens =>
+            [
+                CreateRunEvent(
+                    dateTime: todayDate.AddDays(negEvens + 1),
+                    distanceMetres: 5000,
+                    effort: Runs.EffortLevel.Easy),
+                CreateRunEvent(
+                    dateTime: todayDate.AddDays(negEvens),
+                    distanceMetres: 10000,
+                    effort: Runs.EffortLevel.Recovery)
+            ]);
 
     public static class Defaults
     {
