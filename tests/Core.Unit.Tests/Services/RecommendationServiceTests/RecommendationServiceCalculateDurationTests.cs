@@ -254,7 +254,7 @@ public class RecommendationServiceCalculateDurationTests
     {
         // Arrange
         const int paceMinsPerKm = 10;
-        const string expectedMessage = RecommendationService.LogMessageZeroOrNegativeRunDistance;
+        const string expectedMessage = RecommendationService.LogMessageNegativeRunDistance;
         IEnumerable<RunEvent> runEvents =
         [
             RunBaseFakes.CreateRunEventWithPace(10, paceMinsPerKm, Easy, _currentDate.AddDays(-2))

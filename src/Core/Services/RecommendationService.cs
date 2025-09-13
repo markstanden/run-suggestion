@@ -24,7 +24,7 @@ public class RecommendationService(
     internal const string LogMessageInsufficientHistory =
         "Insufficient RunEvent history provided, supplying a cautious base recommendation";
 
-    internal const string LogMessageZeroOrNegativeRunDistance = "Invalid run distance - cannot be Zero or Negative";
+    internal const string LogMessageNegativeRunDistance = "Invalid run distance - cannot be Negative";
 
     private readonly DateTime _currentDate =
         currentDate ?? DateTime.Now;
@@ -78,10 +78,17 @@ public class RecommendationService(
     /// <returns>A target duration for the recommended run</returns>
     internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distanceMetres, byte effort)
     {
-        if (distanceMetres <= 0)
+        if (distanceMetres < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(distanceMetres), LogMessageZeroOrNegativeRunDistance);
+            throw new ArgumentOutOfRangeException(nameof(distanceMetres), LogMessageNegativeRunDistance);
         }
+
+        // Rest day recommendation - no running required
+        if (distanceMetres == 0)
+        {
+            return TimeSpan.Zero;
+        }
+
         List<RunEvent> recentRuns = runEvents?.ToList() ?? [];
         if (IsEmptyRunHistory(recentRuns))
         {
