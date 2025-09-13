@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging;
 using RunSuggestion.Core.Interfaces;
 using RunSuggestion.Core.Services;
-using RunSuggestion.Shared.Constants;
 using RunSuggestion.Shared.Models.Runs;
 using RunSuggestion.Shared.Models.Users;
 using RunSuggestion.TestHelpers.Assertions;
 using RunSuggestion.TestHelpers.Creators;
+using static RunSuggestion.Shared.Constants.Runs;
 
 namespace RunSuggestion.Core.Unit.Tests.Services.RecommendationServiceTests;
 
@@ -26,12 +26,12 @@ public class RecommendationServiceGetRecommendationAsyncTests
     /// Helper method to help assert whether a <see cref="RunRecommendation"/>
     /// is the base run recommendation returned to beginners.
     /// </summary>
-    /// <param name="runRecommendation">The recommendation to compare against the base recommendation</param>
+    /// <param name="runRec">The recommendation to compare against the base recommendation</param>
     /// <returns>true if the provided RunRecommendation is the base recommendation</returns>
-    private static bool IsBaseRunRecommendation(RunRecommendation runRecommendation) =>
-        runRecommendation.Distance == Runs.InsufficientHistory.RunDistanceMetres &&
-        runRecommendation.Effort == Runs.EffortLevel.Easy &&
-        runRecommendation.Duration == Runs.InsufficientHistory.RunDurationTimeSpan;
+    private static bool IsBaseRunRecommendation(RunRecommendation runRec) =>
+        runRec.Distance == InsufficientHistory.RunDistanceMetres &&
+        runRec.Effort == InsufficientHistory.RunEffort &&
+        runRec.Duration == InsufficientHistory.RunDurationTimeSpan(InsufficientHistory.RunDistanceMetres);
 
     [Fact]
     public async Task GetRecommendationAsync_WhenCalled_LogsRecommendationRequest()

@@ -14,10 +14,10 @@ public static class Runs
     {
         public const int RunDistanceMetres = 1000;
         public const byte RunEffort = EffortLevel.Easy;
-        public const int RunDurationMinutes = 15;
+        public const int RunPaceMinsPerKm = 15;
 
-        public static readonly TimeSpan RunDurationTimeSpan
-            = TimeSpan.FromMinutes(RunDurationMinutes);
+        public static TimeSpan RunDurationTimeSpan(int distanceMetres)
+            => TimeSpan.FromMinutes(distanceMetres / 1000D * RunPaceMinsPerKm);
     }
 
 
