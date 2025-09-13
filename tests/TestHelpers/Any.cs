@@ -1,3 +1,5 @@
+using RunSuggestion.Shared.Constants;
+
 namespace RunSuggestion.TestHelpers;
 
 public static class Any
@@ -15,8 +17,10 @@ public static class Any
     public const string OtherUrlString = "https://www.anotherdomain.com";
 
     // Numbers
-    public const byte Byte = 8;
     public const int Integer = 1;
+
+    // Run Recommendations
+    public const byte EffortLevel = Runs.EffortLevel.Easy;
 
     // URIs
     public static readonly Uri Url = new(UrlString);

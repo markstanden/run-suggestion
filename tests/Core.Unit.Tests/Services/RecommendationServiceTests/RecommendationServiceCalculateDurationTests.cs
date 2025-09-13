@@ -30,7 +30,7 @@ public class RecommendationServiceCalculateDurationTests
         IEnumerable<RunEvent> runEvents = [];
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, distanceMetres, Any.Byte);
+        TimeSpan result = _sut.CalculateDuration(runEvents, distanceMetres, Any.EffortLevel);
 
         // Assert
         result.ShouldBe(expectedTimeSpan);
@@ -279,7 +279,7 @@ public class RecommendationServiceCalculateDurationTests
         IEnumerable<RunEvent> runEvents = RunBaseFakes.CreateDefaultRunEvents();
 
         // Act
-        TimeSpan result = _sut.CalculateDuration(runEvents, restDayDistance, Any.Byte);
+        TimeSpan result = _sut.CalculateDuration(runEvents, restDayDistance, Any.EffortLevel);
 
         // Assert
         result.ShouldBe(Runs.RestDuration);
