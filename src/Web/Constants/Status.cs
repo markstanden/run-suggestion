@@ -1,12 +1,26 @@
+using System.Globalization;
+
 namespace RunSuggestion.Web.Constants;
 
 public static class Status
 {
-    public const string Uploading = "Uploading run history...";
-    public const string GettingRecommendation = "Getting recommendation...";
-    public const string UploadSuccess = "Upload completed successfully.";
-    public const string UploadFailed = "Upload failed. Please try again.";
+    public static class Upload
+    {
+        public const string Start = "Uploading run history...";
 
-    public static string UploadCompleted(int rowsAdded) =>
-        $"Upload completed successfully. {rowsAdded} runs added.";
+        public const string Failure = "Upload failed. Please try again.";
+
+        public static string Success(int rowsAdded) =>
+            $"Upload completed successfully. {rowsAdded} runs added.";
+    }
+
+    public static class Recommendation
+    {
+        public const string Start = "Getting recommendation...";
+
+        public const string Failure = "Recommendation request failed. Please try again.";
+
+        public static string Success(int distance, byte effort, TimeSpan duration) =>
+            $"Recommendation received successfully: Distance {distance.ToString()}, Effort: {effort.ToString()}, Duration: {duration.TotalMinutes.ToString(CultureInfo.InvariantCulture)}";
+    }
 }

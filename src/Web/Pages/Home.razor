@@ -1,8 +1,10 @@
 ﻿@page "/"
+@using RunSuggestion.Shared.Models.Runs
 @using RunSuggestion.Web.Constants
 @using RunSuggestion.Web.Interfaces
 @inject ILogger<Home> Logger
 @inject ICsvUploadApiService CsvUploadApiService
+@inject IRecommendationApiService RecommendationApiService
 
 <PageTitle>@Site.HomePage.Title</PageTitle>
 
@@ -20,7 +22,7 @@
                 Upload
             </h2>
             <InputFile data-testid="upload-section--input"
-                       OnChange="PostUpload"
+                       OnChange="PostUploadAsync"
                        multiple/>
         </section>
 
@@ -33,7 +35,7 @@
             <button class="button"
                     data-testid="recommendation-section--button"
                     type="button"
-                    @onclick="GetRecommendation">
+                    @onclick="GetRecommendationAsync">
                 @ButtonText.GetRecommendation
             </button>
         </section>
@@ -51,10 +53,10 @@
 
     private string Status { get; set; } = string.Empty;
 
-    private async Task PostUpload(InputFileChangeEventArgs e)
+    private async Task PostUploadAsync(InputFileChangeEventArgs e)
     {
         Logger.LogInformation(Logs.Upload.Start);
-        Status = Constants.Status.Uploading;
+        Status = Constants.Status.Upload.Start;
         StateHasChanged();
 
         try
@@ -68,12 +70,12 @@
             string csvContent = await reader.ReadToEndAsync();
 
             int rowsAdded = await CsvUploadApiService.UploadAsync(csvContent);
-            Status = Constants.Status.UploadCompleted(rowsAdded);
+            Status = Constants.Status.Upload.Success(rowsAdded);
             Logger.LogInformation(Logs.Upload.Success);
         }
         catch (Exception ex)
         {
-            Status = Constants.Status.UploadFailed;
+            Status = Constants.Status.Upload.Failure;
             Logger.LogError(ex, Logs.Upload.Failure);
         }
         finally
@@ -82,10 +84,28 @@
         }
     }
 
-    private void GetRecommendation()
+    private async Task GetRecommendationAsync()
     {
         Logger.LogInformation(Logs.Recommendation.Start);
-        Status = Constants.Status.GettingRecommendation;
+        Status = Constants.Status.Recommendation.Start;
+        StateHasChanged();
+
+        try
+        {
+            RunRecommendation? runRecommendation = await RecommendationApiService.GetRecommendationAsync();
+            Status = runRecommendation is not null
+                ? Constants.Status.Recommendation.Success(runRecommendation.Distance, runRecommendation.Effort, runRecommendation.Duration)
+                : Constants.Status.Recommendation.Failure;
+        }
+        catch (Exception ex)
+        {
+            Status = Constants.Status.Recommendation.Failure;
+            Logger.LogError(ex, Logs.Recommendation.Failure);
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
 }
