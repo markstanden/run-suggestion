@@ -189,10 +189,15 @@ public class RecommendationServiceCalculateDurationTests
     public void CalculateDuration_WithZeroDistanceRuns_ShouldNotThrow()
     {
         // Arrange
+        const int zeroDistance = 0;
         const int recommendedDistanceKm = 5;
         IEnumerable<RunEvent> runEvents =
         [
-            RunBaseFakes.CreateRunEventWithPace(Any.Integer, 0, Easy, _currentDate.AddDays(-1))
+            RunBaseFakes.CreateRunEventWithPace(
+                zeroDistance,
+                Any.Integer,
+                Easy,
+                _currentDate.AddDays(-1))
         ];
 
         // Act
