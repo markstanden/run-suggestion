@@ -24,7 +24,13 @@ public static class Runs
         /// where insufficient run history has been provided.
         /// Returns a rest day duration if the provided distanceMetres is 0.
         /// </summary>
-        /// <param name="distanceMetres">The distance of the run in metres. Must be a non-negative integer.</param>
+        /// <param name="distanceMetres">
+        /// The distance of the run in metres. Must be a non-negative integer.
+        /// </param>
+        /// <param name="runPaceMinsPerKm">
+        /// The optional run pace to use for the calculation in mins/km,
+        /// defaults to <see cref="InsufficientHistory.RunPaceMinsPerKm"/>
+        /// </param>
         /// <returns>
         /// A <see cref="TimeSpan"/> representing the duration of the run.
         /// Returns zero duration if the distance is zero.
@@ -32,7 +38,7 @@ public static class Runs
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided distanceMetres is a negative value.
         /// </exception>
-        public static TimeSpan RunDurationTimeSpan(int distanceMetres)
+        public static TimeSpan RunDurationTimeSpan(int distanceMetres, int runPaceMinsPerKm = RunPaceMinsPerKm)
         {
             if (distanceMetres < 0)
             {
@@ -41,7 +47,7 @@ public static class Runs
             }
             return distanceMetres == 0
                 ? RestDuration
-                : TimeSpan.FromMinutes(distanceMetres / 1000D * RunPaceMinsPerKm);
+                : TimeSpan.FromMinutes(distanceMetres / 1000D * runPaceMinsPerKm);
         }
     }
 
