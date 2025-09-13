@@ -23,7 +23,10 @@
       "apiBuildCommand": "dotnet publish -c Debug",
       "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5281",
-      "open": true
+      "open": true,
+      "env": {
+        "TestCurrentDate": "2025-08-02T10:00:00Z"
+      }
     },
     "automated-tests": {
       "apiLanguage": "dotnetisolated",
@@ -35,7 +38,10 @@
       "apiBuildCommand": "dotnet publish -c Debug",
       "run": "dotnet run",
       "appDevserverUrl": "http://localhost:5281",
-      "open": false
+      "open": false,
+      "env": {
+        "TestCurrentDate": "2025-08-02T10:00:00Z"
+      }
     }
   }
 }
