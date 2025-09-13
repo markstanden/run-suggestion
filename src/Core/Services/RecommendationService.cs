@@ -24,7 +24,7 @@ public class RecommendationService(
     internal const string LogMessageInsufficientHistory =
         "Insufficient RunEvent history provided, supplying a cautious base recommendation";
 
-    internal const string LogMessageNegativeRunDistance = "Invalid run distance - cannot be Negative";
+    internal const string LogMessageNegativeRunDistance = "Invalid run distance - cannot be negative";
 
     private readonly DateTime _currentDate =
         currentDate ?? DateTime.Now;
