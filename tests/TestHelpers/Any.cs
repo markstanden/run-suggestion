@@ -1,3 +1,5 @@
+using RunSuggestion.Shared.Constants;
+
 namespace RunSuggestion.TestHelpers;
 
 public static class Any
@@ -17,7 +19,14 @@ public static class Any
     // Numbers
     public const int Integer = 1;
 
+    // Run Recommendations
+    public const byte EffortLevel = Runs.EffortLevel.Easy;
+
     // URIs
     public static readonly Uri Url = new(UrlString);
     public static readonly Uri OtherUrl = new(OtherUrlString);
+
+    // Dates
+    public static readonly DateTime UtcDate = new(2025, 8, 31, 0, 0, 0, DateTimeKind.Utc);
+    public static readonly DateTime UtcLeapYear = new(2024, 2, 29, 0, 0, 0, DateTimeKind.Utc);
 }

@@ -24,6 +24,8 @@ public class RecommendationService(
     internal const string LogMessageInsufficientHistory =
         "Insufficient RunEvent history provided, supplying a cautious base recommendation";
 
+    internal const string LogMessageNegativeRunDistance = "Invalid run distance - cannot be negative";
+
     private readonly DateTime _currentDate =
         currentDate ?? DateTime.Now;
 
@@ -55,12 +57,20 @@ public class RecommendationService(
             _logger.LogInformation(LogMessageInsufficientHistory);
         }
 
+        int distance = CalculateDistance(recentRunHistory);
+        byte effort = distance == Runs.RestDistance
+            ? Runs.EffortLevel.Rest
+            : CalculateEffort(recentRunHistory);
+        TimeSpan duration = distance == Runs.RestDistance
+            ? Runs.RestDuration
+            : CalculateDuration(recentRunHistory, distance, effort);
+
         return new RunRecommendation
         {
             Date = _currentDate.Date,
-            Distance = CalculateDistance(recentRunHistory),
-            Effort = CalculateEffort(recentRunHistory),
-            Duration = CalculateDuration(recentRunHistory)
+            Distance = distance,
+            Effort = effort,
+            Duration = duration
         };
     }
 
@@ -68,15 +78,67 @@ public class RecommendationService(
     /// User-configurable rule to calculate run duration based on run history.
     /// </summary>
     /// <param name="runEvents">The users past completed run events</param>
+    /// <param name="distanceMetres">Recommended distance in metres</param>
+    /// <param name="effort">Recommended effort level</param>
     /// <returns>A target duration for the recommended run</returns>
-    internal TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents)
+    internal static TimeSpan CalculateDuration(IEnumerable<RunEvent>? runEvents, int distanceMetres, byte effort)
     {
-        if (IsEmptyRunHistory(runEvents))
+        if (distanceMetres < 0)
         {
-            return Runs.InsufficientHistory.RunDurationTimeSpan;
+            throw new ArgumentOutOfRangeException(nameof(distanceMetres), LogMessageNegativeRunDistance);
         }
 
-        return TimeSpan.FromMinutes(30);
+        if (distanceMetres == Runs.RestDistance || effort == Runs.EffortLevel.Rest)
+        {
+            // Rest day recommendation
+            return Runs.RestDuration;
+        }
+
+        List<RunEvent> recentRuns = runEvents?.ToList() ?? [];
+        if (IsEmptyRunHistory(recentRuns))
+        {
+            return Runs.InsufficientHistory.RunDurationTimeSpan(distanceMetres);
+        }
+
+        double averageMinsPerMetre = CalculateAveragePaceForEffort(recentRuns, effort);
+        double totalMinutes = distanceMetres * averageMinsPerMetre;
+
+        return TimeSpan.FromMinutes(Math.Round(totalMinutes, MidpointRounding.AwayFromZero));
+    }
+
+    /// <summary>
+    /// Calculates the average pace in mins/metre for a specific effort level based on
+    /// recent runs at the same effort level within the provided recent run history.
+    /// If an existing run does not yet exist at the required effort level (no average),
+    /// the function recursively calls itself with the next effort level down until a match is made.
+    /// If no match can be found, the base run pace is returned.
+    /// </summary>
+    /// <param name="runEvents">Completed run events to filter</param>
+    /// <param name="effort">The effort level to calculate pace for</param>
+    /// <returns>Average pace in minutes per metre for the recommended effort level</returns>
+    private static double CalculateAveragePaceForEffort(IEnumerable<RunEvent> runEvents, byte effort)
+    {
+        if (effort < 1)
+        {
+            return Runs.InsufficientHistory.RunPaceMinsPerKm / 1000D;
+        }
+
+        List<RunEvent> recentRunList = runEvents.ToList();
+        List<RunEvent> runsAtEffortLevel = recentRunList
+            .Where(re => re.Effort == effort)
+            .Where(re => re.Distance > 0)
+            .Where(re => re.Duration > TimeSpan.Zero)
+            .ToList();
+
+        if (runsAtEffortLevel.Count == 0)
+        {
+            byte previousEffort = (byte)Math.Max(effort - 1, Runs.EffortLevel.Rest);
+            return CalculateAveragePaceForEffort(recentRunList, previousEffort);
+        }
+
+        double totalMinutes = runsAtEffortLevel.Sum(re => re.Duration.TotalMinutes);
+        double totalDistance = runsAtEffortLevel.Sum(re => re.Distance);
+        return totalMinutes / totalDistance;
     }
 
     /// <summary>
@@ -120,7 +182,7 @@ public class RecommendationService(
     /// <summary>
     /// Calculates the quantity of high-effort run events from the provided collection of run events.
     /// The threshold (exclusive) of what constitutes a high-effort run can be set
-    /// (defaults to anything above an <see cref="Runs.EffortLevel.Easy">easy</see> run.
+    /// defaults to anything above an <see cref="Runs.EffortLevel.Easy">easy</see> run.
     /// </summary>
     /// <param name="runEvents">The collection of run events to evaluate.</param>
     /// <param name="highEffortThreshold">
@@ -128,7 +190,7 @@ public class RecommendationService(
     /// Defaults to <see cref="Runs.EffortLevel.Easy"/>.\
     /// </param>
     /// <returns>The number of high-effort run events exceeding the provided threshold.</returns>
-    internal static int CalculateHighEffortCount(IEnumerable<RunEvent> runEvents,
+    private static int CalculateHighEffortCount(IEnumerable<RunEvent> runEvents,
         byte highEffortThreshold = Runs.EffortLevel.Easy) =>
         runEvents.Count(re => re.Effort > highEffortThreshold);
 
@@ -138,18 +200,18 @@ public class RecommendationService(
     /// <param name="recentRunCount">The number of runs conducted within the last training period</param>
     /// <param name="highEffortPercentage">The percentage of runs within the training period that should be high effort</param>
     /// <returns>The quantity of runs that should be completed using high effort</returns>
-    internal static int CalculateTargetHighEffortRunQuantity(int recentRunCount, int highEffortPercentage)
+    private static int CalculateTargetHighEffortRunQuantity(int recentRunCount, int highEffortPercentage)
     {
         int totalRunCount = recentRunCount + 1;
         return (int)Math.Floor(totalRunCount * (highEffortPercentage / 100.0));
     }
 
     /// <summary>
-    /// User configuarble rule to calculate distance based on weekly average. 
+    /// User configurable rule to calculate distance based on the weekly average. 
     /// </summary>
     /// <param name="runEvents">The users passed completed run events</param>
     /// <param name="progressionPercent">The target weekly progression.</param>
-    /// <returns>A rounded target distance based on the users history and target progression</returns>
+    /// <returns>A rounded target distance based on the user's history and target progression</returns>
     internal int CalculateDistance(IEnumerable<RunEvent>? runEvents,
         int progressionPercent = RuleConfig.Default.SafeProgressionPercent)
     {
@@ -163,7 +225,8 @@ public class RecommendationService(
         double previousWeeklyLoad = CalculateHistoricWeeklyAverageDistance(recentRunEvents, _currentDate);
         double targetWeeklyLoad = previousWeeklyLoad * CalculateProgressionRatio(progressionPercent);
 
-        return (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
+        int calculatedDistance = (int)Math.Round(targetWeeklyLoad - currentWeeklyLoad);
+        return Math.Max(calculatedDistance, Runs.RestDistance);
     }
 
     /// <summary>
@@ -172,7 +235,7 @@ public class RecommendationService(
     /// </summary>
     /// <param name="progressionPercent">Percentage increase to convert - must be between <see cref="RuleConfig.MinProgressionPercent"/> and <see cref="RuleConfig.MaxProgressionPercent"/></param>
     /// <returns>multiplier to apply</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if progressionPercent is outside of permitted range</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if progressionPercent is outside the permitted range</exception>
     internal static double CalculateProgressionRatio(int progressionPercent)
     {
         if (progressionPercent < RuleConfig.MinProgressionPercent ||
@@ -194,10 +257,10 @@ public class RecommendationService(
     /// <param name="endDate">The (inclusive) end date of run events to be included in the calculation</param>
     /// <param name="dayCount">The number of days before the end date to include in the calculation. Default is 7 days.</param>
     /// <returns>The total distance of completed runs within the time period.</returns>
-    internal static double CalculateRollingTotalLoad(
+    private static double CalculateRollingTotalLoad(
         IEnumerable<RunEvent> runEvents,
         DateTime endDate,
-        int dayCount = 7)
+        int dayCount)
     {
         return runEvents
             .Where(re => re.Date <= endDate)
@@ -214,13 +277,13 @@ public class RecommendationService(
     /// <param name="currentDate">The current date, from which the history range is calculated</param>
     /// <param name="weeks">The number of weeks to include in the averaging. Defaults to 4 weeks.</param>
     /// <returns>The calculated average weekly distance over the specified duration, excluding the most recent week</returns>
-    internal static double CalculateHistoricWeeklyAverageDistance(
+    private static double CalculateHistoricWeeklyAverageDistance(
         IEnumerable<RunEvent> runEvents,
         DateTime currentDate,
         int weeks = 4)
     {
         return Enumerable.Range(1, weeks)
-            .Select(weekNumber => CalculateRollingTotalLoad(runEvents, currentDate.AddDays(PrevWeek * weekNumber)))
+            .Select(weekNumber => CalculateRollingTotalLoad(runEvents, currentDate.AddDays(PrevWeek * weekNumber), 7))
             .Average(x => x);
     }
 
@@ -229,6 +292,6 @@ public class RecommendationService(
     /// </summary>
     /// <param name="runEvents">The nullable RunEvent collection</param>
     /// <returns>true if the run history is empty</returns>
-    internal static bool IsEmptyRunHistory(IEnumerable<RunEvent>? runEvents) =>
+    private static bool IsEmptyRunHistory(IEnumerable<RunEvent>? runEvents) =>
         runEvents is null || !runEvents.Any();
 }
