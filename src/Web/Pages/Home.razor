@@ -56,15 +56,26 @@
         Logger.LogInformation(Logs.Upload.Start);
         Status = Constants.Status.Uploading;
 
-        IBrowserFile csvFile = e.GetMultipleFiles(1)[0];
-        using MemoryStream memoryStream = new();
-        await csvFile.OpenReadStream().CopyToAsync(memoryStream);
+        try
+        {
+            IBrowserFile csvFile = e.GetMultipleFiles(1)[0];
+            using MemoryStream memoryStream = new();
+            await csvFile.OpenReadStream().CopyToAsync(memoryStream);
 
-        memoryStream.Position = 0;
-        using StreamReader reader = new(memoryStream);
-        string csvContent = await reader.ReadToEndAsync();
+            memoryStream.Position = 0;
+            using StreamReader reader = new(memoryStream);
+            string csvContent = await reader.ReadToEndAsync();
 
         await CsvUploadService.UploadAsync(csvContent);
+            int rowsAdded = await CsvUploadService.UploadAsync(csvContent);
+            Status = Constants.Status.UploadCompleted(rowsAdded);
+            Logger.LogInformation(Logs.Upload.Success);
+        }
+        catch (Exception ex)
+        {
+            Status = Constants.Status.UploadFailed;
+            Logger.LogError(ex, Logs.Upload.Failure);
+        }
     }
 
     private void GetRecommendation()
