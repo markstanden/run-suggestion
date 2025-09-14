@@ -135,8 +135,8 @@ This project uses Azure Static Web Apps CLI with two configurations:
     - builds and deploys Release versions
 - **`dev` config**: Used for local development (`swa start dev`/`swa start --config-name dev`)
     - runs Debug builds with hot reload
-- **`automated-tests` config**: Used for automated/end-to-end tests (`swa start automated-tests`/
-  `swa start --config-name automated-tests`)
+- **`test` config**: Used for api testing/automated tests (`swa start test`/
+  `swa start --config-name test`)
     - Debug build, no browser, stable dev-server URL
 
 The SWA CLI configuration is in `./swa-cli.config.json` and handles:
