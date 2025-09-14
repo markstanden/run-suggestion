@@ -1,4 +1,5 @@
 using RunSuggestion.Shared.Models.Dto;
+using RunSuggestion.Shared.Models.Runs;
 
 namespace RunSuggestion.Web.Interfaces;
 
@@ -10,5 +11,5 @@ public interface IRecommendationApiService
     /// <returns>
     /// The <see cref="RecommendationResponse">run recommendation response DTO</see>
     /// </returns>
-    public Task<RecommendationResponse> GetRecommendationAsync();
+    public Task<RunRecommendation?> GetRecommendationAsync();
 }

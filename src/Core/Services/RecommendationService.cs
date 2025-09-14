@@ -38,7 +38,7 @@ public class RecommendationService(
     /// <inheritdoc/>
     public async Task<RunRecommendation> GetRecommendationAsync(string entraId)
     {
-        _logger.LogInformation(LogMessageCalled);
+        _logger.LogInformation("{LogMessage}, Current Date: {CurrentDate}", LogMessageCalled, _currentDate);
         if (string.IsNullOrWhiteSpace(entraId))
         {
             _logger.LogCritical(LogMessageInvalidId);

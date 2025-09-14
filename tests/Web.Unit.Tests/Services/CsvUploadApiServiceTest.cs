@@ -11,21 +11,21 @@ using static RunSuggestion.TestHelpers.Creators.HttpTestHelpers;
 
 namespace RunSuggestion.Web.Unit.Tests.Services;
 
-[TestSubject(typeof(CsvUploadService))]
-public class CsvUploadServiceTest
+[TestSubject(typeof(CsvUploadApiService))]
+public class CsvUploadApiServiceTest
 {
-    private readonly Mock<ILogger<CsvUploadService>> _mockLogger = new();
+    private readonly Mock<ILogger<CsvUploadApiService>> _mockLogger = new();
 
-    private CsvUploadService CreateSut(int response = Any.Integer, HttpStatusCode status = HttpStatusCode.OK) =>
+    private CsvUploadApiService CreateSut(int response = Any.Integer, HttpStatusCode status = HttpStatusCode.OK) =>
         CreateSutWithMockHttpMessageHandler(response, status).sut;
 
-    private (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler)
+    private (CsvUploadApiService sut, Mock<HttpMessageHandler> mockHttpMessageHandler)
         CreateSutWithMockHttpMessageHandler(int response = Any.Integer, HttpStatusCode status = HttpStatusCode.OK)
     {
         Mock<HttpMessageHandler> mockHttpMessageHandler =
-            CreateMockHttpMessageHandler(CreateResponse(response, status));
+            CreateMockHttpMessageHandler(CreateUploadResponse(response, status));
         HttpClient testHttpClient = new(mockHttpMessageHandler.Object) { BaseAddress = Any.Url };
-        CsvUploadService sut = new(_mockLogger.Object, testHttpClient);
+        CsvUploadApiService sut = new(_mockLogger.Object, testHttpClient);
         return (sut, mockHttpMessageHandler);
     }
 
@@ -34,11 +34,11 @@ public class CsvUploadServiceTest
     {
         // Arrange
         const string expectedParamName = "logger";
-        ILogger<CsvUploadService> nullLogger = null!;
+        ILogger<CsvUploadApiService> nullLogger = null!;
         HttpClient anyClient = new();
 
         // Act
-        Func<CsvUploadService> withNullLoggerArgument = () => new CsvUploadService(nullLogger, anyClient);
+        Func<CsvUploadApiService> withNullLoggerArgument = () => new CsvUploadApiService(nullLogger, anyClient);
 
         // Assert
         ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
@@ -53,7 +53,8 @@ public class CsvUploadServiceTest
         HttpClient nullClient = null!;
 
         // Act
-        Func<CsvUploadService> withNullLoggerArgument = () => new CsvUploadService(_mockLogger.Object, nullClient);
+        Func<CsvUploadApiService> withNullLoggerArgument =
+            () => new CsvUploadApiService(_mockLogger.Object, nullClient);
 
         // Assert
         ArgumentNullException ex = withNullLoggerArgument.ShouldThrow<ArgumentNullException>();
@@ -73,10 +74,10 @@ public class CsvUploadServiceTest
         // Arrange
         const string expectedParamName = "csvContent";
         const string expectedMessage = Errors.History.NoCsvContent;
-        CsvUploadService sut = CreateSut();
+        CsvUploadApiService sut = CreateSut();
 
         // Act
-        Func<Task> withEmptyCsvContent = async () => await sut.Upload(csvContent!);
+        Func<Task> withEmptyCsvContent = async () => await sut.UploadAsync(csvContent!);
 
         // Assert
         ArgumentException ex = withEmptyCsvContent.ShouldThrow<ArgumentException>();
@@ -90,10 +91,10 @@ public class CsvUploadServiceTest
         // Arrange
         const string csvContent = Any.String;
         const string expectedLog = Logs.Upload.Start;
-        CsvUploadService sut = CreateSut();
+        CsvUploadApiService sut = CreateSut();
 
         // Act
-        await sut.Upload(csvContent);
+        await sut.UploadAsync(csvContent);
 
         // Assert
         _mockLogger.ShouldHaveLoggedOnce(LogLevel.Information, expectedLog);
@@ -105,16 +106,17 @@ public class CsvUploadServiceTest
         // Arrange
         const string expectedApiEndpoint = Routes.UploadPath;
         const string csvContent = Any.String;
-        (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
+        (CsvUploadApiService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) =
+            CreateSutWithMockHttpMessageHandler();
 
         // Act
-        await sut.Upload(csvContent);
+        await sut.UploadAsync(csvContent);
 
         // Assert
         mockHttpMessageHandler
             .Protected()
             .Verify(
-                SendAsync,
+                SendAsyncMethodName,
                 Times.Once(),
                 ItExpr.Is<HttpRequestMessage>(req =>
                                                   req.Method == HttpMethod.Post &&
@@ -128,16 +130,17 @@ public class CsvUploadServiceTest
     {
         // Arrange
         const string csvContent = Any.String;
-        (CsvUploadService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) = CreateSutWithMockHttpMessageHandler();
+        (CsvUploadApiService sut, Mock<HttpMessageHandler> mockHttpMessageHandler) =
+            CreateSutWithMockHttpMessageHandler();
 
         // Act
-        await sut.Upload(csvContent);
+        await sut.UploadAsync(csvContent);
 
         // Assert
         mockHttpMessageHandler
             .Protected()
             .Verify(
-                SendAsync,
+                SendAsyncMethodName,
                 Times.Once(),
                 ItExpr.Is<HttpRequestMessage>(req =>
                                                   req.Content != null &&
@@ -146,16 +149,16 @@ public class CsvUploadServiceTest
     }
 
     [Fact]
-    public async Task Upload_WithInvalidCsvContent_ReturnsFalse()
+    public async Task Upload_WithInvalidCsvContent_ReturnsZeroRowsAdded()
     {
         // Arrange
         const string csvContent = Any.String;
-        CsvUploadService sut = CreateSut(0, HttpStatusCode.BadRequest);
+        CsvUploadApiService sut = CreateSut(0, HttpStatusCode.BadRequest);
 
         // Act
-        bool result = await sut.Upload(csvContent);
+        int result = await sut.UploadAsync(csvContent);
 
         // Assert
-        result.ShouldBeFalse();
+        result.ShouldBe(0);
     }
 }

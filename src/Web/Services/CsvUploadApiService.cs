@@ -1,15 +1,17 @@
+using System.Net.Http.Json;
 using RunSuggestion.Shared.Constants;
+using RunSuggestion.Shared.Models.Dto;
 using RunSuggestion.Web.Constants;
 using RunSuggestion.Web.Interfaces;
 
 namespace RunSuggestion.Web.Services;
 
-public class CsvUploadService(ILogger<CsvUploadService> logger, HttpClient httpClient) : ICsvUploadService
+public class CsvUploadApiService(ILogger<CsvUploadApiService> logger, HttpClient httpClient) : ICsvUploadApiService
 {
-    private readonly ILogger<CsvUploadService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly ILogger<CsvUploadApiService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public async Task<bool> Upload(string csvContent)
+    public async Task<int> UploadAsync(string csvContent)
     {
         if (string.IsNullOrWhiteSpace(csvContent))
         {
@@ -22,17 +24,18 @@ public class CsvUploadService(ILogger<CsvUploadService> logger, HttpClient httpC
         {
             Content = new StringContent(csvContent, System.Text.Encoding.UTF8, "text/csv")
         };
-        HttpResponseMessage result = await _httpClient.SendAsync(request);
+        HttpResponseMessage response = await _httpClient.SendAsync(request);
 
-        if (result.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
         {
             _logger.LogInformation(Logs.Upload.Success);
+            UploadResponse? uploadResponse = await response.Content.ReadFromJsonAsync<UploadResponse>();
+            return uploadResponse?.RowsAdded ?? 0;
         }
         else
         {
             _logger.LogWarning(Logs.Upload.Failure);
+            return 0;
         }
-
-        return result.IsSuccessStatusCode;
     }
 }
