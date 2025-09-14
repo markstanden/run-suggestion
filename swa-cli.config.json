@@ -25,7 +25,7 @@
       "appDevserverUrl": "http://localhost:5281",
       "open": true
     },
-    "automated-tests": {
+    "test": {
       "apiLanguage": "dotnetisolated",
       "apiVersion": "8.0",
       "appLocation": "src/Web",

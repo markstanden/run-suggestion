@@ -1,0 +1,45 @@
+### RunSuggestion API - HTTP Test File
+### 
+### Setup Instructions:
+### Start the app locally:
+### ```bash
+### swa start test
+### ```
+### API should be served at http:// localhost:7071
+@BaseUrl = http://localhost:7071
+@HealthCheckEndpoint = {{BaseUrl}}/api/healthcheck
+@HistoryEndpoint = {{BaseUrl}}/api/history
+@RecommendationEndpoint = {{BaseUrl}}/api/recommendations
+
+### Create a Base64 encoded principal
+### userId should be set to a unique value - identity provider MUST remain github.
+### PRINCIPAL='{"userId":"User12345","identityProvider":"github"}'
+### echo $PRINCIPAL | base64
+### Base64: eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiZ2l0aHViIn0K
+@Base64Principal = eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiZ2l0aHViIn0K
+
+
+### HEALTH CHECK
+GET {{HealthCheckEndpoint}}
+Content-Type: application/json
+
+
+### RUN HISTORY - mixed workout data
+POST {{HistoryEndpoint}}
+Content-Type: text/csv
+x-ms-client-principal: {{Base64Principal}}
+
+< ../../sample-data/mixed-workouts.csv
+
+### RUN HISTORY - steady progression data 
+POST {{HistoryEndpoint}}
+Content-Type: text/csv
+x-ms-client-principal: {{Base64Principal}}
+
+< ../../sample-data/steady-progression.csv
+
+
+### RUN RECOMMENDATION - Request a recommendation
+GET {{RecommendationEndpoint}}
+Content-Type: application/json
+x-ms-client-principal: {{Base64Principal}}
