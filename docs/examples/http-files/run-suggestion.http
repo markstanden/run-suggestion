@@ -16,8 +16,7 @@
 ### PRINCIPAL='{"userId":"User12345","identityProvider":"github"}'
 ### echo $PRINCIPAL | base64
 ### Base64: eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiZ2l0aHViIn0K
-@Base64Principal = eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiZ2l0aHViIn0K
-
+@Base64Principal = eyJ1c2VySWQiOiIxMGstZWFzeS1ydW5uZXItMTBrZXIiLCJpZGVudGl0eVByb3ZpZGVyIjoiZ2l0aHViIn0K
 
 ### HEALTH CHECK
 GET {{HealthCheckEndpoint}}
@@ -38,6 +37,12 @@ x-ms-client-principal: {{Base64Principal}}
 
 < ../../sample-data/steady-progression.csv
 
+### RUN HISTORY - consistent 45min 10km Easy Runs
+POST {{HistoryEndpoint}}
+Content-Type: text/csv
+x-ms-client-principal: {{Base64Principal}}
+
+< ../../sample-data/consistent-45min-10k-easy-runner.csv
 
 ### RUN RECOMMENDATION - Request a recommendation
 GET {{RecommendationEndpoint}}
