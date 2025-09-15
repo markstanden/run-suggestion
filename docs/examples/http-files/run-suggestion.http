@@ -44,7 +44,40 @@ x-ms-client-principal: {{Base64Principal}}
 
 < ../../sample-data/consistent-45min-10k-easy-runner.csv
 
+### RUN HISTORY - Invalid CSV
+POST {{HistoryEndpoint}}
+Content-Type: text/csv
+x-ms-client-principal: {{Base64Principal}}
+
+### RUN HISTORY - Valid CSV, Invalid Principal
+# PRINCIPAL='{"Invalid":"UserId","Other":"Values"}'
+# echo $PRINCIPAL | base64
+# eyJJbnZhbGlkIjoiVXNlcklkIiwiT3RoZXIiOiJWYWx1ZXMifQo=
+POST {{HistoryEndpoint}}
+Content-Type: text/csv
+x-ms-client-principal: eyJJbnZhbGlkIjoiVXNlcklkIiwiT3RoZXIiOiJWYWx1ZXMifQo=
+
+< ../../sample-data/consistent-45min-10k-easy-runner.csv
+
+### RUN HISTORY - Valid CSV, Invalid Provider
+# PRINCIPAL='{"userId":"User12345","identityProvider":"INVALID_PROVIDER"}'
+# echo $PRINCIPAL | base64
+# eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiSU5WQUxJRF9QUk9WSURFUiJ9Cg==
+POST {{HistoryEndpoint}}
+Content-Type: text/csv
+x-ms-client-principal: eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiSU5WQUxJRF9QUk9WSURFUiJ9Cg==
+
+< ../../sample-data/consistent-45min-10k-easy-runner.csv
+
 ### RUN RECOMMENDATION - Request a recommendation
 GET {{RecommendationEndpoint}}
 Content-Type: application/json
 x-ms-client-principal: {{Base64Principal}}
+
+### RUN RECOMMENDATION - Invalid Provider
+# PRINCIPAL='{"userId":"User12345","identityProvider":"INVALID_PROVIDER"}'
+# echo $PRINCIPAL | base64
+# eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiSU5WQUxJRF9QUk9WSURFUiJ9Cg==
+GET {{RecommendationEndpoint}}
+Content-Type: application/json
+x-ms-client-principal: eyJ1c2VySWQiOiJVc2VyMTIzNDUiLCJpZGVudGl0eVByb3ZpZGVyIjoiSU5WQUxJRF9QUk9WSURFUiJ9Cg==
